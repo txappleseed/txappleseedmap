@@ -1,0 +1,228 @@
+
+/**
+ *  Taken from CartoDB infowindow dark styles
+ */
+    html, body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#viewport {
+    position: relative;
+    height: calc(100% - 85px);
+    background-color: #f0f0f0;
+    overflow: hidden;
+    border: 1px solid #999;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+#masthead {
+    height: 85px;
+    margin: 0;
+    border-top: 1px solid #CDCDCD;
+    padding: 4px 12px 10px 15px;
+    background-image: url(https://www.texasappleseed.org/sites/all/themes/zocalo_custom_zen_theme/images/tx-appleseed-header-background-pattern.png);
+    background-repeat: repeat;
+}
+#mastright {
+    height: 80px;
+    margin-left: 200px;
+    font-family: "museo-slab", serif;
+}
+#logo {
+    float: left;
+    height: 65px;
+    margin-left:20px;
+    margin-top:5px;
+}
+#masthead p {
+    font-size: 13px;
+    font-weight: 200;
+}
+.dash {
+    text-align: left;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.legend-title {
+    text-align:center ;
+}
+
+.layer_selector {
+    background: #fff;
+    border-radius: 4px;
+    padding: 0;
+    border: 1px solid #999999;
+    width: 240px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 0 4px 2px;
+    /*font: 11px 'Helvetica';*/
+    position: absolute;
+    right: 20px;
+    bottom: 140px;
+}
+
+.layer_selector > p {
+    font-weight: bold;
+    color: #000000;
+    font-size: 12px;
+    padding: 12px 12px 10px 12px;
+    margin: 0px;
+    cursor: pointer;
+    text-align: center;
+    border-bottom: 1px solid #999;
+}
+
+.layer_selector ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    bottom: 36px;
+    border-radius: 4px;
+}
+.layer_selector li {
+    padding: 10px;
+    font-size: 11px;
+    text-align: center;
+    color: #222;
+    cursor: pointer;
+}
+.layer_selector li:not(:last-child) {
+    border-bottom: 1px solid #999;
+}
+.layer_selector li:hover {
+    background-color: #e5e5e5;
+    cursor: pointer;
+}
+.layer_selector li:active,
+.layer_selector li.cartocss_selected {
+    background-color: #c1c1c1;
+}
+
+div.cartodb-legend-stack {
+    bottom: 20px;
+    right: 30px;
+}
+
+#textbox {
+    position: absolute;
+    top: 100px;
+    color: rgba(255, 255, 255, .8);
+    text-align: center;
+    font: 300 14px/20px 'Helvetica';
+    left: 300px;
+    right: 300px;
+}
+
+.title-inner {
+    position: absolute;
+    top: 40px;
+    right: 60px;
+    left: 60px;
+    text-align: center;
+}
+.title {
+    position: relative;
+    font:900 40px/1 'Merriweather';
+    color: #fff;
+    z-index: 2;
+    letter-spacing: -1px;
+    display: inline-block;
+}
+.title:after {
+    content:"";
+    position: absolute;
+    width: 50px;
+    height: 1px;
+    background: #fff;
+    top: 50%;
+    left: -70px;
+}
+.title:before {
+    content:"";
+    position: absolute;
+    width: 50px;
+    height: 1px;
+    background: #fff;
+    top: 50%;
+    right: -70px;
+}
+
+.leaflet-left .leaflet-control {
+    margin-left: 30px;
+    margin-top: 65px;
+}
+
+@media (max-width: 1200px) {
+    #textbox {
+        left: 80px;
+        right: 80px;
+    }
+}
+
+@media (max-width: 800px) {
+    .layer_selector {
+        right: auto;
+        bottom: 30px;
+        left: 30px;
+    }
+
+    .leaflet-control-container {
+        display: none !important;
+    }
+    .header {
+        position: absolute;
+        background: #333;
+        padding: 25px;
+        top: 0;
+        right: 0;
+        left: 0;
+    }
+    .title-inner {
+        position: static;
+    }
+    .title {
+        font: 900 20px/1 'Merriweather';
+        margin-bottom: 10px;
+    }
+    #textbox {
+        position: static;
+        font: 400 12px/18px 'Merriweather';
+    }
+    .layer_selector ul {
+        height: 0;
+        opacity: 0;
+    }
+    .layer_selector > p {
+        border-bottom: 0;
+        background: #999999;
+    }
+    .layer_selector.is-active > p {
+        border-bottom: 0;
+        background: #ffffff;
+    }
+
+    .layer_selector.is-active ul {
+        height: auto;
+        opacity: 1;
+    }
+    .layer_selector.is-active > p {
+        border-bottom: 1px solid #999;
+    }
+}
+@media (max-width: 600px) {
+    .layer_selector {
+        right: 30px;
+        bottom: 140px;
+        left: auto;
+    }
+}
