@@ -76,8 +76,8 @@
           );
           else(
                   $(Legend2.render().el).show()
-          )
-        };
+          );
+        }
 
         // Pull tiles from OpenStreetMap
         L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
@@ -88,15 +88,21 @@
                 .addTo(map_object)
                 .done(function(layer) {
                   for (var i = 0; i < layer.getSubLayerCount(); i++) {
-                    sublayers[i] = layer.getSubLayer(i);
-                      sublayers[i].infowindow.set('template', $('#infowindow_template').html());
-                      sublayers[i].setInteraction(true);
-                      sublayers[i].setInteractivity('distname,total_daep_placements_by_pop,dpetallc,ratio_eco_disadv_daep_placements_vs_average');
-                      sublayers[i].on('featureClick', function(e, latlng, pos, data) {
-                          console.log(data.distname + " Number of Students in District:" + data.dpetallc + " Number of Alternative Placements per 100 Students " + data.total_daep_placements_by_pop + " Ratio of Eco Disadv. Placements to Avg: " + data.ratio_eco_disadv_daep_placements_vs_average);
-                      });
+                    var sublayer = layer.getSubLayer(i);
+                    cartodb.vis.Vis.addInfowindow(
+    map_object, 
+    sublayer, 
+    ['cartodb_id','total_daep_placements_by_pop','distname', 'dpetallc'],
+    {
+      infowindowTemplate: $('#infowindow_template').html(),
+      templateType: 'mustache'
+    }
+  );
+                     
+                    
                   }
-                  $("li").on('click', function(e) {
+          
+          $("li").on('click', function(e) {
                     var num = +$(e.target).attr('data');
                     $("li").css('background-color', '#FFFFFF');
                     $("li").hover(function() {
@@ -109,7 +115,7 @@
 				    console.log("layer" + num);
                     createSelector(layer, num, $(e.target).attr("class"));
                   });
-                  createSelector(layer, 0, "")
+                  createSelector(layer, 0, "");
                   $("li[data='0']").css('background-color', '#C1C1C1');
                 })
                 .error(function(err) {
@@ -124,7 +130,7 @@
 
 
       // Hide the other legends by default
-      $(Legend2.render().el).hide()
+      $(Legend2.render().el).hide();
         //legend for overall stats which will display on load
         var allLegend = new cdb.geo.ui.Legend.Density({
           title:   "Number of Placements per 100 Students, Per District",
@@ -132,5 +138,5 @@
         });
         $('#map').append(allLegend.render().el);
 
-      }
+      };
     
