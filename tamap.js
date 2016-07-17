@@ -80,8 +80,8 @@
         }
 
         // Pull tiles from OpenStreetMap
-        L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">Stamen</a> contributors'
+        L.tileLayer('https://tile.stamen.com/toner/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">Stamen</a> contributors'
         }).addTo(map_object);
 
         cartodb.createLayer(map_object, layerSource)
