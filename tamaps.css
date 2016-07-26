@@ -1,22 +1,70 @@
-
-/**
- *  Taken from CartoDB infowindow dark styles
- */
-    html, body {
-    height: 100%;
-    padding: 0;
-    margin: 0;
+html {
+	height: 100%;
+	font-size: 16px;
 }
 
-#viewport {
-    position: relative;
-    height: calc(100% - 85px);
-    background-color: #f0f0f0;
-    overflow: hidden;
-    border: 1px solid #999;
+body {
+	height: 100%;
+	padding: 0;
+	margin: 0;
 }
 
-#map {
+/* TYPOGRAPHY */
+
+body {
+	font-family: "Proxima Nova", helvetica, arial, sans-serif;
+	font-weight: 400;
+	line-height: 1.45;
+	color: #333;
+}
+
+p {
+	margin-bottom: 1.3em;
+	margin-top: 0;
+}
+
+h1, h2, h3, h4 {
+	font-family: "Museo Slab", serif;
+    margin: 1.414em 0 0.5em;
+	font-weight: inherit;
+	line-height: 1.2;
+}
+
+h1, .h1 {
+    margin-top: 0;
+	font-size: 1.602em;
+}
+
+h2, .h2 {font-size: 1.424em;}
+
+h3, .h3 {font-size: 1.266em;}
+
+h4, .h4 {font-size: 1.125em;}
+
+small, .small {font-size: 0.889em;}
+
+button {
+	margin: 0;
+
+	font-size: 0.8em;
+	font-family: inherit;
+	text-align: center;
+
+	appearance: none;
+	background-color: transparent;
+	border: none;
+	color: inherit;
+
+	cursor: pointer;
+}
+
+/* MAP */
+.viewport {
+  	position: relative;
+    height: calc(100% - 5.3rem);
+}
+
+.map {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -25,204 +73,85 @@
     width: 100%;
 }
 
-#masthead {
-    height: 85px;
-    margin: 0;
-    border-top: 1px solid #CDCDCD;
-    padding: 4px 12px 10px 15px;
-    background-image: url(https://www.texasappleseed.org/sites/all/themes/zocalo_custom_zen_theme/images/tx-appleseed-header-background-pattern.png);
-    background-repeat: repeat;
-}
-#mastright {
-    height: 80px;
-    margin-left: 200px;
-    font-family: "museo-slab", serif;
-}
-#logo {
-    float: left;
-    height: 65px;
-    margin-left:20px;
-    margin-top:5px;
-}
-#masthead p {
-    font-size: 13px;
-    font-weight: 200;
-}
-.dash {
-    text-align: left;
-    font-size: 16px;
-    font-weight: 300;
+/* MASTHEAD */
+.masthead {
+	box-sizing: border-box;
+	height: 5.3rem;
+	padding: 0.2rem;
+	overflow: hidden;
+
+  background: linear-gradient(#F0F0F0 0%,  #F0F0F0 50%,  #FAFAFA 50%,  #FAFAFA 100%);
+	background-size: 1.5rem;
 }
 
-.legend-title {
-    text-align:center ;
+.masthead__logo {
+	float: left;
+	height: 100%;
+	overflow: hidden;
+	width: 120px;
+
+	text-indent: -9999em;
+
+	background: url('https://www.texasappleseed.org/sites/all/themes/zocalo_custom_zen_theme/images/tx-appleseed-header-logo.png') no-repeat center;
+	background-size: 100%;
+}
+.masthead__content {
+	float: right;
+	max-width: 80%;
+}
+.masthead__disclaimer {
+	font-size: 0.7em;
 }
 
-.layer_selector {
-    background: #fff;
-    border-radius: 4px;
-    padding: 0;
-    border: 1px solid #999999;
-    width: 240px;
-    box-shadow: rgba(0, 0, 0, 0.2) 0 0 4px 2px;
-    /*font: 11px 'Helvetica';*/
-    position: absolute;
-    right: 20px;
-    bottom: 140px;
+
+/* SELECTOR */
+.selector {
+	max-width: 15rem;
+	width: 100%;
+
+	position: absolute;
+	right:  1.5rem;
+	bottom: 8.75rem;
+
+	background: #fff;
+	border: 1px solid #999999;
+	border-radius: 4px;
+	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.2);
 }
 
-.layer_selector > p {
-    font-weight: bold;
-    color: #000000;
-    font-size: 12px;
-    padding: 12px 12px 10px 12px;
-    margin: 0px;
-    cursor: pointer;
-    text-align: center;
+.selector__title {
+	display: block;
+	padding: 1em;
+
+	font-weight: bold;
+	font-size: 0.75em;
+	text-align: center;
+	text-transform: uppercase;
+
+	border-bottom: 1px solid #999;
+}
+
+.selector__list {
+	padding-left: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.selector__item:not(:last-child) {
     border-bottom: 1px solid #999;
 }
 
-.layer_selector ul {
-    padding: 0;
-    margin: 0;
-    list-style-type: none;
-    bottom: 36px;
-    border-radius: 4px;
+.selector__button {
+	display: block;
+	width: 100%;
+	padding: 0.8em;
 }
-.layer_selector li {
-    padding: 10px;
-    font-size: 11px;
-    text-align: center;
-    color: #222;
-    cursor: pointer;
+.selector__button:hover, .selector__button:focus {
+	background-color: #DDD;
 }
-.layer_selector li:not(:last-child) {
-    border-bottom: 1px solid #999;
-}
-.layer_selector li:hover {
-    background-color: #e5e5e5;
-    cursor: pointer;
-}
-.layer_selector li:active,
-.layer_selector li.cartocss_selected {
-    background-color: #c1c1c1;
-}
-
-div.cartodb-legend-stack {
-    bottom: 20px;
-    right: 30px;
-}
-
-#textbox {
-    position: absolute;
-    top: 100px;
-    color: rgba(255, 255, 255, .8);
-    text-align: center;
-    font: 300 14px/20px 'Helvetica';
-    left: 300px;
-    right: 300px;
-}
-
-.title-inner {
-    position: absolute;
-    top: 40px;
-    right: 60px;
-    left: 60px;
-    text-align: center;
-}
-.title {
-    position: relative;
-    font:900 40px/1 'Merriweather';
-    color: #fff;
-    z-index: 2;
-    letter-spacing: -1px;
-    display: inline-block;
-}
-.title:after {
-    content:"";
-    position: absolute;
-    width: 50px;
-    height: 1px;
-    background: #fff;
-    top: 50%;
-    left: -70px;
-}
-.title:before {
-    content:"";
-    position: absolute;
-    width: 50px;
-    height: 1px;
-    background: #fff;
-    top: 50%;
-    right: -70px;
-}
-
-.leaflet-left .leaflet-control {
-    margin-left: 30px;
-    margin-top: 65px;
-}
-
-@media (max-width: 1200px) {
-    #textbox {
-        left: 80px;
-        right: 80px;
-    }
-}
-
-@media (max-width: 800px) {
-    .layer_selector {
-        right: auto;
-        bottom: 30px;
-        left: 30px;
-    }
-
-    .leaflet-control-container {
-        display: none !important;
-    }
-    .header {
-        position: absolute;
-        background: #333;
-        padding: 25px;
-        top: 0;
-        right: 0;
-        left: 0;
-    }
-    .title-inner {
-        position: static;
-    }
-    .title {
-        font: 900 20px/1 'Merriweather';
-        margin-bottom: 10px;
-    }
-    #textbox {
-        position: static;
-        font: 400 12px/18px 'Merriweather';
-    }
-    .layer_selector ul {
-        height: 0;
-        opacity: 0;
-    }
-    .layer_selector > p {
-        border-bottom: 0;
-        background: #999999;
-    }
-    .layer_selector.is-active > p {
-        border-bottom: 0;
-        background: #ffffff;
-    }
-
-    .layer_selector.is-active ul {
-        height: auto;
-        opacity: 1;
-    }
-    .layer_selector.is-active > p {
-        border-bottom: 1px solid #999;
-    }
-}
-@media (max-width: 600px) {
-    .layer_selector {
-        right: 30px;
-        bottom: 140px;
-        left: auto;
-    }
+.selector__button:active, .selector__button.selector__button--active {
+	box-shadow: inset 0 3px 15px rgba(0, 0, 0, 0.4);
+	text-shadow:0 -1px #000;
+	background-color: #555;
+	color: #FFF
 }
