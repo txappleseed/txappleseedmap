@@ -73,18 +73,21 @@ window.onload = function() {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">Stamen</a> contributors'
   }).addTo(map_object);
 
-  cartodb.createLayer(map_object, layerSource)
+
+    cartodb.createLayer(map_object, layerSource)
     .addTo(map_object)
     .done(function(layer) {
       for (var i = 0; i < layer.getSubLayerCount(); i++) {
-        sublayers[i] = layer.getSubLayer(i);
-        sublayers[i].infowindow.set('template', $('#infowindow_template').html());
-        sublayers[i].setInteraction(true);
-        sublayers[i].setInteractivity('distname,total_daep_placements_by_pop,dpetallc,ratio_eco_disadv_daep_placements_vs_average');
-        sublayers[i].on('featureClick', function(e, latlng, pos, data) {
-          console.log(data.distname + " Number of Students in District:" + data.dpetallc + " Number of Alternative Placements per 100 Students " + data.total_daep_placements_by_pop + " Ratio of Eco Disadv. Placements to Avg: " + data.ratio_eco_disadv_daep_placements_vs_average);
-        });
-      }
+        var sublayer = layer.getSubLayer(i);
+        cartodb.vis.Vis.addInfowindow(
+        map_object, 
+        sublayer, 
+        ['cartodb_id','total_daep_placements_by_pop','distname', 'dpetallc'],
+          {
+            infowindowTemplate: $('#infowindow_template').html(),
+            templateType: 'mustache'
+          }
+      )}
 
       $(".selector__button").on('click', function(e) {
         var $this = $(this),
