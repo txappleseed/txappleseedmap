@@ -138,25 +138,6 @@
         });
         $('#map').append(Legend2.render().el);
 
-             $("li").on('click', function(e) {
-                 var num = +$(e.target).attr('data');
-                 $("li").css('background-color', '#FFFFFF');
-                 $("li").hover(function() {
-                     $(this).css("background-color", "#E5E5E5");
-                 }, function() {
-                     $(this).css("background-color", "#FFFFFF");
-                 });
-                 $(e.target).css('background-color', '#C1C1C1');
-                 $(e.target).unbind("mouseenter mouseleave");
-                 console.log("layer" + num);
-                 createSelector(layer, num, $(e.target).attr("class"));
-             });
-             createSelector(layer, 0, "");
-             $("li[data='0']").css('background-color', '#C1C1C1');
-         })
-         .error(function(err) {
-             console.log("error: " + err);
-         });
 
       // Hide the other legends by default
       $(Legend2.render().el).hide()
