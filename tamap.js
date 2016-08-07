@@ -1,4 +1,5 @@
-window.onload = function() {
+
+      window.onload = function() {
         // Instantiate new map object, place it in 'map' element
         var map_object = new L.Map('map', {
           center: [31.50, -98.41], // Johnson City
@@ -59,13 +60,6 @@ window.onload = function() {
         // For storing the sublayers
         var sublayers = [];
 
-function myfunction(sublayer, map_object) {
- 
-  
-  
-  
-}
-
         function createSelector(layer,num) {
           for (var i = 0; i < layer.getSubLayerCount(); i++) {
             if (i === num) {
@@ -82,8 +76,8 @@ function myfunction(sublayer, map_object) {
           );
           else(
                   $(Legend2.render().el).show()
-          );
-        }
+          )
+        };
 
         // Pull tiles from OpenStreetMap
         L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
@@ -146,7 +140,7 @@ function myfunction(sublayer, map_object) {
 
 
       // Hide the other legends by default
-      $(Legend2.render().el).hide();
+      $(Legend2.render().el).hide()
         //legend for overall stats which will display on load
         var allLegend = new cdb.geo.ui.Legend.Density({
           title:   "Number of Placements per 100 Students, Per District",
@@ -154,4 +148,5 @@ function myfunction(sublayer, map_object) {
         });
         $('#map').append(allLegend.render().el);
 
-      };
+      }
+    
