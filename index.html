@@ -6,42 +6,56 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <link rel="shortcut icon" href="https://cartodb.com/assets/favicon.ico" />
 
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
-    <link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">
     <link rel="stylesheet" href="tamaps.css">
   </head>
   <body>
-		<div id="masthead">
-			<div id="logo">
-				<img title="Texas Appleseed" src="https://www.texasappleseed.org/sites/all/themes/zocalo_custom_zen_theme/images/tx-appleseed-header-logo.png" style="max-height: 60px" alt="Texas Appleseed">
+		<header class="masthead">
+			<h1 class="masthead__logo">Texas Appleseed</h1>
+			<div class="masthead__content">
+				<h1 class="masthead__title h4">Alternative School Placements, Pre-K through 12th Grade (2013-14)</h1>
+				<p class="masthead__disclaimer">*Inequity Level is calculated as the percentage of referred students divided for that group divided by the percentage of total students in the total population. <em>Higher inequity levels represent greater inequity in the district.</em></p>
 			</div>
-			<div id="mastright">
-			<p class="dash">Alternative School Placements, Pre-K through 12th Grade (2013-14)</p>
-      <p>*Inequity Level is calculated as the percentage of referred students divided for that group divided by the percentage of total students in the total population. <i>Higher inequity levels represent greater inequity in the district.</i></p>
+		</header>
+    <div class="viewport">
+    <div id="map" class="map"></div>
+			<div class="selector">
+				<header class="selector__header">
+					<span class="selector__title">Alternative School Placements</span>
+				</header>
+				<ul class="selector__list">
+					<li class="selector__item">
+						<button class="selector__button selector__button--active" data-layer="0">Overall</button>
+					</li>
+					<li class="selector__item">
+						<button class="selector__button" data-layer="1">Economically Disadvantaged Students</button>
+					</li>
+					<li class="selector__item">
+						<button class="selector__button" data-layer="2">Special Education Students</button>
+					</li>
+					<li class="selector__item">
+						<button class="selector__button" data-layer="3">African American Students</button>
+					</li>
+					<li class="selector__item">
+						<button class="selector__button" data-layer="4">Asian Students</button>
+					</li>
+					<li class="selector__item">
+						<button class="selector__button" data-layer="5">Hispanic Students</button>
+					</li>
+					<li class="selector__item">
+						<button class="selector__button" data-layer="6">Native American Students</button>
+					</li>
+					<li class="selector__item">
+						<button class="selector__button" data-layer="7">Students of two or More Races</button>
+					</li>
+					<li class="selector__item">
+						<button class="selector__button" data-layer="8">White Students</button>
+					</li>
+				</ul>
 			</div>
 		</div>
-    <div id="viewport">
-    <div id="map"></div>
-			<div id="cartocss" class="layer_selector">
-				 <p id="selector_title">ALTERNATIVE SCHOOL PLACEMENTS</p>
-				 <ul class="LayerSelector-list">
-					 <li data="0">Overall</li>
-					 <li data="1">Economically Disadvantaged Students</li>
-					 <li data="2">Special Education Students</li>
-					 <li data="3">African American Students</li>
-					 <li data="4">Asian Students</li>
-					 <li data="5">Hispanic Students</li>
-					 <li data="6">Native American Students</li>
-					 <li data="7">Students of two or More Races</li>
-					 <li data="8">White Students</li>
-				 </ul>
-			</div>
-    </div>
 
-    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="http://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-    <script type="text/javascript" src="http://fast.fonts.net/jsapi/b6470a43-5105-49d3-95ae-75217a436bf8.js"></script>
+    <!--<script src="http://code.jquery.com/jquery-1.10.2.js"></script>-->
 
     <!-- include cartodb.js library -->
     <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
@@ -49,12 +63,9 @@
 			<div class="cartodb-popup v2">
 				<a href="#close" class="cartodb-popup-close-button close">x</a>
 				 <div class="cartodb-popup-content-wrapper">
-					 <div class="cartodb-popup-header">
-						 <img style="width: 100%" src="https://cartodb.com/assets/logos/logos_full_cartodb_light.png"></src>
-					 </div>
 					 <div class="cartodb-popup-content">
 						 <!-- content.data contains the field info -->
-						 <h4>City: </h4>
+						 <h4>District: </h4>
 						 <p>{{content.data.distname}}</p>
 					 </div>
 				 </div>
