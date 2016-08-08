@@ -82,12 +82,12 @@ window.onload = function() {
             sublayer.setInteraction(true)
           layer.leafletMap.viz.addOverlay({
 
-    type: 'tooltip',
-    layer: sublayer,
-    template: '<div class="cartodb-tooltip-content-wrapper"> <!-- content.data contains the field info --> <h4>City: </h4><p>{{distname}}</p></div>', 
-    position: 'bottom|right',
-    fields: [{ name: 'name' }]
-  });
+      type: 'tooltip',
+      layer: sublayer,
+      template: '<div class="cartodb-tooltip-content-wrapper"> <!-- content.data contains the field info --> <h4>City: </h4><p>{{distname}}</p></div>', 
+      position: 'bottom|right',
+      fields: [{ name: 'name' }]
+    });
    
   }
 
