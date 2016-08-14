@@ -79,31 +79,37 @@ window.onload = function() {
     .done(function(layer) {
       for (var i = 0; i < layer.getSubLayerCount(); i++) {
         var sublayer = layer.getSubLayer(i);
-        cartodb.vis.Vis.addInfowindow(
-        map_object, 
-        sublayer, 
-        ['cartodb_id','total_daep_placements_by_pop','distname', 'dpetallc'],
-          {
-            infowindowTemplate: $('#infowindow_template').html(),
-            templateType: 'mustache'
-          }
-      )}
+            sublayer.setInteraction(true)
+          layer.leafletMap.viz.addOverlay({
 
-      $(".selector__button").on('click', function(e) {
-        var $this = $(this),
-            layerId = $(this).data('layer');
+      type: 'tooltip',
+      layer: sublayer,
+      template: '<div class="cartodb-tooltip-content-wrapper"> <!-- content.data contains the field info --> <h4>City: </h4><p>{{distname}}</p></div>', 
+      position: 'bottom|right',
+      fields: [{ name: 'name' }]
+    });
+   
+  }
 
-        $('.selector__button').removeClass('selector__button--active');
-        $this.addClass('selector__button--active');
-        console.log("layer" + layerId);
-        createSelector(layer, layerId);
+  $("li").on('click', function(e) {
+    var num = parseInt($(e.target).attr('data-layer'));
+      createSelector(layer, num, $(e.target).attr("class"));
       });
-
-      createSelector(layer, 0);
+      createSelector(layer, 0, "");
     })
     .error(function(err) {
       console.log("error: " + err);
     });
+
+  $(".selector__button").on('click', function(e) {
+    var $this = $(this),
+        layerId = $(this).data('layer');
+
+    $('.selector__button').removeClass('selector__button--active');
+    $this.addClass('selector__button--active');
+    console.log("layer" + layerId);
+    createSelector(layerId);
+  });
 
   var Legend2 = new cdb.geo.ui.Legend.Density({
     title: "Inequity Level, per district",
