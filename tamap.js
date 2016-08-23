@@ -76,24 +76,22 @@ window.onload = function() {
 
     cartodb.createLayer(map_object, layerSource)
     .addTo(map_object)
-    .done(function(layer) {
+    .on('done', function(layer) {
       for (var i = 0; i < layer.getSubLayerCount(); i++) {
         var sublayer = layer.getSubLayer(i);
             sublayer.setInteraction(true)
           layer.leafletMap.viz.addOverlay({
+            type: 'tooltip',
+            layer: sublayer,
+            template: '<div class="cartodb-tooltip-content-wrapper"> <!-- class="cartodb-tooltip-content-wrapper"    content.data contains the field info --> <b>District: </b>{{distname}}<br><b>Placements per 100 Students: </b>{{total_daep_placements_by_pop}}<br><b>Asian Student placements:</b>{{ratio_asian_daep_placements_vs_average}}</p></div>',
+            position: 'bottom|right',
+            fields: [{ name: 'name' }]
+          });
+      }
 
-      type: 'tooltip',
-      layer: sublayer,
-      template: '<div class="cartodb-tooltip-content-wrapper"> <!-- content.data contains the field info --> <><b>District: </b>{{distname}}<br><b>Placements per 100 Students: </b>{{total_daep_placements_by_pop}}<br><b>Asian Student placements:</b>{{ratio_asian_daep_placements_vs_average}}</p></div>',
-      position: 'bottom|right',
-      fields: [{ name: 'name' }]
-    });
-   
-  }
-
-  $("li").on('click', function(e) {
-    var num = parseInt($(e.target).attr('data-layer'));
-      createSelector(layer, num, $(e.target).attr("class"));
+      $("li").on('click', function(e) {
+        var num = parseInt($(e.target).attr('data-layer'));
+        createSelector(layer, num, $(e.target).attr("class"));
       });
       createSelector(layer, 0, "");
     })
@@ -112,10 +110,10 @@ window.onload = function() {
   });
 
   var Legend2 = new cdb.geo.ui.Legend.Density({
-    title: "Inequity Level, per district",
+    title: "   Inequity Level, per district   ",
     left: "0",
-    right: "over 50",
-    colors: ["#2166AC", "#349ED3", "#9BD9E9", "#F7F7F7", "#FECDA5", "#E37853", "#B0182B"]
+    right: "No Data",
+    colors: ["#2166AC", "#349ED3", "#9BD9E9", "#F7F7F7", "#FECDA5", "#E37853", "#B0182B", "#DDD", "#DDD"]
   });
   $('#map').append(Legend2.render().el);
 
