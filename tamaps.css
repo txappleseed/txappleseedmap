@@ -103,6 +103,12 @@ button {
 	font-size: 0.7em;
 }
 
+.cartodb-tooltip-content-wrapper {
+	border-radius: 2px;
+	background: #fff;
+	background: rgba(255, 255, 255, .9);
+}
+
 
 /* SELECTOR */
 .selector {
