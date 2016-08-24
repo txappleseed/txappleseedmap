@@ -15,15 +15,11 @@ window.onload = function() {
             interactivity: ['cartodb_id', 'total_daep_placements', 'distname', 'dpetallc']
         }, {
             sql: "SELECT * FROM ratiodistrictsignificant_placements_merge",
-            cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_eco_disadv_daep_placements_vs_average <= 685.0] { polygon-fill: #00FF00;}#ratiodistrictsignificant_placements_merge [ ratio_eco_disadv_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_eco_disadv_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_eco_disadv_daep_placements_vs_average <= 35] {polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_eco_disadv_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_eco_disadv_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_eco_disadv_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_eco_disadv_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_eco_disadv_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_eco_disadv_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_eco_disadv_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
-            interactivity: ['cartodb_id', 'total_daep_placements', 'distname', 'dpetallc', 'o_eco_disadv_daep_placements_eco_disad_daep_placements', 'ratio_eco_disadv_daep_placements_vs_average']
-        }, {
-            sql: "SELECT * FROM ratiodistrictsignificant_placements_merge",
             cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_spec_ed_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_spec_ed_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_spec_ed_daep_placements_vs_average <= 35] {polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_spec_ed_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_spec_ed_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_spec_ed_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_spec_ed_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_spec_ed_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_spec_ed_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_asian_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
             interactivity: ['cartodb_id', 'total_daep_placements', 'distname', 'dpetallc', 'j_spec_ed_daep_placements_spec_ed_daep_placements']
         }, {
             sql: "SELECT * FROM ratiodistrictsignificant_placements_merge",
-            cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= 35] {polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_asian_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
+            cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= 35] {polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_black_or_african_american_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
             interactivity: ['cartodb_id', 'total_daep_placements', 'distname', 'dpetallc','e_daep_placements_black_or_african_american']
         }, {
             sql: "SELECT * FROM ratiodistrictsignificant_placements_merge",
@@ -73,27 +69,24 @@ window.onload = function() {
         var retString = '';
         switch (layerNum) {
             case 1:
-                retString = '<br><b>Economically Disadvantaged Student placements: </b>{{o_eco_disadv_daep_placements_eco_disad_daep_placements}}';
-                break;
-            case 2:
                 retString = '<br><b>Special Education Student placements: </b>{{j_spec_ed_daep_placements_spec_ed_daep_placements}}';
                 break;
-            case 3:
+            case 2:
                 retString = '<br><b>African American Student placements: </b>{{e_daep_placements_black_or_african_american}}';
                 break;
-            case 4:
+            case 3:
                 retString = '<br><b>Asian Student placements: </b>{{e_daep_placements_asian}}';
                 break;
-            case 5:
+            case 45:
                 retString = '<br><b>Latino Student placements: </b>{{e_daep_placements_hispanic_latino}}';
                 break;
-            case 6:
+            case 5:
                 retString = '<br><b>Native American Student placements: </b>{{e_daep_placements_american_indian_or_alaska_nat}}';
                 break;
-            case 7:
+            case 6:
                 retString = '<br><b>Students of Two or More Races placements: </b>{{e_daep_placements_two_or_more_races}}';
                 break;
-            case 8:
+            case 7:
                 retString = '<br><b>White Student placements: </b>{{e_daep_placements_white}}';
                 break;
         }
@@ -125,7 +118,7 @@ window.onload = function() {
                 var num = parseInt($(e.target).attr('data-layer'));
                 createSelector(layer, num, $(e.target).attr("class"));
             });
-            createSelector(layer, 0, "");
+            createSelector(layer, 0);
         })
         .error(function(err) {
             console.log("error: " + err);
@@ -137,8 +130,8 @@ window.onload = function() {
 
         $('.selector__button').removeClass('selector__button--active');
         $this.addClass('selector__button--active');
-        console.log("layer" + layerId);
-        createSelector(layerId);
+        //console.log("layer" + layerId);
+        //createSelector(layerId);
     });
 
     var Legend2 = new cdb.geo.ui.Legend.Density({
