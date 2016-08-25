@@ -105,7 +105,11 @@ button {
 
 .cartodb-tooltip-content-wrapper {
 	border-radius: 2px;
+<<<<<<< HEAD
 	background: #ff0000;
+=======
+	background: #fff;
+>>>>>>> 85dda4ad78bd88b0c94b833a298d3071d94d9228
 	background: rgba(255, 255, 255, .9);
 }
 
