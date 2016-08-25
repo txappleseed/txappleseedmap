@@ -28,28 +28,25 @@
 						<button class="selector__button selector__button--active" data-layer="0">Overall</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="1">Economically Disadvantaged Students</button>
+						<button class="selector__button" data-layer="1">Special Education Students</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="2">Special Education Students</button>
+						<button class="selector__button" data-layer="2">African American Students</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="3">African American Students</button>
+						<button class="selector__button" data-layer="3">Asian Students</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="4">Asian Students</button>
+						<button class="selector__button" data-layer="4">Latino Students</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="5">Hispanic Students</button>
+						<button class="selector__button" data-layer="5">Native American Students</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="6">Native American Students</button>
+						<button class="selector__button" data-layer="6">Students of two or More Races</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="7">Students of two or More Races</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="8">White Students</button>
+						<button class="selector__button" data-layer="7">White Students</button>
 					</li>
 				</ul>
 			</div>
@@ -59,19 +56,6 @@
 
     <!-- include cartodb.js library -->
     <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
-    <script type="infowindow/html" id="infowindow_template">
-			<div class="cartodb-popup v2">
-				<a href="#close" class="cartodb-popup-close-button close">x</a>
-				 <div class="cartodb-popup-content-wrapper">
-					 <div class="cartodb-popup-content">
-						 <!-- content.data contains the field info -->
-						 <h4>District: </h4>
-						 <p>{{content.data.distname}}</p>
-					 </div>
-				 </div>
-				 <div class="cartodb-popup-tip-container"></div>
-			</div>
-		</script>
     <script src="tamap.js"></script>
   </body>
 </html>

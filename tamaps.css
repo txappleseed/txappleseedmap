@@ -97,10 +97,16 @@ button {
 	float: right;
 	max-width: 80%;
 	margin-top: 10px;
-	margin-left: 15px;
+	margin-right: 50px;
 }
 .masthead__disclaimer {
 	font-size: 0.7em;
+}
+
+.cartodb-tooltip-content-wrapper {
+	border-radius: 2px;
+	background: #ff0000;
+	background: rgba(255, 255, 255, .9);
 }
 
 
