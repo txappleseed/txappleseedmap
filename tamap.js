@@ -27,19 +27,19 @@ window.onload = function() {
             interactivity: ['cartodb_id', 'total_daep_placements', 'distname', 'dpetallc','e_daep_placements_asian', 'ratio_asian_daep_placements_vs_average']
         }, {
             sql: "SELECT * FROM ratiodistrictsignificant_placements_merge",
-            cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= 685.0] { polygon-fill: #00FF00;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= 35] {polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
+            cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= 35] { polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_hispanic_latino_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
             interactivity: ['cartodb_id', 'total_daep_placements', 'distname', 'dpetallc', 'e_daep_placements_hispanic_latino', 'ratio_hispanic_latino_daep_placements_vs_average']
         }, {
             sql: "SELECT * FROM ratiodistrictsignificant_placements_merge",
-            cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= 685.0] { polygon-fill: #00FF00;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= 35] {polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
+            cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= 35] { polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_american_indian_or_alaska_nat_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
             interactivity: ['cartodb_id', 'total_daep_placements', 'distname', 'dpetallc','e_daep_placements_american_indian_or_alaska_nat', 'ratio_american_indian_or_alaska_nat_daep_placements_vs_average']
         }, {
             sql: "SELECT * FROM ratiodistrictsignificant_placements_merge",
-            cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= 685.0] { polygon-fill: #00FF00;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= 35] {polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
+            cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= 35] { polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_two_or_more_races_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
             interactivity: ['cartodb_id', 'total_daep_placements', 'distname', 'dpetallc', 'e_daep_placements_two_or_more_races', 'ratio_two_or_more_races_daep_placements_vs_average']
         }, {
             sql: "SELECT * FROM ratiodistrictsignificant_placements_merge",
-            cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= 685.0] { polygon-fill: #00FF00;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= 35] {polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
+            cartocss: '#ratiodistrictsignificant_placements_merge{polygon-fill: #FFFFCC; polygon-opacity: 0.8; line-color: #FFF;  line-width: 0.5;  line-opacity: 1;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= 685.0] { polygon-fill: #B0182B;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= 50] { polygon-fill: #DB6849;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= 35] { polygon-fill: #F6A678;} #ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= 15] {polygon-fill: #FFD8B5;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= 1.2] {  polygon-fill: #F7F7F7;} #ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= .8] {  polygon-fill: #AEE1EB;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= .6] {  polygon-fill: #64BEE1;}#ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= .4] { polygon-fill: #2793CD;} #ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average <= .2] { polygon-fill: #2166AC;} #ratiodistrictsignificant_placements_merge [ ratio_white_daep_placements_vs_average < 0] { polygon-fill: #DDD;}',
             interactivity: ['cartodb_id', 'total_daep_placements', 'distname', 'dpetallc', 'e_daep_placements_white', 'ratio_white_daep_placements_vs_average']
         }]
     };
@@ -55,13 +55,14 @@ window.onload = function() {
                 layer.getSubLayer(i).hide();
             }
         }
-        $(allLegend.render().el).hide();
-        $(Legend2.render().el).hide();
         if (num === 0){
-            $(allLegend.render().el).show()
+            $(otherLegend.render().el).hide()
+            $(customLegend.render().el).show()
         } else{
-            $(Legend2.render().el).show()
+            $(customLegend.render().el).hide()
+            $(otherLegend.render().el).show()
         }
+
     }
 
     function subpopPlacements(layerNum) {
@@ -130,29 +131,29 @@ window.onload = function() {
 
         $('.selector__button').removeClass('selector__button--active');
         $this.addClass('selector__button--active');
-        //console.log("layer" + layerId);
+        console.log("layer" + layerId);
         //createSelector(layerId);
     });
 
-    var Legend2 = new cdb.geo.ui.Legend.Density({
-        title: "   Inequity Level, per district   ",
-        left: "0",
-        right: "No Data",
-        colors: ["#2166AC", "#349ED3", "#9BD9E9", "#F7F7F7", "#FECDA5", "#E37853", "#B0182B", "#DDD", "#DDD"]
-    });
-    $('#map').append(Legend2.render().el);
 
-
-    // Hide the other legends by default
-    $(Legend2.render().el).hide()
-    //legend for overall stats which will display on load
-    var allLegend = new cdb.geo.ui.Legend.Density({
-        title: "Number of Placements per 100 Students, Per District",
-        left: "0",
-        right: "7",
-        colors: ["#F1EEF6", "#D4B9DA", "#C994C7", "#DF65B0", "#E7298A", "#CE1256", "#91003F"]
+    var customLegend = new cdb.geo.ui.Legend({
+        type: "custom",
+        show_title: false,
+        title: "",
+        template: $('#legend_template').html()
     });
 
-    $('#map').append(allLegend.render().el);
+    var otherLegend = new cdb.geo.ui.Legend({
+        type: "custom",
+        show_title: false,
+        title: "",
+        template: $('#legend_template2').html()
+    });
+
+    var stackedLegend = new cdb.geo.ui.StackedLegend({
+        legends: [customLegend, otherLegend]
+    });
+
+    $('#map').append(stackedLegend.render().el);
 
 }
