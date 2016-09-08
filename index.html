@@ -8,6 +8,77 @@
 
     <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
     <link rel="stylesheet" href="tamaps.css">
+
+	<script type='html' id="legend_template">
+
+       <div class='cartodb-legend density'>
+       <ul>
+          <li class="min">
+             Number of Placements per 100 Students
+          </li>
+
+          <li class="graph leg" style="border-radius: 0; border:none">
+          <div class="colors">
+              <div class="quartile" style="background-color:#F1EEF6"></div>
+              <div class="quartile" style="background-color:#D4B9DA"></div>
+              <div class="quartile" style="background-color:#C994C7"></div>
+              <div class="quartile" style="background-color:#DF65B0"></div>
+              <div class="quartile" style="background-color:#E7298A"></div>
+              <div class="quartile" style="background-color:#CE1256"></div>
+              <div class="quartile" style="background-color:#91003F"></div>
+          </div>
+          <div class="colors" style="font-weight:normal; text-align: center">
+              <div class="quartile" style="padding-top: 5px" >>1</div>
+              <div class="quartile" style="padding-top: 5px" >2</div>
+              <div class="quartile" style="padding-top: 5px" >3</div>
+              <div class="quartile" style="padding-top: 5px" >5</div>
+              <div class="quartile" style="padding-top: 5px" >5</div>
+              <div class="quartile" style="padding-top: 5px" >5</div>
+              <div class="quartile" style="padding-top: 5px" >7</div>
+          </div>
+          </li>
+       </ul>
+       </div>
+
+ </script>
+ <script type='html' id="legend_template2">
+
+       <div class='cartodb-legend density'>
+       <ul>
+          <li class="min">
+             Inequity Level, per district (See note above)
+          </li>
+
+          <li class="graph leg" style="border-radius: 0; border:none">
+          <div class="colors">
+              <div class="quartile" style="background-color:#2166AC"></div>
+              <div class="quartile" style="background-color:#2793CD"></div>
+              <div class="quartile" style="background-color:#64BEE1"></div>
+              <div class="quartile" style="background-color:#AEE1EB"></div>
+              <div class="quartile" style="background-color:#F7F7F7"></div>
+              <div class="quartile" style="background-color:#FFD8B5"></div>
+              <div class="quartile" style="background-color:#F6A678"></div>
+              <div class="quartile" style="background-color:#DB6849"></div>
+              <div class="quartile" style="background-color:#B0182B"></div>
+              <div class="quartile" style="background-color:#DDD"></div>
+          </div>
+          <div class="colors" style="font-weight:normal; text-align: center">
+              <div class="quartile" style="padding-top: 5px" >.2</div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" >1</div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" >50</div>
+              <div class="quartile" style="padding-top: 5px" >No Data</div>
+          </div>
+          </li>
+       </ul>
+       </div>
+
+ </script>
   </head>
   <body>
 		<header class="masthead">
