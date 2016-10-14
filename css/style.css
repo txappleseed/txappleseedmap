@@ -1,0 +1,62 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:400);
+
+/* Some reset */
+@charset "utf-8";
+html, body, div, span, applet, object, iframe, h1, h2, h3,
+h4, h5, h6, p, blockquote, pre, a, abbr, acronym,
+address, big, cite, code, del, dfn, em, font, img, ins,
+kbd, q, s, samp, small, strike, strong, sub, sup, tt,
+var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: 100%;
+    font-family: inherit;
+    vertical-align: baseline;
+}
+:focus { outline: 0;}
+a:link, a:visited, a:active{text-decoration:none; color: #21b3b4}
+table {	border-collapse: separate;border-spacing: 0; width: 100%;}
+th, td {text-align: left; font-weight: normal;}
+tr{line-height: 30px;}
+img, iframe {border: none; text-decoration:none;}
+ol, ul {list-style: none;}
+input, textarea, select, button {font-size: 100%;font-family: inherit;}
+*, *:after, *::before{box-sizing:border-box; -ms-box-sizing:border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;}
+
+/* Main */
+body {
+  font-family: Lato;
+  background: #444B54;
+  padding: 15px;
+  overflow-x:hidden;
+}
+
+.trigger {
+  font-size: 20px;
+  background: #F04903;
+  color: white;
+  width: 300px;
+  padding: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+p{
+  padding: 15px;
+  font-size: 20px;
+  text-align: justify;
+}
+
+.iziModal .iziModal-header-title , .iziModal-header-subtitle {
+    font-family: Lato;
+    font-weight: 100;
+    font-size: 25px;
+}
