@@ -155,3 +155,36 @@ button {
 	background-color: #555;
 	color: #FFF
 }
+
+
+ol {
+
+    padding: 0;
+    border: 1px;
+    outline: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: 100%;
+    font-family: inherit;
+    vertical-align: baseline;
+    list-style-type: none;
+    margin:auto ;
+    padding: 0;
+    width: 400px;
+    background-color: #f1f1f1;
+
+
+}
+
+.fun-time {
+    display: block;
+    padding-left: 10px;
+   margin-top: -10px;
+color: #b30000;
+    padding: 8px 16px;
+    text-decoration: none;
+    width: 400px
+}
+
+
+
