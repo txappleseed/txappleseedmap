@@ -1,3 +1,20 @@
+$(".iziModal").iziModal({
+  width: 700,
+  radius: 10,
+  padding: 20,
+  group: 'products',
+  loop: true
+});
+
+
+// A $( document ).ready() block.
+$( document ).ready(function() {
+  $('#modal-one').iziModal('open');
+});
+
+
+
+
 window.onload = function() {
     // Instantiate new map object, place it in 'map' element
     var map_object = new L.Map('map', {
