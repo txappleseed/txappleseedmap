@@ -9,10 +9,8 @@
     <link rel='stylesheet prefetch' href='http://izimodal.marcelodolce.com/css/iziModal.min.css'>
     <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
     <link rel="stylesheet" href="tamaps.css">
-  </head>
-  <body>
-		<header class="masthead">
-     <div id="modal-one" class="iziModal" data-izimodal-title="How do you want to get involved?" data-izimodal-subtitle="">
+
+  <div id="modal-one" class="iziModal" data-izimodal-title="How do you want to get involved?" data-izimodal-subtitle="">
 <ol>
 <li><button class= "fun-time"  data-izmodal-next="" onclick="window.location.href='http://www.fyi.legis.state.tx.us/Home.aspx'">Contact my Texas State Representative</button></li>
 <li><button class = "fun-time"  data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/pro-bono-opportunities'" >Volunteer</button></li>
@@ -22,9 +20,80 @@
 </div>
 
 
+	<script type='html' id="legend_template">
 
+       <div class='cartodb-legend density'>
+       <ul>
+          <li class="min">
+             Number of Placements per 100 Students
+          </li>
 
-			<h1 class="masthead__logo">Texas Appleseed</h1>
+          <li class="graph leg" style="border-radius: 0; border:none">
+          <div class="colors">
+              <div class="quartile" style="background-color:#F1EEF6"></div>
+              <div class="quartile" style="background-color:#D4B9DA"></div>
+              <div class="quartile" style="background-color:#C994C7"></div>
+              <div class="quartile" style="background-color:#DF65B0"></div>
+              <div class="quartile" style="background-color:#E7298A"></div>
+              <div class="quartile" style="background-color:#CE1256"></div>
+              <div class="quartile" style="background-color:#91003F"></div>
+          </div>
+          <div class="colors" style="font-weight:normal; text-align: center">
+              <div class="quartile" style="padding-top: 5px" >>1</div>
+              <div class="quartile" style="padding-top: 5px" >2</div>
+              <div class="quartile" style="padding-top: 5px" >3</div>
+              <div class="quartile" style="padding-top: 5px" >5</div>
+              <div class="quartile" style="padding-top: 5px" >5</div>
+              <div class="quartile" style="padding-top: 5px" >5</div>
+              <div class="quartile" style="padding-top: 5px" >7</div>
+          </div>
+          </li>
+       </ul>
+       </div>
+
+ </script>
+ <script type='html' id="legend_template2">
+
+       <div class='cartodb-legend density'>
+       <ul>
+          <li class="min">
+             Inequity Level, per district (See note above)
+          </li>
+
+          <li class="graph leg" style="border-radius: 0; border:none">
+          <div class="colors">
+              <div class="quartile" style="background-color:#2166AC"></div>
+              <div class="quartile" style="background-color:#2793CD"></div>
+              <div class="quartile" style="background-color:#64BEE1"></div>
+              <div class="quartile" style="background-color:#AEE1EB"></div>
+              <div class="quartile" style="background-color:#F7F7F7"></div>
+              <div class="quartile" style="background-color:#FFD8B5"></div>
+              <div class="quartile" style="background-color:#F6A678"></div>
+              <div class="quartile" style="background-color:#DB6849"></div>
+              <div class="quartile" style="background-color:#B0182B"></div>
+              <div class="quartile" style="background-color:#DDD"></div>
+          </div>
+          <div class="colors" style="font-weight:normal; text-align: center">
+              <div class="quartile" style="padding-top: 5px" >.2</div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" >1</div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" ></div>
+              <div class="quartile" style="padding-top: 5px" >50</div>
+              <div class="quartile" style="padding-top: 5px" >No Data</div>
+          </div>
+          </li>
+       </ul>
+       </div>
+
+ </script>
+  </head>
+  <body>
+		<header class="masthead">
+			<h1 class="masthead__logo"></h1>
 			<div class="masthead__content">
 				<h1 class="masthead__title h4">Alternative School Placements, Pre-K through 12th Grade (2013-14)</h1>
 				<p class="masthead__disclaimer">*Inequity Level is calculated as the percentage of referred students divided for that group divided by the percentage of total students in the total population. <em>Higher inequity levels represent greater inequity in the district.</em></p>
@@ -41,28 +110,25 @@
 						<button class="selector__button selector__button--active" data-layer="0">Overall</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="1">Economically Disadvantaged Students</button>
+						<button class="selector__button" data-layer="1">Special Education Students</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="2">Special Education Students</button>
+						<button class="selector__button" data-layer="2">African American Students</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="3">African American Students</button>
+						<button class="selector__button" data-layer="3">Asian Students</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="4">Asian Students</button>
+						<button class="selector__button" data-layer="4">Latino Students</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="5">Hispanic Students</button>
+						<button class="selector__button" data-layer="5">Native American Students</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="6">Native American Students</button>
+						<button class="selector__button" data-layer="6">Students of two or More Races</button>
 					</li>
 					<li class="selector__item">
-						<button class="selector__button" data-layer="7">Students of two or More Races</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="8">White Students</button>
+						<button class="selector__button" data-layer="7">White Students</button>
 					</li>
 				</ul>
 			</div>

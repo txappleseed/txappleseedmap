@@ -89,18 +89,24 @@ button {
 	height: 100%;
 	overflow: hidden;
 	width: 120px;
-
-	text-indent: -9999em;
-
+    margin-left: 30px;
 	background: url('https://www.texasappleseed.org/sites/all/themes/zocalo_custom_zen_theme/images/tx-appleseed-header-logo.png') no-repeat center;
 	background-size: 100%;
 }
 .masthead__content {
 	float: right;
 	max-width: 80%;
+	margin-top: 10px;
+	margin-right: 50px;
 }
 .masthead__disclaimer {
 	font-size: 0.7em;
+}
+
+.cartodb-tooltip-content-wrapper {
+	border-radius: 2px;
+	background: #fff;
+	background: rgba(255, 255, 255, .9);
 }
 
 
