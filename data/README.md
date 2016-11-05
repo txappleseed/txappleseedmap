@@ -1,21 +1,23 @@
-Here is where data comes from...
-https://github.com/open-austin/texasappleseed/tree/gh-pages/data
-
-TODO link to TEA data source.
+TODO link to original Texas Education Agency (TEA) data source.
 
 Ask questions to @mscarey :)
 
 
-### TXdemo2015
-The original data is saved in csv format has been exported into two other json files.
+### Texas School District Demographics
+- `TXdemo2014.csv`
+- `TXdemo2015.csv`
+- `TXdemo2015.json`
+- `TXdemo2015_parsed_numbers.json`
+
+
 `TXdemo2015.json` has values parsed as strings. This preserves their original format from the csv.
-`TXdemo2015_parsed_numbers.json` has values parsed as numbers. This as the effect of dropping leading zeros in the `"DISTRICT"` key.
+`TXdemo2015_parsed_numbers.json` has values parsed as numbers. This has the effect of dropping leading zeros in the `"DISTRICT"` key.
 
 
 ```
 DISTRICT - number identifier for each school district
 DISTNAME - string District Name
-REGION - number
+REGION   - number
 DPETALLC - number count of students in the district
 DPETBLAP - number percent of BLA students in the district
 DPETHISP - number percent of HIS students in the district
@@ -32,7 +34,7 @@ DPETSPEP - number percent of SPE students in the district
 ```
 "DISTRICT": 183801,
 "DISTNAME": "PANOLA CHARTER SCHOOL",
-"REGION": 7,
+"REGION"  : 7,
 "DPETALLC": 154,
 "DPETBLAP": 7.8,
 "DPETHISP": 6.5,
@@ -45,6 +47,13 @@ DPETSPEP - number percent of SPE students in the district
 "DPETSPEP": 10.4
 ```
 
+### Ratio District
+?
+- ratioDistrict.csv
+- ratioDistrictDAEP.csv
+- ratioDistrictEXP.csv
+- ratioDistrictISS.csv
+- ratioDistrictOSS.csv
 
 ### DistrictDisparities2015.csv
 '''
