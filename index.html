@@ -6,91 +6,21 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <link rel="shortcut icon" href="https://cartodb.com/assets/favicon.ico" />
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
     <link rel='stylesheet prefetch' href='http://izimodal.marcelodolce.com/css/iziModal.min.css'>
-    <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
     <link rel="stylesheet" href="tamaps.css">
+    <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
 
-  <div id="modal-one" class="iziModal" data-izimodal-title="How do you want to get involved?" data-izimodal-subtitle="">
-<ol>
-<li><button class= "fun-time"  data-izmodal-next="" onclick="window.location.href='http://www.fyi.legis.state.tx.us/Home.aspx'">Contact my Texas State Representative</button></li>
-<li><button class = "fun-time"  data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/pro-bono-opportunities'" >Volunteer</button></li>
-<li><button class = "fun-time" data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/school-prison-pipeline'">Learn about the school-to-prison pipeline</button></li>
-<li><button class = "fun-time" data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/contact'"   >Tell your story</button></li>
-</ol>
-</div>
-
-
-	<script type='html' id="legend_template">
-
-       <div class='cartodb-legend density'>
-       <ul>
-          <li class="min">
-             Number of Placements per 100 Students
-          </li>
-
-          <li class="graph leg" style="border-radius: 0; border:none">
-          <div class="colors">
-              <div class="quartile" style="background-color:#F1EEF6"></div>
-              <div class="quartile" style="background-color:#D4B9DA"></div>
-              <div class="quartile" style="background-color:#C994C7"></div>
-              <div class="quartile" style="background-color:#DF65B0"></div>
-              <div class="quartile" style="background-color:#E7298A"></div>
-              <div class="quartile" style="background-color:#CE1256"></div>
-              <div class="quartile" style="background-color:#91003F"></div>
-          </div>
-          <div class="colors" style="font-weight:normal; text-align: center">
-              <div class="quartile" style="padding-top: 5px" >>1</div>
-              <div class="quartile" style="padding-top: 5px" >2</div>
-              <div class="quartile" style="padding-top: 5px" >3</div>
-              <div class="quartile" style="padding-top: 5px" >4</div>
-              <div class="quartile" style="padding-top: 5px" >5</div>
-              <div class="quartile" style="padding-top: 5px" >6</div>
-              <div class="quartile" style="padding-top: 5px" >7</div>
-          </div>
-          </li>
-       </ul>
-       </div>
-
- </script>
- <script type='html' id="legend_template2">
-
-       <div class='cartodb-legend density'>
-       <ul>
-          <li class="min">
-             Inequity Level, per district (See note above)
-          </li>
-
-          <li class="graph leg" style="border-radius: 0; border:none">
-          <div class="colors">
-              <div class="quartile" style="background-color:#2166AC"></div>
-              <div class="quartile" style="background-color:#2793CD"></div>
-              <div class="quartile" style="background-color:#64BEE1"></div>
-              <div class="quartile" style="background-color:#AEE1EB"></div>
-              <div class="quartile" style="background-color:#F7F7F7"></div>
-              <div class="quartile" style="background-color:#FFD8B5"></div>
-              <div class="quartile" style="background-color:#F6A678"></div>
-              <div class="quartile" style="background-color:#DB6849"></div>
-              <div class="quartile" style="background-color:#B0182B"></div>
-              <div class="quartile" style="background-color:#DDD"></div>
-          </div>
-          <div class="colors" style="font-weight:normal; text-align: center">
-              <div class="quartile" style="padding-top: 5px" >.2</div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" >1</div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" >50</div>
-              <div class="quartile" style="padding-top: 5px" >No Data</div>
-          </div>
-          </li>
-       </ul>
-       </div>
-
- </script>
+    <div id="modal-one" class="iziModal" data-izimodal-title="How do you want to get involved?" data-izimodal-subtitle="">
+      <ol>
+        <li><button class= "fun-time"  data-izmodal-next="" onclick="window.location.href='http://www.fyi.legis.state.tx.us/Home.aspx'">Contact my Texas State Representative</button></li>
+        <li><button class = "fun-time"  data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/pro-bono-opportunities'" >Volunteer</button></li>
+        <li><button class = "fun-time" data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/school-prison-pipeline'">Learn about the school-to-prison pipeline</button></li>
+        <li><button class = "fun-time" data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/contact'"   >Tell your story</button></li>
+      </ol>
+    </div>
   </head>
+
   <body>
 		<header class="masthead">
 			<h1 class="masthead__logo"></h1>
@@ -99,61 +29,13 @@
 				<p class="masthead__disclaimer">*Inequity Level is calculated as the percentage of referred students divided for that group divided by the percentage of total students in the total population. <em>Higher inequity levels represent greater inequity in the district.</em></p>
 			</div>
 		</header>
+
     <div class="viewport">
-    <div id="map" class="map"></div>
-			<div class="selector">
-				<header class="selector__header">
-					<span class="selector__title">Alternative School Placements</span>
-				</header>
-				<ul class="selector__list">
-					<li class="selector__item">
-						<button class="selector__button selector__button--active" data-layer="0">Overall</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="1">Special Education Students</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="2">African American Students</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="3">Asian Students</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="4">Latino Students</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="5">Native American Students</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="6">Students of two or More Races</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="7">White Students</button>
-					</li>
-				</ul>
-			</div>
+      <div id="map" class="map"></div>
 		</div>
 
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
     <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
-<script src='http://izimodal.marcelodolce.com/js/iziModal.min.js'></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <!--<script src="http://code.jquery.com/jquery-1.10.2.js"></script>-->
-
-    <!-- include cartodb.js library -->
-    <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
-    <script type="infowindow/html" id="infowindow_template">
-			<div class="cartodb-popup v2">
-				<a href="#close" class="cartodb-popup-close-button close">x</a>
-				 <div class="cartodb-popup-content-wrapper">
-					 <div class="cartodb-popup-content">
-						 <!-- content.data contains the field info -->
-						 <h4>District: </h4>
-						 <p>{{content.data.distname}}</p>
-					 </div>
-				 </div>
-				 <div class="cartodb-popup-tip-container"></div>
-			</div>
-		</script>
-    <script src="tamap.js"></script>
+    <script src="js/index.js"></script>
   </body>
 </html>
