@@ -11,3 +11,5 @@ https://texasappleseed.carto.com/viz/69242700-22b4-11e6-8a10-0ecfd53eb7d3/public
 
 School District level data comes from open records requests to the Texas Education Agency.
 https://texasappleseed.carto.com/tables/ratiodistrictdaep_merge/public
+
+[here for more data documentation](/data)
