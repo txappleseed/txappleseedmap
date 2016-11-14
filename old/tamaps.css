@@ -90,7 +90,7 @@ button {
 	overflow: hidden;
 	width: 120px;
     margin-left: 30px;
-	background: url('https://www.texasappleseed.org/sites/all/themes/zocalo_custom_zen_theme/images/tx-appleseed-header-logo.png') no-repeat center;
+	background: url('/tx-appleseed-header-logo.png') no-repeat center;
 	background-size: 100%;
 }
 .masthead__content {
@@ -191,6 +191,3 @@ color: #b30000;
     text-decoration: none;
     width: 400px
 }
-
-
-
