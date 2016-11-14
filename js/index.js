@@ -66,13 +66,14 @@
             popupContent;
 
         if (feature.properties.OSSPercentBlack){
-          var moreOrLess = punishmentsPercent > 0 ? "more" : "less";
+          var moreOrLessText = feature.properties.OSSPercentBlack > 0 ? "more" : "less";
+          
           popupContent = [
             "<span class='popup-text'>",
               percentStudentsByGroup + "% of " + districtName + "'s ",
               studentCount + " students were classified as " + groupName + ". ",
               "They received " + punishmentType + " " + punishmentsCount + " times, ",
-              punishmentsPercent + "% " + moreOrLess + " than the district average.",
+              punishmentsPercent + "% " + moreOrLessText + " than the district average.",
             "</span>"
           ].join('');
 
