@@ -56,25 +56,38 @@
         };
       },
       onEachFeature: function onEachFeature(feature, layer) {
-        var percentStudentsByGroup = feature.properties.DPETBLAP || "TODO",
+        var percentStudentsByGroup = feature.properties.DPETBLAP,
             districtName = feature.properties.DISTNAME,
             studentCount = feature.properties.DPETALLC,
             groupName = "Black",
-            punishmentsPercent = feature.properties.OSSPercentBlack,
-            punishmentsCount = feature.properties.OSSCountBlack || "TODO",
+            punishmentsPercent = (Math.abs(feature.properties.OSSPercentBlack)).toFixed(2)*100,
+            punishmentsCount = feature.properties.OSSCountBlack,
             punishmentType = "Out of School Suspension",
             popupContent;
 
-        if (punishmentsPercent){
+        if (feature.properties.OSSPercentBlack){
+          var moreOrLess = punishmentsPercent > 0 ? "more" : "less";
           popupContent = [
             "<span class='popup-text'>",
               percentStudentsByGroup + "% of " + districtName + "'s ",
-              studentCount + " students are " + groupName + ".",
-              "<br>",
-              punishmentsPercent + "% of the district's " + punishmentsCount + " ",
-              punishmentType + " punishments went to students who are " + groupName + ".",
+              studentCount + " students were classified as " + groupName + ". ",
+              "They received " + punishmentType + " " + punishmentsCount + " times, ",
+              punishmentsPercent + "% " + moreOrLess + " than the district average.",
             "</span>"
           ].join('');
+
+          // Alt Popup Message
+          // TODO: Delete me if I'm not needed.
+          //
+          // popupContent = [
+          //   "<span class='popup-text'>",
+          //     percentStudentsByGroup + "% of " + districtName + "'s ",
+          //     studentCount + " students are " + groupName + ".",
+          //     "<br>",
+          //     punishmentsPercent + "% of the district's " + punishmentsCount + " ",
+          //     punishmentType + " punishments went to students who are " + groupName + ".",
+          //   "</span>"
+          // ].join('');
         } else {
           popupContent = "<span>No Data</span>";
         }
