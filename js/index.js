@@ -68,17 +68,16 @@
         if (punishmentsPercent){
           popupContent = [
             "<span class='popup-text'>",
-            percentStudentsByGroup + "% of " + districtName + "'s ",
-            studentCount + " students are " + groupName + ".",
-            "<br>",
-            punishmentsPercent + "% of the district's " + punishmentsCount + " ",
-            punishmentType + " punishments went to students who are " + groupName + ".",
+              percentStudentsByGroup + "% of " + districtName + "'s ",
+              studentCount + " students are " + groupName + ".",
+              "<br>",
+              punishmentsPercent + "% of the district's " + punishmentsCount + " ",
+              punishmentType + " punishments went to students who are " + groupName + ".",
             "</span>"
           ].join('');
         } else {
           popupContent = "<span>No Data</span>";
         }
-
 
         if (feature.properties) {
             layer.bindPopup(popupContent);
