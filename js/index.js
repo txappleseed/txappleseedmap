@@ -52,7 +52,7 @@
           weight: 1,
           opacity: 1,
           color: '#b3b3b3',
-          fillOpacity: 0.5,
+          fillOpacity: 0.75,
         };
       },
       onEachFeature: function onEachFeature(feature, layer) {
@@ -67,7 +67,7 @@
 
         if (feature.properties.OSSPercentBlack){
           var moreOrLessText = feature.properties.OSSPercentBlack > 0 ? "more" : "less";
-          
+
           popupContent = [
             "<span class='popup-text'>",
               percentStudentsByGroup + "% of " + districtName + "'s ",
@@ -94,7 +94,7 @@
         }
 
         if (feature.properties) {
-            layer.bindPopup(popupContent);
+          layer.bindPopup(popupContent);
         }
       },
     };
@@ -134,16 +134,16 @@
   };
 
   Map.prototype.getFillColor =   function (d) {
-    var red  = ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26','#a50f15'],
-        blue = ['#eff3ff','#c6dbef','#9ecae1','#6baed6','#3182bd','#08519c'],
-        gray = '#DEDCDC';
+    var red    = ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26','#a50f15'],
+        purple = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f'],
+        gray   = '#DEDCDC';
 
     return d === null   ? gray    :
-           d < -0.9984  ? blue[4] :
-           d < -0.992   ? blue[3] :
-           d < -0.96    ? blue[2] :
-           d < -0.8     ? blue[1] :
-           d < -0.2     ? blue[0] :
+           d < -0.9984  ? purple[4] :
+           d < -0.992   ? purple[3] :
+           d < -0.96    ? purple[2] :
+           d < -0.8     ? purple[1] :
+           d < -0.2     ? purple[0] :
            d <  0       ? 'white' :
            d === 0      ? 'white' :
            d <  0.2     ? 'white' :
