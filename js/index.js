@@ -3,6 +3,7 @@
   "use strict";
 
   function Map( selector ) {
+    this.$el = $( selector );
 
     this.mapObject = new L.Map('map', {
         center: [31.50, -98.41], // Johnson City
@@ -32,20 +33,63 @@
       "ISS"       : "G-IN SCHOOL SUSPENSIONS",
     };
 
+    debugger
+
+    this.$el.find(".selector__button").on("click", this.handleDataToggleClick);
+
     this.setUp();
   };
 
   Map.prototype.setUp = function () {
-    var mapObject = this.mapObject,
+    var mapClass = this,
+        mapObject = this.mapObject,
         tileLayer  = this.tileLayer,
-        addDataToMap = this.addDataToMap,
-        getFillColor = this.getFillColor,
         joinIncidentsDataToJSON = this.joinIncidentsDataToJSON,
         punishments = this.punishments,
         groups = this.groups,
-        options;
+        options = this.getOptions();
 
-    options = {
+    // Adds tileLayer from the Map Class to the mapObject
+    tileLayer.addTo(mapObject);
+
+    this.requestInitialData(options);
+  };
+
+  Map.prototype.requestInitialData = function (options) {
+    var addDataToMap = this.addDataToMap,
+        mapObject = this.mapObject;
+
+    // Request CSV data and store as an object
+    // Request data from geosjon file and inserts data to the mapObject
+    d3.queue()
+      .defer(d3.csv, "data/DistrictDisparities2015.csv")
+      .defer(d3.json, "data/districts_w_feature_data2015.geojson")
+      // .await(analyze);
+      .await(function(error, incidents, geojson){
+        if (error) throw error;
+
+        // This is the function I run when I want to create a new geojson with
+        // more data. The end result is console logged to the JS console and I
+        // use this trick to save download the output. There is a better way.
+        // https://stackoverflow.com/questions/11849562/how-to-save-the-output-of-a-console-logobject-to-a-file
+        //
+        // joinIncidentsDataToJSON(dataLayer, incidents, groups, punishments, "OSS");
+        // joinIncidentsDataToJSON(dataLayer, incidents, groups, punishments, "AltEdu");
+
+        console.log(geojson);
+        addDataToMap(geojson, mapObject, options);
+
+        // This is ugly, but I need to persist the geojson data so we don't have
+        // to keep loading it from the file. Attaching it to the global window
+        // object feels like bad practice, so forgive my ignorance.
+        window.GEODATA = geojson;
+      });
+  };
+
+  Map.prototype.getOptions = function () {
+    var getFillColor = this.getFillColor;
+
+    return {
       style: function style(feature) {
         return {
           fillColor: getFillColor(Number(feature.properties.OSSFischerBlack)),
@@ -59,7 +103,7 @@
         var percentStudentsByGroup = feature.properties.DPETBLAP,
             districtName = feature.properties.DISTNAME,
             studentCount = feature.properties.DPETALLC,
-            groupName = "Black",
+            groupName = "African American",
             punishmentsPercent = (Math.abs(feature.properties.OSSPercentBlack)).toFixed(2)*100,
             punishmentsCount = feature.properties.OSSCountBlack,
             punishmentType = "Out of School Suspension",
@@ -76,19 +120,6 @@
               punishmentsPercent + "% " + moreOrLessText + " than the district average.",
             "</span>"
           ].join('');
-
-          // Alt Popup Message
-          // TODO: Delete me if I'm not needed.
-          //
-          // popupContent = [
-          //   "<span class='popup-text'>",
-          //     percentStudentsByGroup + "% of " + districtName + "'s ",
-          //     studentCount + " students are " + groupName + ".",
-          //     "<br>",
-          //     punishmentsPercent + "% of the district's " + punishmentsCount + " ",
-          //     punishmentType + " punishments went to students who are " + groupName + ".",
-          //   "</span>"
-          // ].join('');
         } else {
           popupContent = "<span>No Data</span>";
         }
@@ -98,35 +129,12 @@
         }
       },
     };
-
-    // Adds tileLayer from the Map Class to the mapObject
-    tileLayer.addTo(mapObject);
-
-    // Request CSV data and store as an object
-    // Request data from geosjon file and inserts data to the mapObject
-    d3.queue()
-      .defer(d3.csv, "data/DistrictDisparities2015.csv")
-      .defer(d3.json, "data/districts_w_feature_data2015.geojson")
-      // .await(analyze);
-      .await(function(error, incidents, geojson){
-        if (error) throw error;
-
-        var dataLayer = geojson,
-            incidents = incidents;
-
-
-        // This is the function I run when I want to create a new geojson with
-        // more data. The end result is console logged to the JS console and I
-        // use this trick to save download the output. There is a better way.
-        // https://stackoverflow.com/questions/11849562/how-to-save-the-output-of-a-console-logobject-to-a-file
-        //
-        // joinIncidentsDataToJSON(dataLayer, incidents, groups, punishments, "OSS");
-        // joinIncidentsDataToJSON(dataLayer, incidents, groups, punishments, "AltEdu");
-
-        console.log(dataLayer);
-        addDataToMap(dataLayer, mapObject, options);
-      });
   };
+
+  Map.prototype.handleDataToggleClick = function (e) {
+    debugger
+  };
+
 
   Map.prototype.addDataToMap = function (data, map, options) {
     var dataLayer = L.geoJson(data, options);
@@ -175,6 +183,6 @@
     return geodata;
   }
 
-  new Map( "#map" );
+  new Map( "#leMap" );
 
 })();
