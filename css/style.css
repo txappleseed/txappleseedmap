@@ -254,3 +254,43 @@ color: #b30000;
     text-decoration: none;
     width: 400px
 }
+
+/* LEGEND */
+.legend-title {
+  font-size: 18px !important;
+}
+
+.legend-subtitle {
+
+}
+
+.graph-sublegend {
+  width: 80px;
+}
+
+.graph-sublegend-right {
+  width: 80px;
+  text-align: right;
+}
+
+/* Z INDEX */
+
+.z-400 {
+  z-index: 400 !important;
+}
+
+/* MARGIN */
+
+.margin-bottom {
+  margin-bottom: 5px;
+}
+
+/* UGH, guilt */
+div.cartodb-legend ul li {
+  overflow: auto;
+}
+
+.leaflet-popup-tip-container {
+  margin-left: -20px;
+  position: absolute !important;
+}
