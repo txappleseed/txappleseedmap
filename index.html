@@ -30,6 +30,41 @@
 
     <div class="viewport">
       <div id="map" class="map"></div>
+
+      <div class="cartodb-legend-stack z-400">
+        <div class='cartodb-legend density'>
+          <ul>
+             <li class="min">
+                <span class="legend-title">Punishments per Capita</span><br>
+                <span class="legend-subtitle">(compared to statewide district average)</span>
+             </li>
+
+             <li class="graph leg" style="border-radius: 0; border:none">
+             <div class="colors">
+               <div class="quartile" style="background-color:#756bb1"></div>
+               <div class="quartile" style="background-color:#9e9ac8"></div>
+               <div class="quartile" style="background-color:#bcbddc"></div>
+               <div class="quartile" style="background-color:#dadaeb"></div>
+               <div class="quartile" style="background-color:#f2f0f7"></div>
+               <div class="quartile" style="background-color:#fee5d9"></div>
+               <div class="quartile" style="background-color:#fcbba1"></div>
+               <div class="quartile" style="background-color:#fc9272"></div>
+               <div class="quartile" style="background-color:#fb6a4a"></div>
+               <div class="quartile" style="background-color:#de2d26"></div>
+             </div>
+             </li>
+             <li class="margin-bottom">
+               <div class="quartile graph-sublegend" style="padding-top: 5px; float:left;" >
+                 Fewer than Average
+               </div>
+               <div class="quartile graph-sublegend-right" style="padding-top: 5px; float:right;" >
+                 More than Average
+               </div>
+             </li>
+          </ul>
+        </div>
+      </div>
+
 		</div>
 
     <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
