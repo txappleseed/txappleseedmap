@@ -158,7 +158,7 @@ button {
 }
 .masthead__content {
 	float: right;
-	max-width: 80%;
+	width: 80%;
 	margin-top: 10px;
 	margin-right: 50px;
 }
