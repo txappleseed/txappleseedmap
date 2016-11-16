@@ -177,11 +177,9 @@ button {
 .selector {
 	max-width: 15rem;
 	width: 100%;
-
 	position: absolute;
 	right:  1.5rem;
-	bottom: 8.75rem;
-
+	bottom: 10.75rem;
 	background: #fff;
 	border: 1px solid #999999;
 	border-radius: 4px;
