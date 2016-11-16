@@ -6,7 +6,7 @@
 
     this.mapObject = new L.Map('map', {
         center: [31.50, -98.41], // Johnson City
-        zoom: 6
+        zoom: 7
     });
 
     this.tileLayer = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
