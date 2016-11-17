@@ -16,15 +16,35 @@
 
     this.groups = {
       "Black"           : "BLACK OR AFRICAN AMERICAN",
-      "AmericanIndian"  : "AMERICAN INDIAN OR ALASKA NAT",
       "Asian"           : "ASIAN",
       "Latino"          : "HISPANIC/LATINO",
-      "Pacific"         : "NATIVE HAWAIIAN/OTHER PACIFIC",
+      "AmericanIndian"  : "AMERICAN INDIAN OR ALASKA NAT",
+      "SpecialEdu"      : "Special Education",
       "Multi"           : "TWO OR MORE RACES",
       "White"           : "WHITE",
+      "Pacific"         : "NATIVE HAWAIIAN/OTHER PACIFIC",
       "EconDis"         : "Economic Disadvantage",
-      "SpecialEdu"      : "Special Education",
     };
+
+    this.groupShortHand = [
+      "Black",
+      "Asian",
+      "Latino",
+      "AmericanIndian",
+      "SpecialEdu",
+      "Multi",
+      "White",
+    ];
+
+    this.groupDisplayName = [
+      "African American Students",
+      "Asian Students",
+      "Latino Students",
+      "Native American Students",
+      "Special Education Students",
+      "Students of two or More Races",
+      "White Students",
+    ];
 
     this.punishments = {
       "Expulsion" : "D-EXPULSION ACTIONS",
@@ -33,9 +53,17 @@
       "ISS"       : "G-IN SCHOOL SUSPENSIONS",
     };
 
-    debugger
+    this.groupPercentCode = [
+      "DPETBLAP", // black
+      "DPETASIP", // asian?
+      "DPETHISP", // latino?
+      "DPETINDP", // native american?
+      "DPETSPEP", // special ed?
+      "DPETTWOP", // multi-ethnic?
+      "DPETWHIP", // white?
+    ];
 
-    this.$el.find(".selector__button").on("click", this.handleDataToggleClick);
+    this.$el.find(".selector__button").on("click", {context: this}, this.handleDataToggleClick);
 
     this.setUp();
   };
@@ -47,7 +75,8 @@
         joinIncidentsDataToJSON = this.joinIncidentsDataToJSON,
         punishments = this.punishments,
         groups = this.groups,
-        options = this.getOptions();
+        initialGroupId = 0,
+        options = this.getOptions(initialGroupId);
 
     // Adds tileLayer from the Map Class to the mapObject
     tileLayer.addTo(mapObject);
@@ -86,54 +115,77 @@
       });
   };
 
-  Map.prototype.getOptions = function () {
-    var getFillColor = this.getFillColor;
+  Map.prototype.getOptions = function (groupId) {
+    var getFillColor = this.getFillColor,
+        fischerValue = "OSSFischer" + this.groupShortHand[groupId],
+        punishmentPercentValue = "OSSPercent" + this.groupShortHand[groupId],
+        punishmentCountValue = "OSSCount" + this.groupShortHand[groupId],
+        percentStudentsValue = this.groupPercentCode[groupId],
+        groupNameInPopup = this.groupDisplayName[groupId];
 
     return {
       style: function style(feature) {
         return {
-          fillColor: getFillColor(Number(feature.properties.OSSFischerBlack)),
+          fillColor: getFillColor(Number(feature.properties[fischerValue])),
           weight: 1,
           opacity: 1,
           color: '#b3b3b3',
-          fillOpacity: 0.75,
+          fillOpacity: 0.6,
         };
       },
       onEachFeature: function onEachFeature(feature, layer) {
-        var percentStudentsByGroup = feature.properties.DPETBLAP,
+        var percentStudentsByGroup = feature.properties[percentStudentsValue],
             districtName = feature.properties.DISTNAME,
             studentCount = feature.properties.DPETALLC,
-            groupName = "African American",
-            punishmentsPercent = (Math.abs(feature.properties.OSSPercentBlack)).toFixed(2)*100,
-            punishmentsCount = feature.properties.OSSCountBlack,
+            groupName = groupNameInPopup,
+            punishmentsPercent = (Math.abs(feature.properties[punishmentPercentValue])).toFixed(2)*100,
+            punishmentsCount = feature.properties[punishmentCountValue],
             punishmentType = "Out of School Suspension",
             popupContent;
 
-        if (feature.properties.OSSPercentBlack){
-          var moreOrLessText = feature.properties.OSSPercentBlack > 0 ? "more" : "less";
+        if (punishmentPercentValue){
+          var moreOrLessText = punishmentPercentValue > 0 ? "more" : "less";
 
           popupContent = [
             "<span class='popup-text'>",
-              percentStudentsByGroup + "% of " + districtName + "'s ",
-              studentCount + " students were classified as " + groupName + ". ",
+              percentStudentsByGroup + "% of <b>" + districtName + "'s</b> ",
+              studentCount + " students are classified as " + groupName + ". ",
               "They received " + punishmentType + " " + punishmentsCount + " times, ",
               punishmentsPercent + "% " + moreOrLessText + " than the district average.",
             "</span>"
           ].join('');
         } else {
-          popupContent = "<span>No Data</span>";
+          popupContent = "<span>Data not available for this student group.</span>";
         }
 
-        if (feature.properties) {
-          layer.bindPopup(popupContent);
-        }
+        if (feature.properties) layer.bindPopup(popupContent);
       },
     };
   };
 
   Map.prototype.handleDataToggleClick = function (e) {
-    debugger
+    var selectedGroupId = $(this).data("group-id"),
+        thiz = e.data.context,
+        dataLayer = GEODATA,
+        options = thiz.getOptions(selectedGroupId);
+
+    // change toggle button CSS to indicate "active" 
+    $(".selector__button").removeClass("selector__button--active");
+    $(this).addClass("selector__button--active");
+
+    // remove exisiting layer for previous group
+    thiz.clearGeojsonLayer.call(thiz);
+
+    thiz.addDataToMap(dataLayer, thiz.mapObject, options)
   };
+
+  Map.prototype.clearGeojsonLayer = function(){
+    var map = this.mapObject;
+
+    map.eachLayer(function (layer) {
+      if (layer.feature) map.removeLayer(layer);
+    });
+  }
 
 
   Map.prototype.addDataToMap = function (data, map, options) {
