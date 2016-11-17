@@ -139,12 +139,12 @@
             studentCount = feature.properties.DPETALLC,
             groupName = groupNameInPopup,
             punishmentsPercent = (Math.abs(feature.properties[punishmentPercentValue])).toFixed(2)*100,
-            punishmentsCount = feature.properties[punishmentCountValue],
+            punishmentsCount = feature.properties[punishmentCountValue] || 0,
             punishmentType = "Out of School Suspension",
             popupContent;
 
         if (punishmentPercentValue){
-          var moreOrLessText = punishmentPercentValue > 0 ? "more" : "less";
+          var moreOrLessText = feature.properties[punishmentPercentValue] > 0 ? "more" : "less";
 
           popupContent = [
             "<span class='popup-text'>",
@@ -169,7 +169,7 @@
         dataLayer = GEODATA,
         options = thiz.getOptions(selectedGroupId);
 
-    // change toggle button CSS to indicate "active" 
+    // change toggle button CSS to indicate "active"
     $(".selector__button").removeClass("selector__button--active");
     $(this).addClass("selector__button--active");
 
