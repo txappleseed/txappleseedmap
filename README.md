@@ -3,6 +3,9 @@ maps for the Texas Appleseed "School to Prison Pipeline" projects
 
 http://txappleseed.github.io/txappleseedmap/
 
+This map is linked from a WordPress hosted site with more information about the School to Prison Pipeline:
+http://www.texasdisciplinelab.org/
+
 ## Documentation
 This project uses carto.js to render the map. https://carto.com/docs/
 
