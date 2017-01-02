@@ -148,10 +148,10 @@
 
           popupContent = [
             "<span class='popup-text'>",
-              percentStudentsByGroup + "% of <b>" + districtName + "'s</b> ",
-              studentCount + " students are classified as " + groupName + ". ",
-              "They received " + punishmentType + " " + punishmentsCount + " times, ",
-              punishmentsPercent + "% " + moreOrLessText + " than the district average.",
+              groupName + " students received out-of-school suspensions ",
+              punishmentsCount + " times",
+              " accounting for" + " X% " + "of all out-of-school suspensions",
+              "in <b>" + districtName + "</b>.",
             "</span>"
           ].join('');
         } else {
@@ -162,6 +162,8 @@
       },
     };
   };
+
+  console.log("pupu platter")
 
   Map.prototype.handleDataToggleClick = function (e) {
     var selectedGroupId = $(this).data("group-id"),
