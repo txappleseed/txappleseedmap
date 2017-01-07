@@ -88,24 +88,13 @@
     var addDataToMap = this.addDataToMap,
         mapObject = this.mapObject;
 
-    // Request CSV data and store as an object
     // Request data from geosjon file and inserts data to the mapObject
     d3.queue()
-      .defer(d3.csv, "data/DistrictDisparities2015.csv")
       .defer(d3.json, "data/districts_w_feature_data2015.geojson")
       // .await(analyze);
       .await(function(error, incidents, geojson){
         if (error) throw error;
 
-        // This is the function I run when I want to create a new geojson with
-        // more data. The end result is console logged to the JS console and I
-        // use this trick to save download the output. There is a better way.
-        // https://stackoverflow.com/questions/11849562/how-to-save-the-output-of-a-console-logobject-to-a-file
-        //
-        // joinIncidentsDataToJSON(dataLayer, incidents, groups, punishments, "OSS");
-        // joinIncidentsDataToJSON(dataLayer, incidents, groups, punishments, "AltEdu");
-
-        console.log(geojson);
         addDataToMap(geojson, mapObject, options);
 
         // This is ugly, but I need to persist the geojson data so we don't have
@@ -216,26 +205,6 @@
            d <= 1       ? red[4]  :
            gray;
   };
-
-  Map.prototype.joinIncidentsDataToJSON = function (geodata, incidents, groups, punishments, punishmentType) {
-    var punishmentType = punishmentType;
-
-    geodata.features.forEach( function(feature) {
-      var district = feature.properties.DISTRICT_C;
-
-      _.mapObject(groups, function(value, key) {
-        var groupName = key;
-        var punishmentName = punishmentType;
-        var punishmentsByGroup = _.where(incidents, { district: district, group: value, feature: punishments[punishmentType]});
-
-        // feature.properties[punishmentName + "Fischer" + groupName] = punishmentsByGroup.length ? punishmentsByGroup[0].scale : null;
-        // feature.properties[punishmentName + "Percent" + groupName] = punishmentsByGroup.length ? punishmentsByGroup[0].disparity : null;
-        feature.properties[punishmentName + "Count" + groupName] = punishmentsByGroup.length ? punishmentsByGroup[0].count : null;
-      });
-    });
-
-    return geodata;
-  }
 
   new Map( "#leMap" );
 
