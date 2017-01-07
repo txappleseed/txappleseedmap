@@ -14,26 +14,16 @@
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">Stamen</a> contributors'
     });
 
-    this.groups = {
-      "Black"           : "BLACK OR AFRICAN AMERICAN",
-      "Asian"           : "ASIAN",
-      "Latino"          : "HISPANIC/LATINO",
-      "AmericanIndian"  : "AMERICAN INDIAN OR ALASKA NAT",
-      "SpecialEdu"      : "Special Education",
-      "Multi"           : "TWO OR MORE RACES",
-      "White"           : "WHITE",
-      "Pacific"         : "NATIVE HAWAIIAN/OTHER PACIFIC",
-      "EconDis"         : "Economic Disadvantage",
-    };
-
-    this.groupShortHand = [
-      "Black",
-      "Asian",
-      "Latino",
-      "AmericanIndian",
-      "SpecialEdu",
-      "Multi",
-      "White",
+    this.groups = [
+      "black_or_african_american",
+      "asian",
+      "hispanic/latino",
+      "american_indian_or_alaska_nat",
+      "special_education",
+      "two_or_more_races",
+      "white",
+      "native_hawaiian/other_pacific",
+      "economic_disadvantage"
     ];
 
     this.groupDisplayName = [
@@ -90,10 +80,11 @@
 
     // Request data from geosjon file and inserts data to the mapObject
     d3.queue()
-      .defer(d3.json, "data/districts_w_feature_data2015.geojson")
-      // .await(analyze);
-      .await(function(error, incidents, geojson){
+      .defer(d3.json, "geojson/oss_districts.geojson")
+      .await(function(error, geojson){
         if (error) throw error;
+
+        console.log(geojson)
 
         addDataToMap(geojson, mapObject, options);
 
@@ -106,11 +97,12 @@
 
   Map.prototype.getOptions = function (groupId) {
     var getFillColor = this.getFillColor,
-        fischerValue = "OSSFischer" + this.groupShortHand[groupId],
-        punishmentPercentValue = "OSSPercent" + this.groupShortHand[groupId],
-        punishmentCountValue = "OSSCount" + this.groupShortHand[groupId],
+        fischerValue = "OSS_scale_" + this.groups[groupId],
+        punishmentPercentValue = "OSS_percent_" + this.groups[groupId],
+        punishmentCountValue = "OSS_count_" + this.groups[groupId],
         percentStudentsValue = this.groupPercentCode[groupId],
         groupNameInPopup = this.groupDisplayName[groupId];
+
 
     return {
       style: function style(feature) {
@@ -125,21 +117,23 @@
       onEachFeature: function onEachFeature(feature, layer) {
         var percentStudentsByGroup = feature.properties[percentStudentsValue],
             districtName = feature.properties.DISTNAME,
-            studentCount = feature.properties.DPETALLC,
             groupName = groupNameInPopup,
-            punishmentsPercent = (Math.abs(feature.properties[punishmentPercentValue])).toFixed(2)*100,
+            punishmentsPercent = feature.properties[punishmentPercentValue],
             punishmentsCount = feature.properties[punishmentCountValue] || 0,
-            punishmentType = "Out of School Suspension",
+            punishmentType = "Out of School Suspensions",
             popupContent;
 
-        if (punishmentPercentValue){
+        debugger
+
+        if (feature.properties[punishmentPercentValue]){
           var moreOrLessText = feature.properties[punishmentPercentValue] > 0 ? "more" : "less";
 
           popupContent = [
             "<span class='popup-text'>",
-              groupName + " students received out-of-school suspensions ",
+              groupName + " students received " + punishmentType + " ",
               punishmentsCount + " times",
-              " accounting for" + " X% " + "of all out-of-school suspensions",
+              " accounting for " + punishmentsPercent + "%",
+              " of all out-of-school suspensions",
               "in <b>" + districtName + "</b>.",
             "</span>"
           ].join('');
@@ -151,8 +145,6 @@
       },
     };
   };
-
-  console.log("pupu platter")
 
   Map.prototype.handleDataToggleClick = function (e) {
     var selectedGroupId = $(this).data("group-id"),
@@ -189,7 +181,7 @@
         purple = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f'],
         gray   = '#DEDCDC';
 
-    return d === null   ? gray    :
+    return d == false   ? gray    :
            d < -0.9984  ? purple[4] :
            d < -0.992   ? purple[3] :
            d < -0.96    ? purple[2] :
