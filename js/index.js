@@ -1,4 +1,4 @@
-(function(){
+var PageControl = (function(){
 
   "use strict";
 
@@ -123,7 +123,7 @@
             punishmentType = "Out of School Suspensions",
             popupContent;
 
-        debugger
+        // debugger
 
         if (feature.properties[punishmentPercentValue]){
           var moreOrLessText = feature.properties[punishmentPercentValue] > 0 ? "more" : "less";
@@ -198,6 +198,7 @@
            gray;
   };
 
-  new Map( "#leMap" );
+  // Return a reference to the map
+  return(new Map( "#leMap" ));
 
 })();
