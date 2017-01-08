@@ -176,8 +176,11 @@ var PageControl = (function(){
   };
 
   Map.prototype.clearGeojsonLayer = function(){
+
+    // Rename 'this' for use in callback
     var map = this.mapObject;
 
+    // Remove all layers which have 'feature' properties
     map.eachLayer(function (layer) {
       if (layer.feature) map.removeLayer(layer);
     });
@@ -203,6 +206,20 @@ var PageControl = (function(){
 
     });
   };
+
+  // Update data after selection is made
+  Map.prototype.selectData = function(dataKey) {
+    /*
+      Takes a key for a data layer and loads the data
+      from the corresponding GeoJSON file.
+    */
+
+    // Clear old layers
+    this.clearGeojsonLayer();
+
+    // Add new layer
+    this.loadGeojsonLayer(dataKey);
+  }
 
   Map.prototype.addDataToMap = function (data, map, options) {
     var dataLayer = L.geoJson(data, options);
