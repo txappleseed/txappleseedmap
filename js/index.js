@@ -1,8 +1,13 @@
 var PageControl = (function(){
 
+
   "use strict";
 
   function Map( selector ) {
+
+    // Rename 'this' for use in callbacks
+    var thisMap = this;
+
     this.$el = $( selector );
 
     this.mapObject = new L.Map('map', {
@@ -178,6 +183,26 @@ var PageControl = (function(){
     });
   }
 
+  // Loads data from GeoJSON file and adds layer to map
+  Map.prototype.loadGeojsonLayer = function(dataKey, geoJsonOptions) {
+
+    // Get path to data file
+    var path = this.dataFiles[dataKey];
+
+    // Load data from file
+    $.ajax({
+        dataType: "json",
+        geoJsonOptions: geoJsonOptions,
+        url: path,
+        context: this,
+        success: function(data) {
+
+            // Add the data layer to the map
+            this.mapObject.addLayer(L.geoJSON(data));
+        }
+
+    });
+  };
 
   Map.prototype.addDataToMap = function (data, map, options) {
     var dataLayer = L.geoJson(data, options);
