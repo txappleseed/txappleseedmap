@@ -43,6 +43,14 @@ var PageControl = (function(){
       "ISS"       : "G-IN SCHOOL SUSPENSIONS",
     };
 
+    // Dictionary that maps option values to GeoJSON data file paths
+    this.dataFiles = {
+        "Expulsion" : "geojson/expulsion_districts.geojson",
+        "AltEdu"    : "geojson/altedu_districts.geojson",
+        "OSS"       : "geojson/oss_districts.geojson",
+        "ISS"       : "geojson/iss_districts.geojson",
+    };
+
     this.groupPercentCode = [
       "DPETBLAP", // black
       "DPETASIP", // asian?
