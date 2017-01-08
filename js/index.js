@@ -68,6 +68,20 @@ var PageControl = (function(){
 
     this.$el.find(".selector__button").on("click", {context: this}, this.handleDataToggleClick);
 
+    // Attach event handler to drop-down menu to update data after
+    // selection changed.
+    $("#dropdown").on(
+        "change",
+        function(event) {
+
+            // Get the selection from the drop-down menu
+            var dataKey = $("#dropdown").find("option:selected").val();
+
+            // Load the data from the corresponding file
+            thisMap.selectData(dataKey);
+        }
+    );
+
     this.setUp();
   };
 
