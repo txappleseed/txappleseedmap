@@ -1,8 +1,13 @@
-(function(){
+var PageControl = (function(){
+
 
   "use strict";
 
   function Map( selector ) {
+
+    // Rename 'this' for use in callbacks
+    var thisMap = this;
+
     this.$el = $( selector );
 
     this.mapObject = new L.Map('map', {
@@ -14,26 +19,16 @@
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">Stamen</a> contributors'
     });
 
-    this.groups = {
-      "Black"           : "BLACK OR AFRICAN AMERICAN",
-      "Asian"           : "ASIAN",
-      "Latino"          : "HISPANIC/LATINO",
-      "AmericanIndian"  : "AMERICAN INDIAN OR ALASKA NAT",
-      "SpecialEdu"      : "Special Education",
-      "Multi"           : "TWO OR MORE RACES",
-      "White"           : "WHITE",
-      "Pacific"         : "NATIVE HAWAIIAN/OTHER PACIFIC",
-      "EconDis"         : "Economic Disadvantage",
-    };
-
-    this.groupShortHand = [
-      "Black",
-      "Asian",
-      "Latino",
-      "AmericanIndian",
-      "SpecialEdu",
-      "Multi",
-      "White",
+    this.groups = [
+      "black_or_african_american",
+      "asian",
+      "hispanic/latino",
+      "american_indian_or_alaska_nat",
+      "special_education",
+      "two_or_more_races",
+      "white",
+      "native_hawaiian/other_pacific",
+      "economic_disadvantage"
     ];
 
     this.groupDisplayName = [
@@ -53,6 +48,14 @@
       "ISS"       : "G-IN SCHOOL SUSPENSIONS",
     };
 
+    // Dictionary that maps option values to GeoJSON data file paths
+    this.dataFiles = {
+        "Expulsion" : "geojson/expulsion_districts.geojson",
+        "AltEdu"    : "geojson/altedu_districts.geojson",
+        "OSS"       : "geojson/oss_districts.geojson",
+        "ISS"       : "geojson/iss_districts.geojson",
+    };
+
     this.groupPercentCode = [
       "DPETBLAP", // black
       "DPETASIP", // asian?
@@ -64,6 +67,20 @@
     ];
 
     this.$el.find(".selector__button").on("click", {context: this}, this.handleDataToggleClick);
+
+    // Attach event handler to drop-down menu to update data after
+    // selection changed.
+    $("#dropdown").on(
+        "change",
+        function(event) {
+
+            // Get the selection from the drop-down menu
+            var dataKey = $("#dropdown").find("option:selected").val();
+
+            // Load the data from the corresponding file
+            thisMap.selectData(dataKey);
+        }
+    );
 
     this.setUp();
   };
@@ -88,24 +105,14 @@
     var addDataToMap = this.addDataToMap,
         mapObject = this.mapObject;
 
-    // Request CSV data and store as an object
     // Request data from geosjon file and inserts data to the mapObject
     d3.queue()
-      .defer(d3.csv, "data/DistrictDisparities2015.csv")
-      .defer(d3.json, "data/districts_w_feature_data2015.geojson")
-      // .await(analyze);
-      .await(function(error, incidents, geojson){
+      .defer(d3.json, "geojson/oss_districts.geojson")
+      .await(function(error, geojson){
         if (error) throw error;
 
-        // This is the function I run when I want to create a new geojson with
-        // more data. The end result is console logged to the JS console and I
-        // use this trick to save download the output. There is a better way.
-        // https://stackoverflow.com/questions/11849562/how-to-save-the-output-of-a-console-logobject-to-a-file
-        //
-        // joinIncidentsDataToJSON(dataLayer, incidents, groups, punishments, "OSS");
-        // joinIncidentsDataToJSON(dataLayer, incidents, groups, punishments, "AltEdu");
+        console.log(geojson)
 
-        console.log(geojson);
         addDataToMap(geojson, mapObject, options);
 
         // This is ugly, but I need to persist the geojson data so we don't have
@@ -117,11 +124,12 @@
 
   Map.prototype.getOptions = function (groupId) {
     var getFillColor = this.getFillColor,
-        fischerValue = "OSSFischer" + this.groupShortHand[groupId],
-        punishmentPercentValue = "OSSPercent" + this.groupShortHand[groupId],
-        punishmentCountValue = "OSSCount" + this.groupShortHand[groupId],
+        fischerValue = "OSS_scale_" + this.groups[groupId],
+        punishmentPercentValue = "OSS_percent_" + this.groups[groupId],
+        punishmentCountValue = "OSS_count_" + this.groups[groupId],
         percentStudentsValue = this.groupPercentCode[groupId],
         groupNameInPopup = this.groupDisplayName[groupId];
+
 
     return {
       style: function style(feature) {
@@ -136,22 +144,24 @@
       onEachFeature: function onEachFeature(feature, layer) {
         var percentStudentsByGroup = feature.properties[percentStudentsValue],
             districtName = feature.properties.DISTNAME,
-            studentCount = feature.properties.DPETALLC,
             groupName = groupNameInPopup,
-            punishmentsPercent = (Math.abs(feature.properties[punishmentPercentValue])).toFixed(2)*100,
+            punishmentsPercent = feature.properties[punishmentPercentValue],
             punishmentsCount = feature.properties[punishmentCountValue] || 0,
-            punishmentType = "Out of School Suspension",
+            punishmentType = "Out of School Suspensions",
             popupContent;
 
-        if (punishmentPercentValue){
+        // debugger
+
+        if (feature.properties[punishmentPercentValue]){
           var moreOrLessText = feature.properties[punishmentPercentValue] > 0 ? "more" : "less";
 
           popupContent = [
             "<span class='popup-text'>",
-              percentStudentsByGroup + "% of <b>" + districtName + "'s</b> ",
-              studentCount + " students are classified as " + groupName + ". ",
-              "They received " + punishmentType + " " + punishmentsCount + " times, ",
-              punishmentsPercent + "% " + moreOrLessText + " than the district average.",
+              groupName + " students received " + punishmentType + " ",
+              punishmentsCount + " times",
+              " accounting for " + punishmentsPercent + "%",
+              " of all out-of-school suspensions",
+              "in <b>" + districtName + "</b>.",
             "</span>"
           ].join('');
         } else {
@@ -180,13 +190,50 @@
   };
 
   Map.prototype.clearGeojsonLayer = function(){
+
+    // Rename 'this' for use in callback
     var map = this.mapObject;
 
+    // Remove all layers which have 'feature' properties
     map.eachLayer(function (layer) {
       if (layer.feature) map.removeLayer(layer);
     });
   }
 
+  // Loads data from GeoJSON file and adds layer to map
+  Map.prototype.loadGeojsonLayer = function(dataKey, geoJsonOptions) {
+
+    // Get path to data file
+    var path = this.dataFiles[dataKey];
+
+    // Load data from file
+    $.ajax({
+        dataType: "json",
+        geoJsonOptions: geoJsonOptions,
+        url: path,
+        context: this,
+        success: function(data) {
+
+            // Add the data layer to the map
+            this.mapObject.addLayer(L.geoJSON(data));
+        }
+
+    });
+  };
+
+  // Update data after selection is made
+  Map.prototype.selectData = function(dataKey) {
+    /*
+      Takes a key for a data layer and loads the data
+      from the corresponding GeoJSON file.
+    */
+
+    // Clear old layers
+    this.clearGeojsonLayer();
+
+    // Add new layer
+    this.loadGeojsonLayer(dataKey);
+  }
 
   Map.prototype.addDataToMap = function (data, map, options) {
     var dataLayer = L.geoJson(data, options);
@@ -198,7 +245,7 @@
         purple = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f'],
         gray   = '#DEDCDC';
 
-    return d === null   ? gray    :
+    return d == false   ? gray    :
            d < -0.9984  ? purple[4] :
            d < -0.992   ? purple[3] :
            d < -0.96    ? purple[2] :
@@ -215,26 +262,7 @@
            gray;
   };
 
-  Map.prototype.joinIncidentsDataToJSON = function (geodata, incidents, groups, punishments, punishmentType) {
-    var punishmentType = punishmentType;
-
-    geodata.features.forEach( function(feature) {
-      var district = feature.properties.DISTRICT_C;
-
-      _.mapObject(groups, function(value, key) {
-        var groupName = key;
-        var punishmentName = punishmentType;
-        var punishmentsByGroup = _.where(incidents, { district: district, group: value, feature: punishments[punishmentType]});
-
-        // feature.properties[punishmentName + "Fischer" + groupName] = punishmentsByGroup.length ? punishmentsByGroup[0].scale : null;
-        // feature.properties[punishmentName + "Percent" + groupName] = punishmentsByGroup.length ? punishmentsByGroup[0].disparity : null;
-        feature.properties[punishmentName + "Count" + groupName] = punishmentsByGroup.length ? punishmentsByGroup[0].count : null;
-      });
-    });
-
-    return geodata;
-  }
-
-  new Map( "#leMap" );
+  // Return a reference to the map
+  return(new Map( "#leMap" ));
 
 })();
