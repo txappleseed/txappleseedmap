@@ -161,7 +161,7 @@ var PageControl = (function(){
               punishmentsCount + " times",
               " accounting for " + punishmentsPercent + "%",
               " of all out-of-school suspensions",
-              "in <b>" + districtName + "</b>.",
+              " in <b>" + districtName + "</b>.",
             "</span>"
           ].join('');
         } else {
