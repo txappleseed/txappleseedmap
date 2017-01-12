@@ -38,14 +38,14 @@ var PageControl = (function(){
       "Native American Students",
       "Special Education Students",
       "Students of two or More Races",
-      "White Students",
+      "White Students"
     ];
 
     this.punishments = {
       "Expulsion" : "D-EXPULSION ACTIONS",
       "AltEdu"    : "E-DAEP PLACEMENTS",
       "OSS"       : "F-OUT OF SCHOOL SUSPENSIONS",
-      "ISS"       : "G-IN SCHOOL SUSPENSIONS",
+      "ISS"       : "G-IN SCHOOL SUSPENSIONS"
     };
 
     // Dictionary that maps option values to GeoJSON data file paths
@@ -53,7 +53,7 @@ var PageControl = (function(){
         "Expulsion" : "geojson/expulsion_districts.geojson",
         "AltEdu"    : "geojson/altedu_districts.geojson",
         "OSS"       : "geojson/oss_districts.geojson",
-        "ISS"       : "geojson/iss_districts.geojson",
+        "ISS"       : "geojson/iss_districts.geojson"
     };
 
     this.groupPercentCode = [
@@ -122,6 +122,19 @@ var PageControl = (function(){
       });
   };
 
+    $.ajax({
+        'url': "geojson/expulsion_districts.geojson",
+        'dataType': "json",
+        'success': function (data) {
+            var gLayer = L.geoJson(data, {
+                onEachFeature: onEachFeature
+            });
+            glayer.addLayer(gLayer);
+        }
+    });
+
+
+
   Map.prototype.getOptions = function (groupId) {
     var getFillColor = this.getFillColor,
         fischerValue = "OSS_scale_" + this.groups[groupId],
@@ -129,8 +142,7 @@ var PageControl = (function(){
         punishmentCountValue = "OSS_count_" + this.groups[groupId],
         percentStudentsValue = this.groupPercentCode[groupId],
         groupNameInPopup = this.groupDisplayName[groupId];
-
-
+    console.log(this.punishments);
     return {
       style: function style(feature) {
         return {
@@ -178,7 +190,7 @@ var PageControl = (function(){
         thiz = e.data.context,
         dataLayer = GEODATA,
         options = thiz.getOptions(selectedGroupId);
-
+      console.log(thiz);
     // change toggle button CSS to indicate "active"
     $(".selector__button").removeClass("selector__button--active");
     $(this).addClass("selector__button--active");
@@ -233,11 +245,32 @@ var PageControl = (function(){
 
     // Add new layer
     this.loadGeojsonLayer(dataKey);
-  }
+  };
 
   Map.prototype.addDataToMap = function (data, map, options) {
     var dataLayer = L.geoJson(data, options);
     dataLayer.addTo(map);
+
+    var districtNames = [];
+    for (var n = 0; n < data.features.length; n++) {
+    	var dName = data.features[n].properties.DISTNAME;
+    	if (dName)
+		    districtNames.push(data.features[n].properties.DISTNAME);
+	}
+	
+	//console.log(districtNames);
+
+    // autocomplete searchbox stuff
+	$("#searchbox").autocomplete({
+		source: districtNames,
+		select: function(event, ui) {
+			if(ui.item){
+				$('#searchbox').val(ui.item.value);
+			}
+			// do something
+		}
+	});
+
   };
 
   Map.prototype.getFillColor =   function (d) {

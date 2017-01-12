@@ -5,35 +5,35 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <link rel="shortcut icon" href="favicon.ico" />
-
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="js/vendor/leaflet/leaflet.css" />
     <link rel="stylesheet" href="css/cartodb.css">
     <link rel="stylesheet" href="css/style.css">
 
-    <!-- <div id="modal-one" class="iziModal" data-izimodal-title="How do you want to get involved?" data-izimodal-subtitle="">
-      <ol>
-        <li><button class= "fun-time"  data-izmodal-next="" onclick="window.location.href='http://www.fyi.legis.state.tx.us/Home.aspx'">Contact my Texas State Representative</button></li>
-        <li><button class = "fun-time"  data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/pro-bono-opportunities'" >Volunteer</button></li>
-        <li><button class = "fun-time" data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/school-prison-pipeline'">Learn about the school-to-prison pipeline</button></li>
-        <li><button class = "fun-time" data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/contact'"   >Tell your story</button></li>
-      </ol>
-    </div> -->
   </head>
 
   <body>
 		<header class="masthead">
 			<h1 class="masthead__logo"></h1>
 			<div class="masthead__content">
-				<h1 class="masthead__title h2">Texas School Discipline Punishments by Race/Ethnicity, Pre-K through 12th Grade (2014-15)</h1>
+				<h1 class="masthead__title h2">Texas School Discipline Punishments by Race/Ethnicity<br>Pre-K through 12th Grade (2014-15)</h1>
 				<span class="masthead__disclaimer">Data Source: Texas Education Agency</span>
-          <!-- temporarily hiding this from view -->
-          <!-- <select id="dropdown">
-            <option value="Expulsion">D-EXPULSION ACTIONS</option>
-            <option value="AltEdu">E-DAEP PLACEMENTS</option>
-            <option value="OSS">F-OUT OF SCHOOL SUSPENSIONS</option>
-            <option value="ISS">G-IN SCHOOL SUSPENSIONS</option>
-          </select> -->
-			</div>
+
+            <div class="masthead_right">
+              <div class="masthead_select">
+                <select id="dropdown">
+                  <option value="Expulsion">Expulsion Actions</option>
+                  <option value="AltEdu">Alternative Placements</option>
+                  <option value="OSS">Out of School Suspensions</option>
+                  <option value="ISS">In School Suspensions</option>
+                </select>
+              </div>
+              <form class="masthead_search" role="search">
+                <div>
+                  <input id="searchbox" type="text" placeholder="Search by district" class="form-control">
+                </div>
+              </form>
+            </div>
 		</header>
 
     <div class="viewport" id="leMap">
@@ -105,6 +105,7 @@
 		</div>
 
     <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/4.3.0/d3.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/d3-queue/3.0.3/d3-queue.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'></script>
