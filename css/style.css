@@ -142,8 +142,10 @@ button {
 	height: 5.3rem;
 	padding: 0.2rem;
 	overflow: hidden;
-
-  background: linear-gradient(#F0F0F0 0%,  #F0F0F0 50%,  #FAFAFA 50%,  #FAFAFA 100%);
+	background: linear-gradient(#F0F0F0 0%,  #F0F0F0 50%,  #FAFAFA 50%,  #FAFAFA 100%);
+	background-image: url(https://www.texasappleseed.org/sites/all/themes/zocalo_custom_zen_theme/images/tx-appleseed-header-background-pattern.png);
+	background-repeat: repeat;
+	border-bottom: 1px solid #CDCDCD;
 	background-size: 1.5rem;
 }
 
@@ -162,9 +164,38 @@ button {
 	margin-top: 10px;
 	margin-right: 50px;
 }
-.masthead__disclaimer {
-	font-size: 0.7em;
+masthead__title h2{
+	margin-bottom:.2em;
+	line-height: 1;
 }
+
+.masthead_right {
+	position: fixed;
+	top: 10px;
+	right:30px;
+	padding-bottom:15px;
+	font-size: 0.85em;
+	align:right;
+}
+.form-control {
+
+	width: 240px;
+}
+.masthead_search, .masthead_select {
+	margin:8px;
+	min-width:230px;
+}
+
+.masthead__disclaimer {
+	font-size: 0.75em;
+}
+.ui-menu .ui-menu-item a{
+	background:red;
+	height:10px;
+	font-size:8px;
+}
+
+
 
 .cartodb-tooltip-content-wrapper {
 	border-radius: 2px;
