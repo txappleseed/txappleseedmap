@@ -1,4 +1,4 @@
-# School Distric Discipline Map
+# School District Discipline Map
 maps for the Texas Appleseed "School to Prison Pipeline" projects
 
 http://txappleseed.github.io/txappleseedmap/
