@@ -138,11 +138,11 @@ var PageControl = (function(){
 
                 if (feature.properties[punishmentPercentValue]){
                     var moreOrLessText = feature.properties[punishmentPercentValue] > 0 ? "more" : "less";
-
+                    var timeOrTimes = punishmentsCount === '1' ? " time" : " times";
                     popupContent = [
                         "<span class='popup-text'>",
-                        groupName + " students received " + punishmentType + " ",
-                        punishmentsCount + " times",
+                        groupName + " received " + punishmentType + " ",
+                        punishmentsCount + timeOrTimes,
                         " accounting for " + punishmentsPercent + "%",
                         " of all " + displayvalue,
                         " in <b>" + districtName + "</b>.",
