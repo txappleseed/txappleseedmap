@@ -81,6 +81,7 @@ var PageControl = (function(){
         // selection changed.
         $("#dropdown").on(
             "change",
+            {context: this},
             function(event) {
 
                 // Get the selection from the drop-down menu
@@ -88,6 +89,8 @@ var PageControl = (function(){
                 console.log("In dropdown" + this.dataSet);
                 // Load the data from the corresponding file
                 thisMap.selectData(this.dataSet);
+                debugger
+                $('.selector__title').html(event.data.context.displaypunishment[this.dataSet]);
             }
         );
         this.setUp();
