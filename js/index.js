@@ -89,7 +89,6 @@ var PageControl = (function(){
                 console.log("In dropdown" + this.dataSet);
                 // Load the data from the corresponding file
                 thisMap.selectData(this.dataSet);
-                debugger
                 $('.selector__title').html(event.data.context.displaypunishment[this.dataSet]);
             }
         );
