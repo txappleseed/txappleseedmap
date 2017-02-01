@@ -136,8 +136,6 @@ var PageControl = (function(){
                     punishmentType = displayvalue,
                     popupContent;
 
-                // debugger
-
                 if (feature.properties[punishmentPercentValue]){
                     var moreOrLessText = feature.properties[punishmentPercentValue] > 0 ? "more" : "less";
                     var timeOrTimes = punishmentsCount === '1' ? " time" : " times";
@@ -158,7 +156,7 @@ var PageControl = (function(){
             },
         };
         var options = thiz.getOptions();
-        console.log(thiz.population);
+
         // change toggle button CSS to indicate "active"
         $(".selector__button").removeClass("selector__button--active");
         $(this).addClass("selector__button--active");
@@ -173,7 +171,7 @@ var PageControl = (function(){
             dataLayer = GEODATA;
         thiz.population = $(this).data("group-id");
         var options = thiz.getOptions();
-        console.log(thiz);
+
         // change toggle button CSS to indicate "active"
         $(".selector__button").removeClass("selector__button--active");
         $(this).addClass("selector__button--active");
