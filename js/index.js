@@ -258,9 +258,9 @@ var PageControl = (function(){
     Map.prototype.getFillColor =   function (d) {
         var red    = ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26','#a50f15'],
             purple = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f'],
-            gray   = '#DEDCDC';
+            white  = '#ffffff';
 
-        return d == false   ? gray    :
+        return d == false   ? "transparent"  :
             d < -0.9984  ? purple[4] :
             d < -0.992   ? purple[3] :
             d < -0.96    ? purple[2] :
@@ -274,7 +274,7 @@ var PageControl = (function(){
             d <  0.992   ? red[2]  :
             d <  0.9984  ? red[3]  :
             d <= 1       ? red[4]  :
-            gray;
+            "transparent";
     };
 
     // Return a reference to the map
