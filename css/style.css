@@ -7,7 +7,7 @@ h4, h5, h6, p, blockquote, pre, a, abbr, acronym,
 address, big, cite, code, del, dfn, em, font, img, ins,
 kbd, q, s, samp, small, strike, strong, sub, sup, tt,
 var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td {
+table, caption, tbody, tfoot, thead, tr, th, td ui-widget {
     margin: 0;
     padding: 0;
     border: 0;
@@ -176,25 +176,31 @@ masthead__title h2{
 	padding-bottom:15px;
 	font-size: 0.85em;
 	align:right;
+	overflow: visible !important;
 }
 .form-control {
-
-	width: 240px;
+	width: 200px;
+	overflow: visible !important;
 }
 .masthead_search, .masthead_select {
 	margin:8px;
-	min-width:230px;
+	min-width:210px;
 }
 
 .masthead__disclaimer {
 	font-size: 0.75em;
 }
-.ui-menu .ui-menu-item a{
-	background:red;
-	height:10px;
-	font-size:8px;
-}
 
+.ui-widget{
+	background:white;
+	font-family: "Proxima Nova", helvetica, arial, sans-serif;
+	font-weight: 400;
+	line-height: 1.45;
+	color: #333;
+	font-size: 0.85em;
+	overflow: visible !important;
+	z-index:9999;
+}
 
 
 .cartodb-tooltip-content-wrapper {
@@ -322,4 +328,8 @@ div.cartodb-legend ul li {
 .leaflet-popup-tip-container {
   margin-left: -20px;
   position: absolute !important;
+}
+
+.leaflet-popup-content {
+	z-index:400 !important;
 }
