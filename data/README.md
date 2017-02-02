@@ -1,4 +1,4 @@
-TODO link to original Texas Education Agency (TEA) data source.
+See the [original Texas Education Agency (TEA) data source](https://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html).
 
 Ask questions to @mscarey :)
 
