@@ -17,8 +17,13 @@ function Map( selector ) {
         zoom: 7
     });
 
-    this.tileLayer = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
+/*    this.tileLayer = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">Stamen</a> contributors'
+    });*/
+
+    this.tileLayer = L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
     });
 
     this.groups = [
@@ -232,6 +237,15 @@ Map.prototype.selectData = function(dataKey) {
     // Add new layer
     this.loadGeojsonLayer(dataKey, this.getOptions(dataKey,this.population));
 };
+
+// highlights district chosen in searchbox
+Map.prototype.zoomToFeature = function(distvalue) {
+    var layer = distvalue;
+
+    var b = districtBounds[distvalue];
+    map.fitBounds([[b.getEast(), b.getSouth()], [b.getWest(), b.getNorth()]]);
+};
+
 
 // highlights district chosen in searchbox
 Map.prototype.highlightFeature = function(distvalue) {
