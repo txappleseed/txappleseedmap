@@ -7,7 +7,7 @@ h4, h5, h6, p, blockquote, pre, a, abbr, acronym,
 address, big, cite, code, del, dfn, em, font, img, ins,
 kbd, q, s, samp, small, strike, strong, sub, sup, tt,
 var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td {
+table, caption, tbody, tfoot, thead, tr, th, td ui-widget {
     margin: 0;
     padding: 0;
     border: 0;
@@ -59,4 +59,277 @@ p{
     font-family: Lato;
     font-weight: 100;
     font-size: 25px;
+}
+
+html {
+	height: 100%;
+	font-size: 16px;
+}
+
+body {
+	height: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+/* TYPOGRAPHY */
+
+body {
+	font-family: "Proxima Nova", helvetica, arial, sans-serif;
+	font-weight: 400;
+	line-height: 1.45;
+	color: #333;
+}
+
+p {
+	margin-bottom: 1.3em;
+	margin-top: 0;
+}
+
+h1, h2, h3, h4 {
+	font-family: "Museo Slab", serif;
+    margin: 1.414em 0 0.5em;
+	font-weight: inherit;
+	line-height: 1.2;
+}
+
+h1, .h1 {
+    margin-top: 0;
+	font-size: 1.602em;
+}
+
+h2, .h2 {font-size: 1.424em;}
+
+h3, .h3 {font-size: 1.266em;}
+
+h4, .h4 {font-size: 1.125em;}
+
+small, .small {font-size: 0.889em;}
+
+button {
+	margin: 0;
+
+	font-size: 0.8em;
+	font-family: inherit;
+	text-align: center;
+
+	appearance: none;
+	background-color: transparent;
+	border: none;
+	color: inherit;
+
+	cursor: pointer;
+}
+
+/* MAP */
+.viewport {
+  	position: relative;
+    height: calc(100% - 5.3rem);
+}
+
+.map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+/* MASTHEAD */
+.masthead {
+	box-sizing: border-box;
+	height: 5.3rem;
+	padding: 0.2rem;
+	overflow: hidden;
+	background: linear-gradient(#F0F0F0 0%,  #F0F0F0 50%,  #FAFAFA 50%,  #FAFAFA 100%);
+	background-image: url(https://www.texasappleseed.org/sites/all/themes/zocalo_custom_zen_theme/images/tx-appleseed-header-background-pattern.png);
+	background-repeat: repeat;
+	border-bottom: 1px solid #CDCDCD;
+	background-size: 1.5rem;
+}
+
+.masthead__logo {
+	float: left;
+	height: 100%;
+	overflow: hidden;
+	width: 120px;
+    margin-left: 30px;
+	background: url('../tx-appleseed-header-logo.png') no-repeat center;
+	background-size: 100%;
+}
+.masthead__content {
+	float: right;
+	width: 80%;
+	margin-top: 10px;
+	margin-right: 50px;
+}
+masthead__title h2{
+	margin-bottom:.2em;
+	line-height: 1;
+}
+
+.masthead_right {
+	position: fixed;
+	top: 10px;
+	right:30px;
+	padding-bottom:15px;
+	font-size: 0.85em;
+	align:right;
+	overflow: visible !important;
+}
+.form-control {
+	width: 200px;
+	overflow: visible !important;
+}
+.masthead_search, .masthead_select {
+	margin:8px;
+	min-width:210px;
+}
+
+.masthead__disclaimer {
+	font-size: 0.75em;
+}
+
+.ui-widget{
+	background:white;
+	font-family: "Proxima Nova", helvetica, arial, sans-serif;
+	font-weight: 400;
+	line-height: 1.45;
+	color: #333;
+	font-size: 0.85em;
+	overflow: visible !important;
+	z-index:9999;
+}
+
+
+.cartodb-tooltip-content-wrapper {
+	border-radius: 2px;
+	background: #fff;
+	background: rgba(255, 255, 255, .9);
+}
+
+
+/* SELECTOR */
+.selector {
+	max-width: 15rem;
+	width: 100%;
+	position: absolute;
+	right:  1.5rem;
+	bottom: 10.75rem;
+	background: #fff;
+	border: 1px solid #999999;
+	border-radius: 4px;
+	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.2);
+}
+
+.selector__title {
+	display: block;
+	padding: 1em;
+
+	font-weight: bold;
+	font-size: 0.75em;
+	text-align: center;
+	text-transform: uppercase;
+
+	border-bottom: 1px solid #999;
+}
+
+.selector__list {
+	padding-left: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.selector__item:not(:last-child) {
+    border-bottom: 1px solid #999;
+}
+
+.selector__button {
+	display: block;
+	width: 100%;
+	padding: 0.8em;
+}
+.selector__button:hover, .selector__button:focus {
+	background-color: #DDD;
+}
+.selector__button:active, .selector__button.selector__button--active {
+	box-shadow: inset 0 3px 15px rgba(0, 0, 0, 0.4);
+	text-shadow:0 -1px #000;
+	background-color: #555;
+	color: #FFF
+}
+
+
+ol {
+
+    padding: 0;
+    border: 1px;
+    outline: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: 100%;
+    font-family: inherit;
+    vertical-align: baseline;
+    list-style-type: none;
+    margin:auto ;
+    padding: 0;
+    width: 400px;
+    background-color: #f1f1f1;
+
+
+}
+
+.fun-time {
+    display: block;
+    padding-left: 10px;
+   margin-top: -10px;
+color: #b30000;
+    padding: 8px 16px;
+    text-decoration: none;
+    width: 400px
+}
+
+/* LEGEND */
+.legend-title {
+  font-size: 18px !important;
+}
+
+.legend-subtitle {
+
+}
+
+.graph-sublegend {
+  width: 80px;
+}
+
+.graph-sublegend-right {
+  width: 80px;
+  text-align: right;
+}
+
+/* Z INDEX */
+
+.z-400 {
+  z-index: 400 !important;
+}
+
+/* MARGIN */
+
+.margin-bottom {
+  margin-bottom: 5px;
+}
+
+/* UGH, guilt */
+div.cartodb-legend ul li {
+  overflow: auto;
+}
+
+.leaflet-popup-tip-container {
+  margin-left: -20px;
+  position: absolute !important;
+}
+
+.leaflet-popup-content {
+	z-index:400 !important;
 }
