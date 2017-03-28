@@ -17,11 +17,11 @@ function Map( selector ) {
         zoom: 7
     });
 
-/*    this.tileLayer = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">Stamen</a> contributors'
-    });*/
+    /*  this.tileLayer = L.tileLayer('https://tile.stamen.com/toner/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">Stamen</a> contributors'
+    }); */
 
-    this.tileLayer = L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
+        this.tileLayer = L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
     });
@@ -64,10 +64,10 @@ function Map( selector ) {
 
     // Dictionary that maps option values to GeoJSON data file paths
     this.dataFiles = {
-        "Expulsion" : "geojson/expulsion_districts.geojson",
-        "AltEdu"    : "geojson/altedu_districts.geojson",
-        "OSS"       : "geojson/oss_districts.geojson",
-        "ISS"       : "geojson/iss_districts.geojson"
+        "Expulsion" : "geojson/simple/expulsion_districts.geojson",
+        "AltEdu"    : "geojson/simple/altedu_districts.geojson",
+        "OSS"       : "geojson/simple/oss_districts.geojson",
+        "ISS"       : "geojson/simple/iss_districts.geojson"
     };
 
     this.groupPercentCode = [
