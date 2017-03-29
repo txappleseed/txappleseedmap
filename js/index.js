@@ -269,6 +269,7 @@ Map.prototype.addDataToMap = function (data, map, options) {
 
     var districtNames = [];
     var districtBounds = new Object();
+    var thiz = this;
     for (var n = 0; n < data.features.length; n++) {
         var dName = data.features[n].properties.DISTNAME;
         if (dName)
@@ -279,8 +280,7 @@ Map.prototype.addDataToMap = function (data, map, options) {
     // autocomplete searchbox stuff
     $("#searchbox").autocomplete({
         source: districtNames,
-        select: function(event, ui)
-        {
+        select: function(event, ui){
             if(ui.item){
                 $('#searchbox').val(ui.item.value);
             }
@@ -288,6 +288,11 @@ Map.prototype.addDataToMap = function (data, map, options) {
             map.fitBounds([[b.getEast(), b.getSouth()], [b.getWest(), b.getNorth()]]);
         }
     });
+
+    $("#searchbox").on("autocompleteselect", { context: this }, function(e, ui){
+      var thiz = e.data.context;
+      thiz.highlightFeature(ui.item.value)
+    } )
 };
 
 
