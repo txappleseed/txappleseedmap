@@ -17,8 +17,13 @@ function Map( selector ) {
         zoom: 7
     });
 
-    this.tileLayer = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">Stamen</a> contributors'
+    /*  this.tileLayer = L.tileLayer('https://tile.stamen.com/toner/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">Stamen</a> contributors'
+    }); */
+
+        this.tileLayer = L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
     });
 
     this.groups = [
@@ -59,10 +64,10 @@ function Map( selector ) {
 
     // Dictionary that maps option values to GeoJSON data file paths
     this.dataFiles = {
-        "Expulsion" : "geojson/expulsion_districts.geojson",
-        "AltEdu"    : "geojson/altedu_districts.geojson",
-        "OSS"       : "geojson/oss_districts.geojson",
-        "ISS"       : "geojson/iss_districts.geojson"
+        "Expulsion" : "geojson/simple/expulsion_districts.geojson",
+        "AltEdu"    : "geojson/simple/altedu_districts.geojson",
+        "OSS"       : "geojson/simple/oss_districts.geojson",
+        "ISS"       : "geojson/simple/iss_districts.geojson"
     };
 
     this.groupPercentCode = [
@@ -104,7 +109,6 @@ Map.prototype.setUp = function () {
         options = this.getOptions();
     // Adds tileLayer from the Map Class to the mapObject
     tileLayer.addTo(mapObject);
-
 //    this.requestInitialData(options);
   //console.log(this.dataSet);
   this.loadGeojsonLayer(this.dataSet, options);
@@ -234,6 +238,14 @@ Map.prototype.selectData = function(dataKey) {
 };
 
 // highlights district chosen in searchbox
+Map.prototype.zoomToFeature = function(distvalue) {
+    var layer = distvalue;
+
+    var b = districtBounds[distvalue];
+    map.fitBounds([[b.getEast(), b.getSouth()], [b.getWest(), b.getNorth()]]);
+};
+
+// highlights district chosen in searchbox
 Map.prototype.highlightFeature = function(distvalue) {
     var layer = distvalue;
 
@@ -255,6 +267,7 @@ Map.prototype.addDataToMap = function (data, map, options) {
 
     var districtNames = [];
     var districtBounds = new Object();
+    //var thiz = this;
     for (var n = 0; n < data.features.length; n++) {
         var dName = data.features[n].properties.DISTNAME;
         if (dName)
@@ -265,8 +278,7 @@ Map.prototype.addDataToMap = function (data, map, options) {
     // autocomplete searchbox stuff
     $("#searchbox").autocomplete({
         source: districtNames,
-        select: function(event, ui)
-        {
+        select: function(event, ui){
             if(ui.item){
                 $('#searchbox').val(ui.item.value);
             }
@@ -274,6 +286,10 @@ Map.prototype.addDataToMap = function (data, map, options) {
             map.fitBounds([[b.getEast(), b.getSouth()], [b.getWest(), b.getNorth()]]);
         }
     });
+   // $("#searchbox").on("autocompleteselect", { context: this }, function(e, ui){
+    //  var thiz = e.data.context;
+   //   thiz.highlightFeature(ui.item.value)
+   // } )
 };
 
 
