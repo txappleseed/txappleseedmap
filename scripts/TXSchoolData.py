@@ -1,4 +1,5 @@
 # # coding: utf-8
+#
 # This file was used to produce DistrictDisparities2015.csv and TXDemo2015.csv for the Texas Appleseed "School to Prison Pipeline" map. If there are any errors in that dataset, they probably originated in this file.
 #
 # The TEA published its District Data file in a different format for 2015, so the process for this notebook has changed. Here it is:
@@ -29,20 +30,33 @@ import pandas as pd
 import re
 from scipy import stats
 from decimal import Decimal
-import numpy as np
 
-year = "2015"  # put the year to use to label the output file (for 2015-16, I use "2016")
-actionsFile = '../data/from_agency/TX2015.csv'  # put the name of the discipline actions file here
-districtFile = '../data/from_agency/district2015.csv'  # put the name of the district demographics file here
+year = "2014"  # put the year to use to label the output file (for 2015-16, I use "2016")
+actionsPath = '../data/from_agency/'  # put the name of the discipline actions directory here
+districtPath = '../data/from_agency/'  # put the name of the district demographics directory here
+
+a = input('enter name of the discipline actions file in " + actionsPath + " (blank for "TX2014.csv") --> ')
+if a == "":
+    a = "TX2014.csv"
+actionsPath = actionsPath + a
+
+d = input('enter name of the district demographics file in " + districtPath + " (blank for "district2014.csv") --> ')
+if d == "":
+    d = "district2014.csv"
+districtPath = districtPath + d
+
+year = input('enter the year for these files (blank for "2014") --> ')
+if year == "":
+    year = "2016"
 
 
-def actions(actionsFile):
+def actions(actionsPath):
     """
     >>> actions('../data/from_agency/TX2016.csv')[14:15]["Group Punishments"]
     39    1592
     Name: Group Punishments, dtype: int64
     """
-    apple = pd.read_csv(actionsFile)
+    apple = pd.read_csv(actionsPath, low_memory=False)
 
     # Delete rows that repeat the headers.
     if apple["REGION"].dtype != int:
@@ -53,6 +67,20 @@ def actions(actionsFile):
 
     # deleting redundant columns
     apple = apple[['DISTRICT', 'SECTION', 'HEADING NAME', "Group Punishments"]]
+
+    # Consolidating some of the descriptors into broader categories
+    appleReplace = {"Group Punishments":
+                        {-99999999: 1},
+                    "SECTION": {
+                        'M-ECO\. DISADV\. JJAEP PLACEMENTS|H-SPEC\. ED\. JJAEP EXPULSIONS': 'C-JJAEP EXPULSIONS',
+                        'N-ECO\. DISADV\. EXPULSIONS|I-SPEC\. ED\. EXPULSIONS': 'D-EXPULSION ACTIONS',
+                        'O-ECO\. DISADV\. DAEP PLACEMENTS|J-SPEC\. ED\. DAEP PLACEMENTS': 'E-DAEP PLACEMENTS',
+                        'P-ECO\. DISADV\. OUT OF SCHOOL SUS.|K-SPEC\. ED\. OUT OF SCHOOL SUS\.': 'F-OUT OF SCHOOL SUSPENSIONS',
+                        'Q-ECO\. DISADV\. IN SCHOOL SUS\.|L-SPEC\. ED\. IN SCHOOL SUS\.': 'G-IN SCHOOL SUSPENSIONS'},
+                    "HEADING NAME": {'SPEC\. ED.*$': 'Special Education',
+                                     'ECO?. DISAD.*$': 'Economic Disadvantage'}
+                    }
+    # print(apple.isnull().any(axis=1))
 
     # string columns to int
     apple = apple.astype({'DISTRICT': int, "Group Punishments": int})
@@ -67,26 +95,13 @@ def actions(actionsFile):
     # Delete rows appearing to double-count the same expulsions.
     apple = apple[apple["SECTION"].str.contains("JJAEP EXPULSIONS|DISCIPLINE ACTION COUNTS") == False]
 
-    # Consolidating some of the descriptors into broader categories
-    appleReplace = {"Group Punishments":
-                        {-99999999: 1},
-                    "SECTION": {
-                        'M-ECO\. DISADV\. JJAEP PLACEMENTS|H-SPEC\. ED\. JJAEP EXPULSIONS': 'C-JJAEP EXPULSIONS',
-                        'N-ECO\. DISADV\. EXPULSIONS|I-SPEC\. ED\. EXPULSIONS': 'D-EXPULSION ACTIONS',
-                        'O-ECO\. DISADV\. DAEP PLACEMENTS|J-SPEC\. ED\. DAEP PLACEMENTS': 'E-DAEP PLACEMENTS',
-                        'P-ECO\. DISADV\. OUT OF SCHOOL SUS.|K-SPEC\. ED\. OUT OF SCHOOL SUS\.': 'F-OUT OF SCHOOL SUSPENSIONS',
-                        'Q-ECO\. DISADV\. IN SCHOOL SUS\.|L-SPEC\. ED\. IN SCHOOL SUS\.': 'G-IN SCHOOL SUSPENSIONS'},
-                    "HEADING NAME": {'SPEC\. ED.*$': 'Special Education',
-                                     'ECO?. DISAD.*$': 'Economic Disadvantage'}
-                    }
-
     apple = apple.replace(to_replace=appleReplace, regex=True)
 
     return apple
 
 
-def populations(districtFile):
-    district = pd.read_csv(districtFile)
+def populations(districtPath):
+    district = pd.read_csv(districtPath)
 
     # deleting redundant columns
 
@@ -121,7 +136,7 @@ def getRacePop(df, row):
 
 
 def getRatio(distPop, racePop, all_punishments, group_punishments):
-    # Calculating the ratio of punishments for the demographic group compared to the punishments for the student population
+    # Calculating ratio of punishments for the demographic group compared to the punishments for the student population
     # as a whole. For instance, "0.505" in the disparity column indicates the group got the punishment 50.5% as often
     # as average for the student population.
 
@@ -149,7 +164,7 @@ def getRatio(distPop, racePop, all_punishments, group_punishments):
 def impossible(distPop, racePop, all_punishments, group_punishments):
     # The "RecordError" column flags implausible data entries. Some of them could still be true if school administrators
     # applied different standards different standards to determine which students belong to which demographic group.
-    # Or some could be the result of students not being counted because of the time they moved in and out of the district.
+    # Or some could be the result of students not being counted because of the time they moved in and out of district.
 
     """
     >>> print(impossible(5, 20, 20, 10))
@@ -218,8 +233,8 @@ def combine(apple, district):
     return apple
 
 
-apple = actions(actionsFile)
-district = populations(districtFile)
+apple = actions(actionsPath)
+district = populations(districtPath)
 apple = combine(apple, district)
 
 district = district.set_index("DISTRICT")
@@ -227,29 +242,29 @@ district = district.set_index("DISTRICT")
 apple["DEMO POPULATION"] = apple.apply(lambda x: getRacePop(district, x), axis=1)  # Temporarily moving this
 # information from the district dataframe to the punishment dataframe to make later calculations easier.
 
-apple["Disparity"] = apple.apply(lambda x: getRatio(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"], \
+apple["Disparity"] = apple.apply(lambda x: getRatio(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"],
                                                     x["Group Punishments"]), axis=1)
 
-apple["LikelyError"] = apple.apply(lambda x: impossible(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"], \
+apple["LikelyError"] = apple.apply(lambda x: impossible(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"],
                                                         x["Group Punishments"]), axis=1)
 
 apple = apple.astype({'Group Punishments': int})
 
-apple["Scale"] = apple.apply(lambda x: getFisher(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"], \
+apple["Scale"] = apple.apply(lambda x: getFisher(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"],
                                                  x["Group Punishments"]), axis=1)
 
 apple = apple[['DISTRICT', 'SECTION', 'HEADING NAME', "Group Punishments", "Disparity", "Scale", "LikelyError"]]
 
 district.reset_index(level=0, inplace=True)
 
-district = district[['DISTRICT', 'DISTNAME', 'DPETALLC', 'ASIAN', 'AMERICAN INDIAN OR ALASKA NAT', \
-                     'NATIVE HAWAIIAN/OTHER PACIFIC', 'HISPANIC/LATINO', 'BLACK OR AFRICAN AMERICAN', \
+district = district[['DISTRICT', 'DISTNAME', 'DPETALLC', 'ASIAN', 'AMERICAN INDIAN OR ALASKA NAT',
+                     'NATIVE HAWAIIAN/OTHER PACIFIC', 'HISPANIC/LATINO', 'BLACK OR AFRICAN AMERICAN',
                      'TWO OR MORE RACES', 'Special Education', 'WHITE', 'Economic Disadvantage']]
 
 DisparitiesFile = "../data/processed/DistrictDisparities" + str(year) + ".csv"
 DemoFile = "../data/processed/TXdemo" + str(year) + ".csv"
 
-apple.to_csv(path_or_buf=DisparitiesFile, columns=['DISTRICT', 'SECTION', 'HEADING NAME', "Group Punishments", \
+apple.to_csv(path_or_buf=DisparitiesFile, columns=['DISTRICT', 'SECTION', 'HEADING NAME', "Group Punishments",
                                                    "Disparity", "Scale", "LikelyError"], index=False)
 
 district.to_csv(path_or_buf=DemoFile, index=False)
