@@ -4,15 +4,8 @@ Ask questions to @mscarey :)
 
 
 ### Texas School District Demographics
-- `TXdemo2014.csv`
 - `TXdemo2015.csv`
-- `TXdemo2015.json`
-- `TXdemo2015_parsed_numbers.json`
-
-
-`TXdemo2015.json` has values parsed as strings. This preserves their original format from the csv.
-`TXdemo2015_parsed_numbers.json` has values parsed as numbers. This has the effect of dropping leading zeros in the `"DISTRICT"` key.
-
+- `TXdemo2016.csv`
 
 - `DISTRICT` - number identifier for each school district
 - `DISTNAME` - string District Name
@@ -45,30 +38,24 @@ Ask questions to @mscarey :)
 "DPETSPEP": 10.4
 ```
 
-### Ratio District
-?
-- ratioDistrict.csv
-- ratioDistrictDAEP.csv
-- ratioDistrictEXP.csv
-- ratioDistrictISS.csv
-- ratioDistrictOSS.csv
-
 ### DistrictDisparities2015.csv
 
 - `district` - number identifier for each school district
-- `feature` - string, one of these four punishments: ["D-EXPULSION ACTIONS", "E-DAEP PLACEMENTS", "F-OUT OF SCHOOL SUSPENSIONS", "G-IN SCHOOL SUSPENSIONS"]
-- `group` - string, one of these nine demographic groups: ["AMERICAN INDIAN OR ALASKA NAT", "ASIAN", "BLACK OR AFRICAN AMERICAN", "HISPANIC/LATINO", "NATIVE HAWAIIAN/OTHER PACIFIC", "TWO OR MORE RACES", "WHITE", "Economic Disadvantage", "Special Education"]. SQL or Carto will rename this column because "group" is a reserved word.
-- `count` - number count of students within that demographic group who got that punishment in that district
-- `disparity` - the percentage difference between the punishment rate for the demographic group compared to the rate for the district's total student population (e.g. "-.5" would mean a rate 50% less than average, or "2.55" would mean 255% more than average). This variable is for creating text that explains the disparity for the user.
-- `scale` - a scaling variable in the range -1 to 1, for assigning the district a color on the map when the corresponding group/feature is selected (on a logarithmic scale, because a lot of the values are very close to -1 or 1). This variable should not be presented to the user as text.
-
+- `SECTION` - string, one of these four punishments: ["D-EXPULSION ACTIONS", "E-DAEP PLACEMENTS", "F-OUT OF SCHOOL SUSPENSIONS", "G-IN SCHOOL SUSPENSIONS"]
+- `HEADING NAME` - string, one of these nine demographic groups: ["AMERICAN INDIAN OR ALASKA NAT", "ASIAN", "BLACK OR AFRICAN AMERICAN", "HISPANIC/LATINO", "NATIVE HAWAIIAN/OTHER PACIFIC", "TWO OR MORE RACES", "WHITE", "Economic Disadvantage", "Special Education"]. (The use of "Heading Name" as a column name comes from the TEA.)
+- `Group Punishments` - number count of students within that demographic group who got that punishment in that district
+- `Disparity` - the percentage difference between the punishment rate for the demographic group compared to the rate for the district's total student population (e.g. "-.5" would mean a rate 50% less than average, or "2.55" would mean 255% more than average). This variable is for creating text that explains the disparity for the user.
+- `Scale` - a scaling variable in the range -1 to 1, for assigning the district a color on the map when the corresponding group/feature is selected (on a logarithmic scale, because a lot of the values are very close to -1 or 1). This variable should not be presented to the user as text.
+- `RecordError` - a boolean value set to "True" in situations suggesting an error in the TEA's data. Specifically, if the number of punishments for a demographic group exceeds the number of punishments for all students, if the population of a demographic group exceeds the population of all students, or if some punishments have been given to a demographic group despite the population of that group being 0.
 
 #### example:
 ```
-"district": 001902,
-"feature": "E-DAEP PLACEMENTS",
-"group": "BLACK OR AFRICAN AMERICAN",
-"count": 1,
-"disparity": 6.0741,
-"scale": 0.860911
+"district": 1902,
+"SECTION": "E-DAEP PLACEMENTS",
+"HEADING NAME": "BLACK OR AFRICAN AMERICAN",
+"Group Punishments": 1,
+"Disparity": 6.0741,
+"Scale": 0.860911
+"RecordError": False
+
 ```
