@@ -80,6 +80,15 @@ function Map( selector ) {
         "DPETWHIP", // white?
     ];
 
+    // Default Stripes.
+    this.stripes = new L.StripePattern({
+        weight: 1,
+        spaceWeight: .5,
+        color: '#b3b3b3',
+        angle: 45
+    });
+
+
     this.$el.find(".selector__button").on("click", {context: this}, this.handleDataToggleClick);
 
     // Attach event handler to drop-down menu to update data after
@@ -106,17 +115,19 @@ Map.prototype.setUp = function () {
         tileLayer  = this.tileLayer,
         punishments = this.punishments,
         groups = this.groups,
+        stripes = this.stripes,
         options = this.getOptions();
     // Adds tileLayer from the Map Class to the mapObject
+    stripes.addTo(mapObject); //adding pattern definition to mapObject
     tileLayer.addTo(mapObject);
-//    this.requestInitialData(options);
-  //console.log(this.dataSet);
+    //this.requestInitialData(options);
   this.loadGeojsonLayer(this.dataSet, options);
 };
 
+
 Map.prototype.getOptions = function () {
-    //console.log(this.dataSet + " right now");
     var getFillColor = this.getFillColor,
+        stripes = this.stripes,
         fischerValue = this.dataSet + "_scale_" + this.groups[this.population],
         punishmentPercentValue = this.dataSet + "_percent_" + this.groups[this.population],
         punishmentCountValue = this.dataSet + "_count_" + this.groups[this.population],
@@ -124,15 +135,28 @@ Map.prototype.getOptions = function () {
         groupNameInPopup = this.groupDisplayName[this.population],
         displayvalue = this.displaypunishment[this.dataSet];
     return {
+
         style: function style(feature) {
-            return {
-                fillColor: getFillColor(Number(feature.properties[fischerValue])),
-                weight: 1,
-                opacity: 1,
-                color: '#b3b3b3',
-                fillOpacity: 0.6,
-            };
-        },
+            var value = (Number(feature.properties[fischerValue]));
+            if (isNaN(value)){
+                //console.log (value);
+                return {
+                    fillColor: getFillColor(Number(feature.properties[fischerValue])),
+                    fillPattern: stripes,
+                    weight: 1,
+                    opacity: 1,
+                    color: '#b3b3b3',
+                    fillOpacity: 0.6
+                }
+            } else {
+                return {
+                    fillColor: getFillColor(Number(feature.properties[fischerValue])),
+                    weight: 1,
+                    opacity: 1,
+                    color: '#b3b3b3',
+                    fillOpacity: 0.6
+                };
+            }},
         onEachFeature: function onEachFeature(feature, layer) {
             var percentStudentsByGroup = feature.properties[percentStudentsValue],
                 districtName = feature.properties.DISTNAME,
@@ -141,8 +165,6 @@ Map.prototype.getOptions = function () {
                 punishmentsCount = feature.properties[punishmentCountValue] || 0,
                 punishmentType = displayvalue,
                 popupContent;
-
-            // debugger
 
             if (feature.properties[punishmentPercentValue]){
                 var moreOrLessText = feature.properties[punishmentPercentValue] > 0 ? "more" : "less";
@@ -163,7 +185,6 @@ Map.prototype.getOptions = function () {
         }
     };
     var options = thiz.getOptions();
-    //console.log(thiz.population);
     // change toggle button CSS to indicate "active"
     $(".selector__button").removeClass("selector__button--active");
     $(this).addClass("selector__button--active");
@@ -202,7 +223,7 @@ Map.prototype.clearGeojsonLayer = function(){
 Map.prototype.loadGeojsonLayer = function(dataKey, geoJsonOptions) {
     // Get path to data file
     var path = this.dataFiles[dataKey];
-    console.log(path + " is the path and " + dataKey + " is the key " + JSON.stringify(geoJsonOptions));
+    //console.log(path + " is the path and " + dataKey + " is the key " + JSON.stringify(geoJsonOptions));
     // Load data from file
     $.ajax({
         dataType: "json",
@@ -291,7 +312,6 @@ Map.prototype.addDataToMap = function (data, map, options) {
    //   thiz.highlightFeature(ui.item.value)
    // } )
 };
-
 
 Map.prototype.getFillColor =   function (d) {
     var red    = ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26','#a50f15'],
