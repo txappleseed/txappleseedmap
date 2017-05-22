@@ -1,28 +1,23 @@
-# # coding: utf-8
-#
-# This file was used to produce DistrictDisparities2015.csv and TXDemo2015.csv for the Texas Appleseed "School to Prison Pipeline" map. If there are any errors in that dataset, they probably originated in this file.
-#
-# The TEA published its District Data file in a different format for 2015, so the process for this notebook has changed. Here it is:
-#
-# 1. Download all 20 of the 2014-2015 region files from http://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html and pasted them together (as TX2015.csv). Sorry this is tedious and not automated.
-#
-# 2. Download "District and Charter Detail Data" (Snapshot 2015) "Data File (comma-delimited *.dat)" from https://rptsvr1.tea.texas.gov/perfreport/snapshot/download.html (as district2015.csv)
-#
-# 3. Put TX2015.csv and district2015.csv in the same directory where this notebook is running.
-#
-# 4. Run the Python code below (in Jupyter, click Kernel -> "Restart & Run All"). The files created in steps 1-2 are used by the lines that say "apple = pd.read_csv('TX2015.csv')" and "district = pd.read_csv('district2015.csv')".
-#
-# 5. The program will create two new files to use in the Appleseed map: 'DistrictDisparities2015.csv' and 'TXDemo2015.csv'.
-
-# In[1]:
-
 """
-Downloaded all 20 of the 2014-2015 region files from 
-http://ritter.tea.state.tx.us/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html 
-and pasted them together (as TX2015.csv).
 
-Also downloaded "District and Charter Detail Data" (Snapshot 2015) from 
-http://ritter.tea.state.tx.us/perfreport/snapshot/download.html (as district2015.csv)
+This script was used to produce DistrictDisparities2015.csv and TXDemo2015.csv for the Texas Appleseed "School to Prison Pipeline" map. If there are any errors in that dataset, they likely originated in this file.
+
+The TEA published its District Data file in a different format for 2015, so this script has been updated. It should be working correctly for the years 2014-2016, but it could always need changes for other years. Here's an example for the year 2015:
+
+1. Download all 20 of the 2014-2015 region files from http://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html and paste them together (as TX2015.csv). You can take a look at the example input files for the years 2014-2016 in the directory '../data/from_agency/' to see how this file should look. Sorry this part of the process is slightly tedious and not automated.
+
+2. Download "District and Charter Detail Data" (Snapshot 2015) "Data File (comma-delimited *.dat)" from https://rptsvr1.tea.texas.gov/perfreport/snapshot/download.html (as district2015.csv)
+
+3. Put TX2015.csv and district2015.csv in the directory at the path '../data/from_agency/'. If you need to use a different path, change the variables "actionsPath" and "districtPath" in this script.
+
+4. Make sure Python is installed on your machine, with the libraries "pandas" "re" "scipy" and "decimal"
+
+5. Use the command line to navigate to the directory where this file (TXSchoolData.py) is located, and run it with the command "python TXSchoolData.py"
+
+6. You'll be prompted to type the names of the files you created in steps 1-2, plus a year to append to the name of the output file.
+
+7. The script will create two new files to use in the Appleseed map: 'DistrictDisparities[year].csv' and 'TXDemo[year].csv'.
+
 
 """
 
@@ -32,8 +27,8 @@ from scipy import stats
 from decimal import Decimal
 
 year = "2016"  # put the year to use to label the output file (for 2015-16, I use "2016")
-actionsPath = '../data/from_agency/'  # put the name of the discipline actions directory here
-districtPath = '../data/from_agency/'  # put the name of the district demographics directory here
+actionsPath = '../data/from_agency/'  # put the path to the discipline actions directory here
+districtPath = '../data/from_agency/'  # put the path to the district demographics directory here
 
 a = input('enter name of the discipline actions file in " + actionsPath + " (blank for "TX2016.csv") --> ')
 if a == "":
