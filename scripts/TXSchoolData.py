@@ -31,21 +31,21 @@ import re
 from scipy import stats
 from decimal import Decimal
 
-year = "2014"  # put the year to use to label the output file (for 2015-16, I use "2016")
+year = "2016"  # put the year to use to label the output file (for 2015-16, I use "2016")
 actionsPath = '../data/from_agency/'  # put the name of the discipline actions directory here
 districtPath = '../data/from_agency/'  # put the name of the district demographics directory here
 
-a = input('enter name of the discipline actions file in " + actionsPath + " (blank for "TX2014.csv") --> ')
+a = input('enter name of the discipline actions file in " + actionsPath + " (blank for "TX2016.csv") --> ')
 if a == "":
-    a = "TX2014.csv"
+    a = "TX2016.csv"
 actionsPath = actionsPath + a
 
-d = input('enter name of the district demographics file in " + districtPath + " (blank for "district2014.csv") --> ')
+d = input('enter name of the district demographics file in " + districtPath + " (blank for "district2016.csv") --> ')
 if d == "":
-    d = "district2014.csv"
+    d = "district2016.csv"
 districtPath = districtPath + d
 
-year = input('enter the year for these files (blank for "2014") --> ')
+year = input('enter the year for these files (blank for "2016") --> ')
 if year == "":
     year = "2016"
 
