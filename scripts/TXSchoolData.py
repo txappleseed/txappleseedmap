@@ -1,27 +1,23 @@
-# # coding: utf-8
-# This file was used to produce DistrictDisparities2015.csv and TXDemo2015.csv for the Texas Appleseed "School to Prison Pipeline" map. If there are any errors in that dataset, they probably originated in this file.
-#
-# The TEA published its District Data file in a different format for 2015, so the process for this notebook has changed. Here it is:
-#
-# 1. Download all 20 of the 2014-2015 region files from http://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html and pasted them together (as TX2015.csv). Sorry this is tedious and not automated.
-#
-# 2. Download "District and Charter Detail Data" (Snapshot 2015) "Data File (comma-delimited *.dat)" from https://rptsvr1.tea.texas.gov/perfreport/snapshot/download.html (as district2015.csv)
-#
-# 3. Put TX2015.csv and district2015.csv in the same directory where this notebook is running.
-#
-# 4. Run the Python code below (in Jupyter, click Kernel -> "Restart & Run All"). The files created in steps 1-2 are used by the lines that say "apple = pd.read_csv('TX2015.csv')" and "district = pd.read_csv('district2015.csv')".
-#
-# 5. The program will create two new files to use in the Appleseed map: 'DistrictDisparities2015.csv' and 'TXDemo2015.csv'.
-
-# In[1]:
-
 """
-Downloaded all 20 of the 2014-2015 region files from 
-http://ritter.tea.state.tx.us/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html 
-and pasted them together (as TX2015.csv).
 
-Also downloaded "District and Charter Detail Data" (Snapshot 2015) from 
-http://ritter.tea.state.tx.us/perfreport/snapshot/download.html (as district2015.csv)
+This script was used to produce DistrictDisparities2015.csv and TXDemo2015.csv for the Texas Appleseed "School to Prison Pipeline" map. If there are any errors in that dataset, they likely originated in this file.
+
+The TEA published its District Data file in a different format for 2015, so this script has been updated. It should be working correctly for the years 2014-2016, but it could always need changes for other years. Here's an example for the year 2015:
+
+1. Download all 20 of the 2014-2015 region files from http://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html and paste them together (as TX2015.csv). You can take a look at the example input files for the years 2014-2016 in the directory '../data/from_agency/' to see how this file should look. Sorry this part of the process is slightly tedious and not automated.
+
+2. Download "District and Charter Detail Data" (Snapshot 2015) "Data File (comma-delimited *.dat)" from https://rptsvr1.tea.texas.gov/perfreport/snapshot/download.html (as district2015.csv)
+
+3. Put TX2015.csv and district2015.csv in the directory at the path '../data/from_agency/'. If you need to use a different path, change the variables "actionsPath" and "districtPath" in this script.
+
+4. Make sure Python is installed on your machine, with the libraries "pandas" "re" "scipy" and "decimal"
+
+5. Use the command line to navigate to the directory where this file (TXSchoolData.py) is located, and run it with the command "python TXSchoolData.py"
+
+6. You'll be prompted to type the names of the files you created in steps 1-2, plus a year to append to the name of the output file.
+
+7. The script will create two new files to use in the Appleseed map: 'DistrictDisparities[year].csv' and 'TXDemo[year].csv'.
+
 
 """
 
@@ -29,20 +25,33 @@ import pandas as pd
 import re
 from scipy import stats
 from decimal import Decimal
-import numpy as np
 
-year = "2015"  # put the year to use to label the output file (for 2015-16, I use "2016")
-actionsFile = '../data/from_agency/TX2015.csv'  # put the name of the discipline actions file here
-districtFile = '../data/from_agency/district2015.csv'  # put the name of the district demographics file here
+year = "2016"  # put the year to use to label the output file (for 2015-16, I use "2016")
+actionsPath = '../data/from_agency/'  # put the path to the discipline actions directory here
+districtPath = '../data/from_agency/'  # put the path to the district demographics directory here
+
+a = input('enter name of the discipline actions file in " + actionsPath + " (blank for "TX2016.csv") --> ')
+if a == "":
+    a = "TX2016.csv"
+actionsPath = actionsPath + a
+
+d = input('enter name of the district demographics file in " + districtPath + " (blank for "district2016.csv") --> ')
+if d == "":
+    d = "district2016.csv"
+districtPath = districtPath + d
+
+year = input('enter the year for these files (blank for "2016") --> ')
+if year == "":
+    year = "2016"
 
 
-def actions(actionsFile):
+def actions(actionsPath):
     """
     >>> actions('../data/from_agency/TX2016.csv')[14:15]["Group Punishments"]
     39    1592
     Name: Group Punishments, dtype: int64
     """
-    apple = pd.read_csv(actionsFile)
+    apple = pd.read_csv(actionsPath, low_memory=False)
 
     # Delete rows that repeat the headers.
     if apple["REGION"].dtype != int:
@@ -53,6 +62,20 @@ def actions(actionsFile):
 
     # deleting redundant columns
     apple = apple[['DISTRICT', 'SECTION', 'HEADING NAME', "Group Punishments"]]
+
+    # Consolidating some of the descriptors into broader categories
+    appleReplace = {"Group Punishments":
+                        {-99999999: 1},
+                    "SECTION": {
+                        'M-ECO\. DISADV\. JJAEP PLACEMENTS|H-SPEC\. ED\. JJAEP EXPULSIONS': 'C-JJAEP EXPULSIONS',
+                        'N-ECO\. DISADV\. EXPULSIONS|I-SPEC\. ED\. EXPULSIONS': 'D-EXPULSION ACTIONS',
+                        'O-ECO\. DISADV\. DAEP PLACEMENTS|J-SPEC\. ED\. DAEP PLACEMENTS': 'E-DAEP PLACEMENTS',
+                        'P-ECO\. DISADV\. OUT OF SCHOOL SUS.|K-SPEC\. ED\. OUT OF SCHOOL SUS\.': 'F-OUT OF SCHOOL SUSPENSIONS',
+                        'Q-ECO\. DISADV\. IN SCHOOL SUS\.|L-SPEC\. ED\. IN SCHOOL SUS\.': 'G-IN SCHOOL SUSPENSIONS'},
+                    "HEADING NAME": {'SPEC\. ED.*$': 'Special Education',
+                                     'ECO?. DISAD.*$': 'Economic Disadvantage'}
+                    }
+    # print(apple.isnull().any(axis=1))
 
     # string columns to int
     apple = apple.astype({'DISTRICT': int, "Group Punishments": int})
@@ -67,26 +90,13 @@ def actions(actionsFile):
     # Delete rows appearing to double-count the same expulsions.
     apple = apple[apple["SECTION"].str.contains("JJAEP EXPULSIONS|DISCIPLINE ACTION COUNTS") == False]
 
-    # Consolidating some of the descriptors into broader categories
-    appleReplace = {"Group Punishments":
-                        {-99999999: 1},
-                    "SECTION": {
-                        'M-ECO\. DISADV\. JJAEP PLACEMENTS|H-SPEC\. ED\. JJAEP EXPULSIONS': 'C-JJAEP EXPULSIONS',
-                        'N-ECO\. DISADV\. EXPULSIONS|I-SPEC\. ED\. EXPULSIONS': 'D-EXPULSION ACTIONS',
-                        'O-ECO\. DISADV\. DAEP PLACEMENTS|J-SPEC\. ED\. DAEP PLACEMENTS': 'E-DAEP PLACEMENTS',
-                        'P-ECO\. DISADV\. OUT OF SCHOOL SUS.|K-SPEC\. ED\. OUT OF SCHOOL SUS\.': 'F-OUT OF SCHOOL SUSPENSIONS',
-                        'Q-ECO\. DISADV\. IN SCHOOL SUS\.|L-SPEC\. ED\. IN SCHOOL SUS\.': 'G-IN SCHOOL SUSPENSIONS'},
-                    "HEADING NAME": {'SPEC\. ED.*$': 'Special Education',
-                                     'ECO?. DISAD.*$': 'Economic Disadvantage'}
-                    }
-
     apple = apple.replace(to_replace=appleReplace, regex=True)
 
     return apple
 
 
-def populations(districtFile):
-    district = pd.read_csv(districtFile)
+def populations(districtPath):
+    district = pd.read_csv(districtPath)
 
     # deleting redundant columns
 
@@ -121,7 +131,7 @@ def getRacePop(df, row):
 
 
 def getRatio(distPop, racePop, all_punishments, group_punishments):
-    # Calculating the ratio of punishments for the demographic group compared to the punishments for the student population
+    # Calculating ratio of punishments for the demographic group compared to the punishments for the student population
     # as a whole. For instance, "0.505" in the disparity column indicates the group got the punishment 50.5% as often
     # as average for the student population.
 
@@ -149,7 +159,7 @@ def getRatio(distPop, racePop, all_punishments, group_punishments):
 def impossible(distPop, racePop, all_punishments, group_punishments):
     # The "RecordError" column flags implausible data entries. Some of them could still be true if school administrators
     # applied different standards different standards to determine which students belong to which demographic group.
-    # Or some could be the result of students not being counted because of the time they moved in and out of the district.
+    # Or some could be the result of students not being counted because of the time they moved in and out of district.
 
     """
     >>> print(impossible(5, 20, 20, 10))
@@ -218,8 +228,8 @@ def combine(apple, district):
     return apple
 
 
-apple = actions(actionsFile)
-district = populations(districtFile)
+apple = actions(actionsPath)
+district = populations(districtPath)
 apple = combine(apple, district)
 
 district = district.set_index("DISTRICT")
@@ -227,29 +237,29 @@ district = district.set_index("DISTRICT")
 apple["DEMO POPULATION"] = apple.apply(lambda x: getRacePop(district, x), axis=1)  # Temporarily moving this
 # information from the district dataframe to the punishment dataframe to make later calculations easier.
 
-apple["Disparity"] = apple.apply(lambda x: getRatio(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"], \
+apple["Disparity"] = apple.apply(lambda x: getRatio(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"],
                                                     x["Group Punishments"]), axis=1)
 
-apple["LikelyError"] = apple.apply(lambda x: impossible(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"], \
+apple["LikelyError"] = apple.apply(lambda x: impossible(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"],
                                                         x["Group Punishments"]), axis=1)
 
 apple = apple.astype({'Group Punishments': int})
 
-apple["Scale"] = apple.apply(lambda x: getFisher(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"], \
+apple["Scale"] = apple.apply(lambda x: getFisher(x["DPETALLC"], x["DEMO POPULATION"], x["PUNISHMENTS"],
                                                  x["Group Punishments"]), axis=1)
 
 apple = apple[['DISTRICT', 'SECTION', 'HEADING NAME', "Group Punishments", "Disparity", "Scale", "LikelyError"]]
 
 district.reset_index(level=0, inplace=True)
 
-district = district[['DISTRICT', 'DISTNAME', 'DPETALLC', 'ASIAN', 'AMERICAN INDIAN OR ALASKA NAT', \
-                     'NATIVE HAWAIIAN/OTHER PACIFIC', 'HISPANIC/LATINO', 'BLACK OR AFRICAN AMERICAN', \
+district = district[['DISTRICT', 'DISTNAME', 'DPETALLC', 'ASIAN', 'AMERICAN INDIAN OR ALASKA NAT',
+                     'NATIVE HAWAIIAN/OTHER PACIFIC', 'HISPANIC/LATINO', 'BLACK OR AFRICAN AMERICAN',
                      'TWO OR MORE RACES', 'Special Education', 'WHITE', 'Economic Disadvantage']]
 
 DisparitiesFile = "../data/processed/DistrictDisparities" + str(year) + ".csv"
 DemoFile = "../data/processed/TXdemo" + str(year) + ".csv"
 
-apple.to_csv(path_or_buf=DisparitiesFile, columns=['DISTRICT', 'SECTION', 'HEADING NAME', "Group Punishments", \
+apple.to_csv(path_or_buf=DisparitiesFile, columns=['DISTRICT', 'SECTION', 'HEADING NAME', "Group Punishments",
                                                    "Disparity", "Scale", "LikelyError"], index=False)
 
 district.to_csv(path_or_buf=DemoFile, index=False)
