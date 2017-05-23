@@ -127,6 +127,7 @@ Map.prototype.setUp = function () {
 
 Map.prototype.getOptions = function () {
     var getFillColor = this.getFillColor,
+        sentenceCase = this.sentenceCase,
         stripes = this.stripes,
         fischerValue = this.dataSet + "_scale_" + this.groups[this.population],
         punishmentPercentValue = this.dataSet + "_percent_" + this.groups[this.population],
@@ -179,7 +180,7 @@ Map.prototype.getOptions = function () {
                     "</span>"
                 ].join('');
             } else {
-                popupContent = "<span>Data not available for this student group.</span>";
+                popupContent = "<span class='popup-text'>Data not available in <b>" + districtName + "</b> for this student group.</span>";
             }
             if (feature.properties) layer.bindPopup(popupContent);
         }
@@ -307,11 +308,9 @@ Map.prototype.addDataToMap = function (data, map, options) {
             map.fitBounds([[b.getEast(), b.getSouth()], [b.getWest(), b.getNorth()]]);
         }
     });
-   // $("#searchbox").on("autocompleteselect", { context: this }, function(e, ui){
-    //  var thiz = e.data.context;
-   //   thiz.highlightFeature(ui.item.value)
-   // } )
+
 };
+
 
 Map.prototype.getFillColor =   function (d) {
     var red    = ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26','#a50f15'],
