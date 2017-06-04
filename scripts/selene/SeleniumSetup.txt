@@ -1,0 +1,44 @@
+These are instructions for setting up the public domain Selenium IDE
+on a windows pc for the purpose of automating data collection
+from Websites. In particular, Selenium can be used to download 
+data from http://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html 
+for the txappleseed project ( http://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html )
+
+Onetime setup steps (annoying but you only have to do them once):
+
+1. Mozilla Firefox.
+
+2. Click on the "Open menu" icon and select "Add Ons".
+
+3. Install the following add-ons:
+    a. Selenium IDE
+    b. File Logging (Selenium IDE)
+
+4. In the "Open Menu" menu, customize to add the Selenium IDE button if not visible.
+   In the "Open Menu" menu, start Selenium IDE
+
+5. Create a file called "user_extensions.js" somewhere.
+
+6. Fill the "user-extensions.js" with the following script text:
+   
+// ==================== File Writer ====================
+Selenium.prototype.doWriteData = function(textToSave, location)
+{   
+    var data = textToSave;
+    var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+    file.initWithPath(location);
+    var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
+    foStream.init(file, 0x02 | 0x08 | 0x20, 0666, 0);
+    var converter = Components.classes["@mozilla.org/intl/converter-output-stream;1"].createInstance(Components.interfaces.nsIConverterOutputStream);
+    converter.init(foStream, "UTF-8", 0, 0);
+    converter.writeString(data);
+    converter.close();
+}
+
+Note: I found this extension here:
+https://stackoverflow.com/questions/11027122/how-to-load-write-data-into-a-newfile-using-selenium-ide
+
+7. In the Selenium IDE popup
+   Select Options->"Options..."
+   place the path of the user-extensions.js in the textbox
+   for "Selenium Core Extensions (user-extensions.js)

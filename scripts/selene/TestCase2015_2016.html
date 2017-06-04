@@ -1,0 +1,837 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="https://rptsvr1.tea.texas.gov/" />
+<title>New Test</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">New Test</td></tr>
+</thead><tbody>
+<!--Operations for Region 1-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 1</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage1}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage1}</td>
+	<td>C:\\selene\\TX2015_region1.txt</td>
+</tr>
+<!--Operations for Region 2-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 2</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage2</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage2}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage2}</td>
+	<td>C:\\selene\\TX2015_region2.txt</td>
+</tr>
+<!--Operations for Region 3-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 3</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage3}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage3}</td>
+	<td>C:\\selene\\TX2015_region3.txt</td>
+</tr>
+<!--Operations for Region 4-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 4</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage4</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage4}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage4}</td>
+	<td>C:\\selene\\TX2015_region4.txt</td>
+</tr>
+<!--Operations for Region 5-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 5</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage5</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage5}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage5}</td>
+	<td>C:\\selene\\TX2015_region5.txt</td>
+</tr>
+<!--Operations for Region 6-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 6</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage6</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage6}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage6}</td>
+	<td>C:\\selene\\TX2015_region6.txt</td>
+</tr>
+<!--Operations for Region 7-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 7</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage7</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage7}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage7}</td>
+	<td>C:\\selene\\TX2015_region7.txt</td>
+</tr>
+<!--Operations for Region 8-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 8</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage8</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage8}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage8}</td>
+	<td>C:\\selene\\TX2015_region8.txt</td>
+</tr>
+<!--Operations for Region 9-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 9</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage9</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage9}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage9}</td>
+	<td>C:\\selene\\TX2015_region9.txt</td>
+</tr>
+<!--Operations for Region 10-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 10</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage10</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage10}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage10}</td>
+	<td>C:\\selene\\TX2015_region10.txt</td>
+</tr>
+<!--On to the second half.............................-->
+<!--Operations for Region 11-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 11</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage11</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage11}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage11}</td>
+	<td>C:\\selene\\TX2015_region1.txt</td>
+</tr>
+<!--Operations for Region 12-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 12</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage12</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage12}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage12}</td>
+	<td>C:\\selene\\TX2015_region12.txt</td>
+</tr>
+<!--Operations for Region 13-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 13</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage13</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage13}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage13}</td>
+	<td>C:\\selene\\TX2015_region13.txt</td>
+</tr>
+<!--Operations for Region 4-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 14</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage14</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage14}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage14}</td>
+	<td>C:\\selene\\TX2015_region14.txt</td>
+</tr>
+<!--Operations for Region 15-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 15</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage15</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage15}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage15}</td>
+	<td>C:\\selene\\TX2015_region15.txt</td>
+</tr>
+<!--Operations for Region 16-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 16</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage16</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage16}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage16}</td>
+	<td>C:\\selene\\TX2015_region16.txt</td>
+</tr>
+<!--Operations for Region 7-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 17</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage17</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage17}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage17}</td>
+	<td>C:\\selene\\TX2015_region17.txt</td>
+</tr>
+<!--Operations for Region 18-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 18</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage18</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage18}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage18}</td>
+	<td>C:\\selene\\TX2015_region18.txt</td>
+</tr>
+<!--Operations for Region 19-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 19</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage19</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage19}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage19}</td>
+	<td>C:\\selene\\TX2015_region19.txt</td>
+</tr>
+<!--Operations for Region 20-->
+<tr>
+	<td>open</td>
+	<td>/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_District_Summary_Year</td>
+	<td>label=2015-2016</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=Select_Region_List</td>
+	<td>label=Region 20</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=Select_District_Summary_CSV</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=Download_District_Summaries_Region_Button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeBodyText</td>
+	<td>varpage20</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>${varpage20}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>writeData</td>
+	<td>${varpage20}</td>
+	<td>C:\\selene\\TX2015_region20.txt</td>
+</tr>
+</tbody></table>
+</body>
+</html>

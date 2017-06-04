@@ -1,159 +1,116 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Alternative School Placements Placements</title>
+    <title>Texas School Discipline</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    <link rel="shortcut icon" href="https://cartodb.com/assets/favicon.ico" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="js/vendor/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="css/cartodb.css">
+    <link rel="stylesheet" href="css/style.css">
 
-    <link rel='stylesheet prefetch' href='http://izimodal.marcelodolce.com/css/iziModal.min.css'>
-    <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/themes/css/cartodb.css" />
-    <link rel="stylesheet" href="tamaps.css">
-
-  <div id="modal-one" class="iziModal" data-izimodal-title="How do you want to get involved?" data-izimodal-subtitle="">
-<ol>
-<li><button class= "fun-time"  data-izmodal-next="" onclick="window.location.href='http://www.fyi.legis.state.tx.us/Home.aspx'">Contact my Texas State Representative</button></li>
-<li><button class = "fun-time"  data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/pro-bono-opportunities'" >Volunteer</button></li>
-<li><button class = "fun-time" data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/school-prison-pipeline'">Learn about the school-to-prison pipeline</button></li>
-<li><button class = "fun-time" data-izimodal-next="" onclick="window.location.href='https://www.texasappleseed.org/contact'"   >Tell your story</button></li>
-</ol>
-</div>
-
-
-	<script type='html' id="legend_template">
-
-       <div class='cartodb-legend density'>
-       <ul>
-          <li class="min">
-             Number of Placements per 100 Students
-          </li>
-
-          <li class="graph leg" style="border-radius: 0; border:none">
-          <div class="colors">
-              <div class="quartile" style="background-color:#F1EEF6"></div>
-              <div class="quartile" style="background-color:#D4B9DA"></div>
-              <div class="quartile" style="background-color:#C994C7"></div>
-              <div class="quartile" style="background-color:#DF65B0"></div>
-              <div class="quartile" style="background-color:#E7298A"></div>
-              <div class="quartile" style="background-color:#CE1256"></div>
-              <div class="quartile" style="background-color:#91003F"></div>
-          </div>
-          <div class="colors" style="font-weight:normal; text-align: center">
-              <div class="quartile" style="padding-top: 5px" >>1</div>
-              <div class="quartile" style="padding-top: 5px" >2</div>
-              <div class="quartile" style="padding-top: 5px" >3</div>
-              <div class="quartile" style="padding-top: 5px" >4</div>
-              <div class="quartile" style="padding-top: 5px" >5</div>
-              <div class="quartile" style="padding-top: 5px" >6</div>
-              <div class="quartile" style="padding-top: 5px" >7</div>
-          </div>
-          </li>
-       </ul>
-       </div>
-
- </script>
- <script type='html' id="legend_template2">
-
-       <div class='cartodb-legend density'>
-       <ul>
-          <li class="min">
-             Inequity Level, per district (See note above)
-          </li>
-
-          <li class="graph leg" style="border-radius: 0; border:none">
-          <div class="colors">
-              <div class="quartile" style="background-color:#2166AC"></div>
-              <div class="quartile" style="background-color:#2793CD"></div>
-              <div class="quartile" style="background-color:#64BEE1"></div>
-              <div class="quartile" style="background-color:#AEE1EB"></div>
-              <div class="quartile" style="background-color:#F7F7F7"></div>
-              <div class="quartile" style="background-color:#FFD8B5"></div>
-              <div class="quartile" style="background-color:#F6A678"></div>
-              <div class="quartile" style="background-color:#DB6849"></div>
-              <div class="quartile" style="background-color:#B0182B"></div>
-              <div class="quartile" style="background-color:#DDD"></div>
-          </div>
-          <div class="colors" style="font-weight:normal; text-align: center">
-              <div class="quartile" style="padding-top: 5px" >.2</div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" >1</div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" ></div>
-              <div class="quartile" style="padding-top: 5px" >50</div>
-              <div class="quartile" style="padding-top: 5px" >No Data</div>
-          </div>
-          </li>
-       </ul>
-       </div>
-
- </script>
   </head>
+
   <body>
 		<header class="masthead">
 			<h1 class="masthead__logo"></h1>
 			<div class="masthead__content">
-				<h1 class="masthead__title h4">Alternative School Placements, Pre-K through 12th Grade (2013-14)</h1>
-				<p class="masthead__disclaimer">*Inequity Level is calculated as the percentage of referred students divided for that group divided by the percentage of total students in the total population. <em>Higher inequity levels represent greater inequity in the district.</em></p>
-			</div>
-		</header>
-    <div class="viewport">
-    <div id="map" class="map"></div>
-			<div class="selector">
-				<header class="selector__header">
-					<span class="selector__title">Alternative School Placements</span>
-				</header>
-				<ul class="selector__list">
-					<li class="selector__item">
-						<button class="selector__button selector__button--active" data-layer="0">Overall</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="1">Special Education Students</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="2">African American Students</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="3">Asian Students</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="4">Latino Students</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="5">Native American Students</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="6">Students of two or More Races</button>
-					</li>
-					<li class="selector__item">
-						<button class="selector__button" data-layer="7">White Students</button>
-					</li>
-				</ul>
-			</div>
+				<h1 class="masthead__title h2">Texas School Discipline Punishments by Race/Ethnicity<br>Pre-K through 12th Grade (2014-15)</h1>
+				<span class="masthead__disclaimer">Data Source: Texas Education Agency</span>
+
+            <div class="masthead_right">
+              <div class="masthead_select">
+                <select id="dropdown">
+                  <option value="OSS">Out of School Suspensions</option>
+                  <option value="Expulsion">Expulsion Actions</option>
+                  <option value="AltEdu">Alternative Placements</option>
+                  <option value="ISS">In School Suspensions</option>
+                </select>
+              </div>
+               <form class="masthead_search" role="search">
+                <div>
+                  <input id="searchbox" type="text" placeholder="Search by district" class="form-control">
+                </div>
+              </form>
+            </div>
+            </div></header>
+
+    <div class="viewport" id="leMap">
+      <div id="map" class="map">
+      </div>
+      <div class="selector z-400">
+        <header class="selector__header">
+          <span class="selector__title">Out of School Suspensions</span>
+        </header>
+        <ul class="selector__list">
+          <li class="selector__item">
+            <button class="selector__button selector__button--active" data-group-id="0">African American Students</button>
+          </li>
+          <li class="selector__item">
+            <button class="selector__button" data-group-id="1">Asian Students</button>
+          </li>
+          <li class="selector__item">
+            <button class="selector__button" data-group-id="2">Latino Students</button>
+          </li>
+          <li class="selector__item">
+            <button class="selector__button" data-group-id="3">Native American Students</button>
+          </li>
+          <li class="selector__item">
+            <button class="selector__button" data-group-id="4">Special Education Students</button>
+          </li>
+          <li class="selector__item">
+            <button class="selector__button" data-group-id="5">Students of two or More Races</button>
+          </li>
+          <li class="selector__item">
+            <button class="selector__button" data-group-id="6">White Students</button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="cartodb-legend-stack z-400">
+        <div class='cartodb-legend density'>
+          <ul>
+             <li class="min">
+                <span class="legend-title">Punishments per Capita</span><br>
+                <span class="legend-subtitle">(compared to statewide district average)</span>
+             </li>
+
+             <li class="graph leg" style="border-radius: 0; border:none">
+             <div class="colors">
+               <div class="quartile" style="background-color:#756bb1"></div>
+               <div class="quartile" style="background-color:#9e9ac8"></div>
+               <div class="quartile" style="background-color:#bcbddc"></div>
+               <div class="quartile" style="background-color:#dadaeb"></div>
+               <div class="quartile" style="background-color:#f2f0f7"></div>
+               <div class="quartile" style="background-color:#fee5d9"></div>
+               <div class="quartile" style="background-color:#fcbba1"></div>
+               <div class="quartile" style="background-color:#fc9272"></div>
+               <div class="quartile" style="background-color:#fb6a4a"></div>
+               <div class="quartile" style="background-color:#de2d26"></div>
+             </div>
+             </li>
+             <li class="margin-bottom">
+               <div class="quartile graph-sublegend" style="padding-top: 5px; float:left;" >
+                 Fewer than Average
+               </div>
+               <div class="quartile graph-sublegend-right" style="padding-top: 5px; float:right;" >
+                 More than Average
+               </div>
+             </li>
+          </ul>
+        </div>
+      </div>
+
 		</div>
 
     <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
-<script src='http://izimodal.marcelodolce.com/js/iziModal.min.js'></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <!--<script src="http://code.jquery.com/jquery-1.10.2.js"></script>-->
-
-    <!-- include cartodb.js library -->
-    <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.15/cartodb.js"></script>
-    <script type="infowindow/html" id="infowindow_template">
-			<div class="cartodb-popup v2">
-				<a href="#close" class="cartodb-popup-close-button close">x</a>
-				 <div class="cartodb-popup-content-wrapper">
-					 <div class="cartodb-popup-content">
-						 <!-- content.data contains the field info -->
-						 <h4>District: </h4>
-						 <p>{{content.data.distname}}</p>
-					 </div>
-				 </div>
-				 <div class="cartodb-popup-tip-container"></div>
-			</div>
-		</script>
-    <script src="tamap.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/4.3.0/d3.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/d3-queue/3.0.3/d3-queue.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'></script>
+    <script src="js/vendor/leaflet/leaflet.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/index.js"></script>
   </body>
 </html>
