@@ -24,17 +24,20 @@ function Map( selector ) {
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
     });
 
+
     this.groups = [
         "black_or_african_american",
         "asian",
-        "hispanic/latino",
+        "hispanic_latino",
         "american_indian_or_alaska_nat",
         "special_education",
         "two_or_more_races",
         "white",
-        "native_hawaiian/other_pacific",
+        "native_hawaiian_other_pacific",
         "economic_disadvantage"
     ];
+
+
 
     this.groupDisplayName = [
         "African American Students",
@@ -53,11 +56,18 @@ function Map( selector ) {
         "ISS"       : "in-school suspensions"
     };
 
-    this.punishments = {
+    /*this.punishments = {
         "Expulsion" : "D-EXPULSION ACTIONS",
         "AltEdu"    : "E-DAEP PLACEMENTS",
         "OSS"       : "F-OUT OF SCHOOL SUSPENSIONS",
         "ISS"       : "G-IN SCHOOL SUSPENSIONS"
+    }; */
+
+    this.punishments = {
+        "Expulsion" : "Expulsion",
+        "AltEdu"    : "Altedu",
+        "OSS"       : "oss",
+        "ISS"       : "ISS"
     };
 
     // Dictionary that maps option values to GeoJSON data file paths
@@ -136,7 +146,10 @@ Map.prototype.getOptions = function () {
 
         style: function style(feature) {
             var value = (Number(feature.properties[fischerValue]));
-            if (isNaN(value)){
+            var dname = feature.properties.district_name;
+            //console.log(value);
+            if (value == 0){  // (isNaN(value)){
+                console.log(value);
                 return {
                     fillPattern: stripes,
                     weight: 1,
@@ -155,26 +168,29 @@ Map.prototype.getOptions = function () {
             }},
         onEachFeature: function onEachFeature(feature, layer) {
             var percentStudentsByGroup = feature.properties[percentStudentsValue],
-                districtName = feature.properties.DISTNAME,
+                districtName = feature.properties.district_name,
                 groupName = groupNameInPopup,
-                punishmentsPercent = feature.properties[punishmentPercentValue],
-                punishmentsCount = feature.properties[punishmentCountValue] || 0,
+                punishmentsPercent = (Number(feature.properties[punishmentPercentValue]))*100,
+                punishmentsCount = (Number(feature.properties[punishmentCountValue])) || 0,
                 punishmentType = displayvalue,
+                fischerValue = feature.properties[fischerValue],
                 popupContent;
 
             if (feature.properties[punishmentPercentValue]){
                 var moreOrLessText = feature.properties[punishmentPercentValue] > 0 ? "more" : "less";
-                var timeOrTimes = punishmentsCount === '1' ? " time" : " times";
+                var timeOrTimes = punishmentsCount == '1' ? " time" : " times";
                 popupContent = [
                     "<span class='popup-text'>",
-                    groupName + " received " + punishmentType + " ",
-                    punishmentsCount + timeOrTimes,
-                    " accounting for " + punishmentsPercent + "%",
-                    " of all " + displayvalue,
-                    " in <b>" + districtName + "</b>.",
+                    "In <b>" + districtName + "</b>, ",
+                    groupName + " students received " + punishmentType + " ",
+                    punishmentsCount + timeOrTimes + ",",
+                    " which is " + Math.round(punishmentsPercent) + "% " + moreOrLessText,
+                    " often than average in the district.",
+
                     "</span>"
                 ].join('');
             } else {
+                //console.log(fischerValue, punishmentsPercent);
                 popupContent = "<span class='popup-text'>Data not available in <b>" + districtName + "</b> for this student group.</span>";
             }
             if (feature.properties) layer.bindPopup(popupContent);
@@ -261,7 +277,7 @@ Map.prototype.addDataToMap = function (data, map, options) {
     var thiz = this;
     // console.log(dataLayer._layers);
     for (var key in this.dataLayer._layers) {
-        var dName = this.dataLayer._layers[key].feature.properties.DISTNAME;
+        var dName = this.dataLayer._layers[key].feature.properties.district_name;
         if (dName) {
             districtNames.push(dName);
             layers[dName] = this.dataLayer._layers[key];
