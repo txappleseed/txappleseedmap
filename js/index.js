@@ -9,6 +9,8 @@ function Map( selector ) {
     var thisMap = this;
     this.dataSet = "OSS";
     this.population = 0;
+    this.hilight_layer = null;
+    this.dataLayer = null;
 
     this.$el = $( selector );
 
@@ -17,26 +19,25 @@ function Map( selector ) {
         zoom: 7
     });
 
-    /*  this.tileLayer = L.tileLayer('https://tile.stamen.com/toner/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">Stamen</a> contributors'
-    }); */
-
-        this.tileLayer = L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
+    this.tileLayer = L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
     });
 
+
     this.groups = [
         "black_or_african_american",
         "asian",
-        "hispanic/latino",
+        "hispanic_latino",
         "american_indian_or_alaska_nat",
         "special_education",
         "two_or_more_races",
         "white",
-        "native_hawaiian/other_pacific",
+        "native_hawaiian_other_pacific",
         "economic_disadvantage"
     ];
+
+
 
     this.groupDisplayName = [
         "African American Students",
@@ -55,11 +56,18 @@ function Map( selector ) {
         "ISS"       : "in-school suspensions"
     };
 
-    this.punishments = {
+    /*this.punishments = {
         "Expulsion" : "D-EXPULSION ACTIONS",
         "AltEdu"    : "E-DAEP PLACEMENTS",
         "OSS"       : "F-OUT OF SCHOOL SUSPENSIONS",
         "ISS"       : "G-IN SCHOOL SUSPENSIONS"
+    }; */
+
+    this.punishments = {
+        "Expulsion" : "Expulsion",
+        "AltEdu"    : "Altedu",
+        "OSS"       : "oss",
+        "ISS"       : "ISS"
     };
 
     // Dictionary that maps option values to GeoJSON data file paths
@@ -118,9 +126,8 @@ Map.prototype.setUp = function () {
         stripes = this.stripes,
         options = this.getOptions();
     // Adds tileLayer from the Map Class to the mapObject
-    stripes.addTo(mapObject); //adding pattern definition to mapObject
     tileLayer.addTo(mapObject);
-    //this.requestInitialData(options);
+    stripes.addTo(mapObject); //adding pattern definition to mapObject
   this.loadGeojsonLayer(this.dataSet, options);
 };
 
@@ -139,15 +146,16 @@ Map.prototype.getOptions = function () {
 
         style: function style(feature) {
             var value = (Number(feature.properties[fischerValue]));
-            if (isNaN(value)){
-                //console.log (value);
+            var dname = feature.properties.district_name;
+            //console.log(value);
+            if (value == 0){  // (isNaN(value)){
+                console.log(value);
                 return {
-                    fillColor: getFillColor(Number(feature.properties[fischerValue])),
                     fillPattern: stripes,
                     weight: 1,
                     opacity: 1,
                     color: '#b3b3b3',
-                    fillOpacity: 0.6
+                    fillOpacity: 1
                 }
             } else {
                 return {
@@ -160,26 +168,29 @@ Map.prototype.getOptions = function () {
             }},
         onEachFeature: function onEachFeature(feature, layer) {
             var percentStudentsByGroup = feature.properties[percentStudentsValue],
-                districtName = feature.properties.DISTNAME,
+                districtName = feature.properties.district_name,
                 groupName = groupNameInPopup,
-                punishmentsPercent = feature.properties[punishmentPercentValue],
-                punishmentsCount = feature.properties[punishmentCountValue] || 0,
+                punishmentsPercent = (Number(feature.properties[punishmentPercentValue]))*100,
+                punishmentsCount = (Number(feature.properties[punishmentCountValue])) || 0,
                 punishmentType = displayvalue,
+                fischerValue = feature.properties[fischerValue],
                 popupContent;
 
             if (feature.properties[punishmentPercentValue]){
                 var moreOrLessText = feature.properties[punishmentPercentValue] > 0 ? "more" : "less";
-                var timeOrTimes = punishmentsCount === '1' ? " time" : " times";
+                var timeOrTimes = punishmentsCount == '1' ? " time" : " times";
                 popupContent = [
                     "<span class='popup-text'>",
-                    groupName + " received " + punishmentType + " ",
-                    punishmentsCount + timeOrTimes,
-                    " accounting for " + punishmentsPercent + "%",
-                    " of all " + displayvalue,
-                    " in <b>" + districtName + "</b>.",
+                    "In <b>" + districtName + "</b>, ",
+                    groupName + " students received " + punishmentType + " ",
+                    punishmentsCount + timeOrTimes + ",",
+                    " which is " + Math.round(punishmentsPercent) + "% " + moreOrLessText,
+                    " often than average in the district.",
+
                     "</span>"
                 ].join('');
             } else {
+                //console.log(fischerValue, punishmentsPercent);
                 popupContent = "<span class='popup-text'>Data not available in <b>" + districtName + "</b> for this student group.</span>";
             }
             if (feature.properties) layer.bindPopup(popupContent);
@@ -259,43 +270,20 @@ Map.prototype.selectData = function(dataKey) {
     this.loadGeojsonLayer(dataKey, this.getOptions(dataKey,this.population));
 };
 
-// highlights district chosen in searchbox
-Map.prototype.zoomToFeature = function(distvalue) {
-    var layer = distvalue;
-
-    var b = districtBounds[distvalue];
-    map.fitBounds([[b.getEast(), b.getSouth()], [b.getWest(), b.getNorth()]]);
-};
-
-// highlights district chosen in searchbox
-Map.prototype.highlightFeature = function(distvalue) {
-    var layer = distvalue;
-
-    layer.setStyle({
-    weight: 5,
-    color: '#666',
-    dashArray: '',
-    fillOpacity: 0.7
-    });
-
-    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-        layer.bringToFront();
-    }
-};
-
 Map.prototype.addDataToMap = function (data, map, options) {
-    var dataLayer = L.geoJson(data, options);
-    dataLayer.addTo(map);
-
     var districtNames = [];
-    var districtBounds = new Object();
-    //var thiz = this;
-    for (var n = 0; n < data.features.length; n++) {
-        var dName = data.features[n].properties.DISTNAME;
-        if (dName)
+    var layers = new Object();
+    this.dataLayer = L.geoJson(data, options);
+    var thiz = this;
+    // console.log(dataLayer._layers);
+    for (var key in this.dataLayer._layers) {
+        var dName = this.dataLayer._layers[key].feature.properties.district_name;
+        if (dName) {
             districtNames.push(dName);
-            districtBounds[dName] = L.polygon(data.features[n].geometry.coordinates).getBounds();
+            layers[dName] = this.dataLayer._layers[key];
+        }
     }
+    this.dataLayer.addTo(map);
 
     // autocomplete searchbox stuff
     $("#searchbox").autocomplete({
@@ -304,15 +292,27 @@ Map.prototype.addDataToMap = function (data, map, options) {
             if(ui.item){
                 $('#searchbox').val(ui.item.value);
             }
-            var b = districtBounds[ui.item.value];
-            map.fitBounds([[b.getEast(), b.getSouth()], [b.getWest(), b.getNorth()]]);
+            var hiStyle = {
+                weight: 5,
+                color: '#ceda6a',
+                opacity: 1
+            };
+            var layer = layers[ui.item.value];
+            thiz.clearHighlight();
+            thiz.hilight_layer = layer;
+            layer.setStyle(hiStyle);
+            map.fitBounds(layer.getBounds());
         }
     });
-
 };
 
+Map.prototype.clearHighlight = function() {
+    if (this.hilight_layer != null) {
+        this.dataLayer.resetStyle(this.hilight_layer);
+    }
+}
 
-Map.prototype.getFillColor =   function (d) {
+Map.prototype.getFillColor = function (d) {
     var red    = ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26','#a50f15'],
         purple = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f'],
         gray   = '#DEDCDC';
