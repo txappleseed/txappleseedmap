@@ -313,12 +313,12 @@ Map.prototype.clearHighlight = function() {
 }
 
 Map.prototype.getFillColor =   function (d) {
-    var red    = ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26', '#ff0008'],
-        purple = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1', '#6e00ff'],
+    var red    = ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26','#a50f15'],
+        purple = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f'],
         gray   = '#DEDCDC';
 
     return d == false   ? gray    :
-        d < -0.9999  ? purple[5] :
+        d < -0.99999  ? purple[5] :
         d < -0.9984  ? purple[4] :
         d < -0.992   ? purple[3] :
         d < -0.96    ? purple[2] :
@@ -331,7 +331,7 @@ Map.prototype.getFillColor =   function (d) {
         d <  0.96    ? red[1]  :
         d <  0.992   ? red[2]  :
         d <  0.9984  ? red[3]  :
-        d <  0.9999  ? red[4]  :
+        d <  0.99999  ? red[4]  :
         d <= 1       ? red[5]  :
         gray;
 };
