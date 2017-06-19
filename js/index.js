@@ -140,13 +140,17 @@ Map.prototype.getOptions = function () {
         punishmentPercentValue = "percent_" + this.dataSet + "_" + this.groups[this.population],
         percentStudentsValue = "percent_students_" + this.groups[this.population],
         groupNameInPopup = this.groupDisplayName[this.population],
-        displayvalue = this.displaypunishment[this.dataSet];
+        displayvalue = this.displaypunishment[this.dataSet],
+        mynum = 0;
+
     return {
 
         style: function style(feature) {
             var value = (feature.properties[fischerValue]);
             var dname = feature.properties.district_name;
-            if (value == null){//(value == 0){
+            if (value == null){   //(value == 0){
+                mynum ++
+                //console.log(feature.properties[fischerValue]);
                 return {
                     fillPattern: stripes,
                     weight: 1,
@@ -186,6 +190,7 @@ Map.prototype.getOptions = function () {
             if (feature.properties) layer.bindPopup(popupContent);
         }
     };
+
     var options = thiz.getOptions();
     // change toggle button CSS to indicate "active"
     $(".selector__button").removeClass("selector__button--active");
