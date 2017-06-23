@@ -29,7 +29,7 @@ function Map( selector ) {
     this.groups = [
         "black_or_african_american",
         "asian",
-        "hispanic/latino",
+        "hispanic_latino",
         "american_indian_or_alaska_nat",
         "special_education",
         "two_or_more_races",
