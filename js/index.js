@@ -34,18 +34,18 @@ function Map( selector ) {
         "special_education",
         "two_or_more_races",
         "white",
-        "native_hawaiian/other_pacific",
-        "economic_disadvantage"
+        "native_hawaiian_other_pacific",
+        //"economic_disadvantage"
     ];
 
     this.groupDisplayName = [
-        "African American Students",
-        "Asian Students",
-        "Latino Students",
-        "Native American Students",
-        "Special Education Students",
+        "African American students",
+        "Asian students",
+        "Latino students",
+        "Native American students",
+        "Special Education students",
         "Students of two or More Races",
-        "White Students"
+        "White students"
     ];
 
     this.displaypunishment = {
@@ -55,19 +55,27 @@ function Map( selector ) {
         "ISS"       : "in-school suspensions"
     };
 
+  /*
     this.punishments = {
         "Expulsion" : "D-EXPULSION ACTIONS",
         "AltEdu"    : "E-DAEP PLACEMENTS",
         "OSS"       : "F-OUT OF SCHOOL SUSPENSIONS",
         "ISS"       : "G-IN SCHOOL SUSPENSIONS"
+    }; */
+
+    this.punishments = {
+        "Expulsion" : "Expulsion",
+        "AltEdu"    : "AltEdu",
+        "OSS"       : "OSS",
+        "ISS"       : "ISS"
     };
 
     // Dictionary that maps option values to GeoJSON data file paths
     this.dataFiles = {
-        "Expulsion" : "geojson/simple/expulsion_districts.geojson",
-        "AltEdu"    : "geojson/simple/altedu_districts.geojson",
-        "OSS"       : "geojson/simple/oss_districts.geojson",
-        "ISS"       : "geojson/simple/iss_districts.geojson"
+        "Expulsion" : "geojson/simple_expulsion.geojson",
+        "AltEdu"    : "geojson/altedu_no_econ.json",
+        "OSS"       : "geojson/simple_oss.geojson",
+        "ISS"       : "geojson/simple_iss.geojson"
     };
 
     this.groupPercentCode = [
@@ -130,17 +138,18 @@ Map.prototype.getOptions = function () {
         sentenceCase = this.sentenceCase,
         stripes = this.stripes,
         fischerValue = this.dataSet + "_scale_" + this.groups[this.population],
-        punishmentPercentValue = this.dataSet + "_percent_" + this.groups[this.population],
-        punishmentCountValue = this.dataSet + "_count_" + this.groups[this.population],
-        percentStudentsValue = this.groupPercentCode[this.population],
+        punishmentPercentValue = "percent_" + this.dataSet + "_" + this.groups[this.population],
+        percentStudentsValue = "percent_students_" + this.groups[this.population],
         groupNameInPopup = this.groupDisplayName[this.population],
-        displayvalue = this.displaypunishment[this.dataSet];
+        displayvalue = this.displaypunishment[this.dataSet],
+        mynum = 0;
+
     return {
 
         style: function style(feature) {
-            var value = (Number(feature.properties[fischerValue]));
-            if (isNaN(value)){
-                //console.log (value);
+            var value = (feature.properties[fischerValue]);
+            var dname = feature.properties.district_name;
+            if (value == null){ 
                 return {
                     fillColor: getFillColor(Number(feature.properties[fischerValue])),
                     fillPattern: stripes,
@@ -158,25 +167,22 @@ Map.prototype.getOptions = function () {
                     fillOpacity: 0.6
                 };
             }},
+        //popup information for each district
         onEachFeature: function onEachFeature(feature, layer) {
-            var percentStudentsByGroup = feature.properties[percentStudentsValue],
-                districtName = feature.properties.DISTNAME,
+            var percentStudentsByGroup = (Number(feature.properties[percentStudentsValue]))*100,
+                districtName = feature.properties.district_name,
                 groupName = groupNameInPopup,
-                punishmentsPercent = feature.properties[punishmentPercentValue],
-                punishmentsCount = feature.properties[punishmentCountValue] || 0,
+                punishmentPercent = (Number(feature.properties[punishmentPercentValue]))*100,
+                //punishmentsCount = (Number(feature.properties[punishmentCountValue])) || 0,
                 punishmentType = displayvalue,
                 popupContent;
 
-            if (feature.properties[punishmentPercentValue]){
-                var moreOrLessText = feature.properties[punishmentPercentValue] > 0 ? "more" : "less";
-                var timeOrTimes = punishmentsCount === '1' ? " time" : " times";
+            if (!isNaN(parseFloat((feature.properties[fischerValue])))){
                 popupContent = [
                     "<span class='popup-text'>",
-                    groupName + " received " + punishmentType + " ",
-                    punishmentsCount + timeOrTimes,
-                    " accounting for " + punishmentsPercent + "%",
-                    " of all " + displayvalue,
-                    " in <b>" + districtName + "</b>.",
+                    "In <b>" + districtName + "</b>, ",
+                    groupName + " received " + Math.round(punishmentPercent*100)/100.0 + "% of " + punishmentType + " and represent ",
+                     + Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population ",
                     "</span>"
                 ].join('');
             } else {
@@ -185,12 +191,13 @@ Map.prototype.getOptions = function () {
             if (feature.properties) layer.bindPopup(popupContent);
         }
     };
+
     var options = thiz.getOptions();
     // change toggle button CSS to indicate "active"
     $(".selector__button").removeClass("selector__button--active");
     $(this).addClass("selector__button--active");
 
-    // remove exisiting layer for previous group
+    // remove existing layer for previous group
     thiz.clearGeojsonLayer.call(thiz);
 
     thiz.addDataToMap(dataLayer, thiz.mapObject, options)
@@ -201,7 +208,7 @@ Map.prototype.handleDataToggleClick = function (e) {
         dataLayer = GEODATA;
     thiz.population = $(this).data("group-id");
     var options = thiz.getOptions();
-    console.log(thiz);
+    //console.log(thiz);
     // change toggle button CSS to indicate "active"
     $(".selector__button").removeClass("selector__button--active");
     $(this).addClass("selector__button--active");
@@ -250,11 +257,11 @@ Map.prototype.selectData = function(dataKey) {
     // Clear old layers
     this.clearGeojsonLayer();
     this.dataSet = dataKey;
-    if(typeof dataKey !== 'undefined'){
+    /*if(typeof dataKey !== 'undefined'){
         console.log(dataKey + " in clearGeojsonLayer");
     } else {
         console.log("dataKey is undefined here in clearGeojsonLayer")
-    }
+    }*/
     // Add new layer
     this.loadGeojsonLayer(dataKey, this.getOptions(dataKey,this.population));
 };
@@ -317,15 +324,16 @@ Map.prototype.getFillColor =   function (d) {
         purple = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f'],
         gray   = '#DEDCDC';
 
-    return d == false   ? gray    :
-        d < -0.99999  ? purple[5] :
+
+ //return d == false   ? gray    :
+ return d < -0.99999  ? purple[5] :
         d < -0.9984  ? purple[4] :
         d < -0.992   ? purple[3] :
         d < -0.96    ? purple[2] :
         d < -0.8     ? purple[1] :
         d < -0.2     ? purple[0] :
-        d <  0       ? 'white' :
-        d === 0      ? 'white' :
+        d <=  0       ? 'white' :
+       // d == 0      ? 'white' :
         d <  0.2     ? 'white' :
         d <  0.8     ? red[0]  :
         d <  0.96    ? red[1]  :
@@ -335,6 +343,7 @@ Map.prototype.getFillColor =   function (d) {
         d <= 1       ? red[5]  :
         gray;
 };
+
 
 // Return a reference to the map
 return(new Map( "#leMap" ));
