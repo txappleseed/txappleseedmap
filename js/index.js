@@ -34,7 +34,7 @@ function Map( selector ) {
         "two_or_more_races",
         "white",
         "native_hawaiian_other_pacific",
-        "economic_disadvantage"
+        //"economic_disadvantage"
     ];
 
 
@@ -73,7 +73,7 @@ function Map( selector ) {
     // Dictionary that maps option values to GeoJSON data file paths
     this.dataFiles = {
         "Expulsion" : "geojson/simple_expulsion.geojson",
-        "AltEdu"    : "geojson/simple_altedu.geojson",
+        "AltEdu"    : "geojson/altedu_no_econ.json",
         "OSS"       : "geojson/simple_oss.geojson",
         "ISS"       : "geojson/simple_iss.geojson"
     };
