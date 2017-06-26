@@ -303,13 +303,13 @@ var PageControl = (function(){
         this.dataLayer.addTo(map);
 
 
-        console.log(data);  //.objects.simple_oss.geometries.properties.district_name);
-        for (var n = 0; n < data.objects.simple_oss.geometries.length; n++) {
-            var dName = data.objects.simple_oss.geometries[n].properties.district_name;
+        //console.log(data);  //.objects.simple_oss.geometries.properties.district_name);
+        //for (var n = 0; n < data.objects.simple_oss.geometries.length; n++) {
+            //var dName = data.objects.simple_oss.geometries[n].properties.district_name;
             //if (dName)
                 //districtNames.push(dName);
                 //districtBounds[dName] = L.polygon(data.objects.simple_oss.geometries[n].geometry.coordinates).getBounds();
-        }
+        //}
 
 
 
