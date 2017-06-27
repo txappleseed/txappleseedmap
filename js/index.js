@@ -209,11 +209,6 @@ var PageControl = (function(){
             }
         };
 
-        var options = thiz.getOptions();
-        // change toggle button CSS to indicate "active"
-        $(".selector__button").removeClass("selector__button--active");
-        $(this).addClass("selector__button--active");
-
         // remove existing layer for previous group
         thiz.clearGeojsonLayer.call(thiz);
 
@@ -221,15 +216,16 @@ var PageControl = (function(){
     };
     //sets population when user clicks choice
     Map.prototype.handleDataToggleClick = function (e) {
+        //remove active button style
+        $(".selector__button").removeClass("selector__button--active");
+        console.log("Me me me");
         var thiz = e.data.context,
             dataLayer = GEODATA;
         thiz.population = $(this).data("group-id");
         var options = thiz.getOptions();
         //console.log(thiz);
         // change toggle button CSS to indicate "active"
-        $(".selector__button").removeClass("selector__button--active");
         $(this).addClass("selector__button--active");
-
         // remove existing layer for previous group
         thiz.clearGeojsonLayer.call(thiz);
 
@@ -290,15 +286,12 @@ var PageControl = (function(){
         this.dataLayer = new L.TopoJSON(null, options);
         this.dataLayer.addData(data);
         var thiz = this;
-        console.log(this.dataLayer._layers);
         for (var key in this.dataLayer._layers) {
-            console.log(this.dataLayer._layers[key]);
             var dName = this.dataLayer._layers[key].feature.properties.district_name;
             if (dName) {
                 districtNames.push(dName);
                 layers[dName] = this.dataLayer._layers[key];
             }
-            console.log(layers);
         }
         this.dataLayer.addTo(map);
 
