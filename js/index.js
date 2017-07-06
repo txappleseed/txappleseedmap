@@ -25,6 +25,7 @@ var PageControl = (function(){
         this.population = 0;
         this.hilight_layer = null;
         this.dataLayer = null;
+        this.schoolYear = "2015-2016"
 
         this.$el = $( selector );
 
@@ -159,7 +160,7 @@ var PageControl = (function(){
             percentStudentsValue = "percent_students_" + this.groups[this.population],
             groupNameInPopup = this.groupDisplayName[this.population],
             displayvalue = this.displaypunishment[this.dataSet],
-            mynum = 0;
+            schoolYear = this.schoolYear;
 
         return {
 
@@ -202,7 +203,9 @@ var PageControl = (function(){
                          + Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population ",
                         "</span>"
                     ].join('');
-                } else {
+                } else if (percentStudentsByGroup == 0) {
+                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + groupName + " for the <b>" + schoolYear + "</b> school year.</span>";
+                }else {
                     popupContent = "<span class='popup-text'>Data not available in <b>" + districtName + "</b> for this student group.</span>";
                 }
                 if (feature.properties) layer.bindPopup(popupContent);
