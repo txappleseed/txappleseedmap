@@ -333,3 +333,9 @@ div.cartodb-legend ul li {
 .leaflet-popup-content {
 	z-index:400 !important;
 }
+
+@media only screen and (max-width : 768px) {
+  .selector {
+    display: none;
+  }
+}
