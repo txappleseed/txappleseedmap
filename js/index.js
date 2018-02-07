@@ -225,10 +225,7 @@ var PageControl = (function(){
         console.log("Me me me");
         var thiz = e.data.context,
             dataLayer = GEODATA;
-        thiz.population = $(this).data("group-id");
-        //console.log(e);
-        thiz.population = $(e.target).val();
-
+        thiz.population = $(this).data("group-id") || $(e.target).val();
         var options = thiz.getOptions();
         //console.log(thiz);
         // change toggle button CSS to indicate "active"
