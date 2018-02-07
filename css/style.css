@@ -33,7 +33,7 @@ body {
   font-family: Lato;
   background: #444B54;
   padding: 15px;
-  overflow-x:hidden;
+  overflow:hidden;
 }
 
 .trigger {
