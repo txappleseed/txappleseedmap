@@ -334,8 +334,20 @@ div.cartodb-legend ul li {
 	z-index:400 !important;
 }
 
+.student_characteristic_selector{
+  display: none;
+}
+
 @media only screen and (max-width : 768px) {
   .selector {
     display: none;
+  }
+
+  .student_characteristic_selector{
+    display: inherit;
+  }
+
+  .masthead {
+    height: 6.5rem;
   }
 }
