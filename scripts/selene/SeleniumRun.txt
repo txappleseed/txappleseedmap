@@ -1,0 +1,28 @@
+These are instructions for using the Selenium IDE
+on a windows pc for the downloading 
+data from http://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html 
+for the txappleseed project ( http://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html )
+
+See the SeleniumSetup.txt file for instruction on the first time setup
+of the Selenium IDE.
+
+Data Preparation:
+
+1. Run steps listed in SeleniumSetup.txt once.
+
+2. Start Mozilla Firefox.
+
+3. In the "Open Menu" at the right top of the Firefox window,
+   start Selenium IDE.
+
+4. Create a directory called c:\selene
+
+5. Copy the selenium script that you want to run to c:\selene
+   such as "TestCase2015_2016.html".
+
+6. In the selenium ide window select File->Open and select
+   the test script such as TestCase2015_2016.html
+
+7. Click on the Actions->Play current test case.
+
+8. Your output csv files will be in c:\selene.

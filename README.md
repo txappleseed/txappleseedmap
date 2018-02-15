@@ -7,10 +7,10 @@ This map is linked from a WordPress hosted site with more information about the 
 http://www.texasdisciplinelab.org/
 
 ## Documentation
-This project uses leaflet.js and carto.js to render the map. https://carto.com/docs/
+This project uses leaflet.js and carto.js to [render the map](https://texasappleseed.carto.com/tables/ratiodistrictdaep_merge/public). https://carto.com/docs/
 
-School District level data comes from open records requests to the Texas Education Agency.
-https://texasappleseed.carto.com/tables/ratiodistrictdaep_merge/public
+School District level data comes from [disciplinary data products](http://ritter.tea.state.tx.us/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html) and [District and Charter Detail Data](http://ritter.tea.state.tx.us/perfreport/snapshot/download.html) published on the Texas Education Agency website.
+Some additional data is available from open records requests to the Texas Education Agency, but not currently in use. See Open Austin's [#texasappleseed Slack channel](https://open-austin.slack.com) for more information.
 
 ### Data Preparation
 
