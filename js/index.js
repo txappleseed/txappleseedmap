@@ -116,6 +116,7 @@ var PageControl = (function(){
 
 
         this.$el.find(".selector__button").on("click", {context: this}, this.handleDataToggleClick);
+        $(".student_characteristic_selector").on("change", {context: this}, this.handleDataToggleClick);
 
         // Attach event handler to drop-down menu to update data after
         // selection changed.
@@ -224,7 +225,7 @@ var PageControl = (function(){
         console.log("Me me me");
         var thiz = e.data.context,
             dataLayer = GEODATA;
-        thiz.population = $(this).data("group-id");
+        thiz.population = $(this).data("group-id") || $(e.target).val();
         var options = thiz.getOptions();
         //console.log(thiz);
         // change toggle button CSS to indicate "active"

@@ -33,7 +33,7 @@ body {
   font-family: Lato;
   background: #444B54;
   padding: 15px;
-  overflow-x:hidden;
+  overflow:hidden;
 }
 
 .trigger {
@@ -332,4 +332,22 @@ div.cartodb-legend ul li {
 
 .leaflet-popup-content {
 	z-index:400 !important;
+}
+
+.student_characteristic_selector{
+  display: none;
+}
+
+@media only screen and (max-width : 768px) {
+  .selector {
+    display: none;
+  }
+
+  .student_characteristic_selector{
+    display: inherit;
+  }
+
+  .masthead {
+    height: 6.5rem;
+  }
 }
