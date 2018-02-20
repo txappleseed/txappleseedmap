@@ -1,7 +1,6 @@
-See the [original Texas Education Agency (TEA) data source](https://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html).
+The CSV files in the /processed/ directory are part of a legacy workflow and hopefully won't be needed any longer. We used a Python script ("../scripts/TXSchoolData.py") to convert files published by TEA, one year at a time, into the CSV files documented below. However, the CSVs later had to be converted to GeoJSON using Ruby scripts like "../scripts/altedu_script.rb". The new approach is to convert the TEA files directly to GeoJSON using the Jupyter notebook "../scripts/TEAtoJSON.ipynb".
 
-Ask questions to @mscarey :)
-
+Below is a description of the columns of the CSVs in the /processed/ directory.
 
 ### Texas School District Demographics
 - `TXdemo2015.csv`
@@ -59,3 +58,7 @@ Ask questions to @mscarey :)
 "RecordError": False
 
 ```
+
+See the [original Texas Education Agency (TEA) data source](https://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html).
+
+Ask questions to @mscarey :)
