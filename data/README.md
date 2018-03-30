@@ -1,10 +1,8 @@
-See the [original Texas Education Agency (TEA) data source](https://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html).
+The files DistrictDisparities2016.csv and TXdemo2016.csv in the /processed/ directory are currently in use in the Appleseed map but hopefully won't be needed any longer. We used a Python script ("../scripts/TXSchoolData.py") to convert files published by TEA, one year at a time, into the CSV files documented below. The CSVs later had to be converted to GeoJSON using Ruby scripts like "../scripts/altedu_script.rb" and they only covered one year each. See "../scripts/TEAtoCSVAllYears.ipynb" for documentation for a CSV that includes all years. "../scripts/TEAtoGeoJSON.ipynb" is about using the map's GeoJSON file to store the entirety of the data for all years, which might be impractical.
 
-Ask questions to @mscarey :)
-
+Below is a description of the columns of the old CSVs.
 
 ### Texas School District Demographics
-- `TXdemo2015.csv`
 - `TXdemo2016.csv`
 
 - `DISTRICT` - number identifier for each school district
@@ -38,7 +36,7 @@ Ask questions to @mscarey :)
 "DPETSPEP": 10.4
 ```
 
-### DistrictDisparities2015.csv
+### DistrictDisparities2016.csv
 
 - `district` - number identifier for each school district
 - `SECTION` - string, one of these four punishments: ["D-EXPULSION ACTIONS", "E-DAEP PLACEMENTS", "F-OUT OF SCHOOL SUSPENSIONS", "G-IN SCHOOL SUSPENSIONS"]
@@ -59,3 +57,7 @@ Ask questions to @mscarey :)
 "RecordError": False
 
 ```
+
+See the [original Texas Education Agency (TEA) data source](https://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html).
+
+Ask questions to @mscarey :)

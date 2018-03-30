@@ -63,18 +63,6 @@ def actions(actionsPath):
     # deleting redundant columns
     apple = apple[['DISTRICT', 'SECTION', 'HEADING NAME', "Group Punishments"]]
 
-    # Consolidating some of the descriptors into broader categories
-    appleReplace = {"Group Punishments":
-                        {-99999999: 1},
-                    "SECTION": {
-                        'M-ECO\. DISADV\. JJAEP PLACEMENTS|H-SPEC\. ED\. JJAEP EXPULSIONS': 'C-JJAEP EXPULSIONS',
-                        'N-ECO\. DISADV\. EXPULSIONS|I-SPEC\. ED\. EXPULSIONS': 'D-EXPULSION ACTIONS',
-                        'O-ECO\. DISADV\. DAEP PLACEMENTS|J-SPEC\. ED\. DAEP PLACEMENTS': 'E-DAEP PLACEMENTS',
-                        'P-ECO\. DISADV\. OUT OF SCHOOL SUS.|K-SPEC\. ED\. OUT OF SCHOOL SUS\.': 'F-OUT OF SCHOOL SUSPENSIONS',
-                        'Q-ECO\. DISADV\. IN SCHOOL SUS\.|L-SPEC\. ED\. IN SCHOOL SUS\.': 'G-IN SCHOOL SUSPENSIONS'},
-                    "HEADING NAME": {'SPEC\. ED.*$': 'Special Education',
-                                     'ECO?. DISAD.*$': 'Economic Disadvantage'}
-                    }
     # print(apple.isnull().any(axis=1))
 
     # string columns to int
@@ -87,10 +75,44 @@ def actions(actionsPath):
     apple = apple[apple["HEADING NAME"].str.contains(patternIn)]
     apple = apple[apple["HEADING NAME"].str.contains(patternOut) == False]
 
+    # Consolidating some of the descriptors into broader categories
+    appleReplace = {"Group Punishments":
+                        {-99999999: 1},
+                    "SECTION": {
+                        'M-ECO\. DISADV\. JJAEP PLACEMENTS|H-SPEC\. ED\. JJAEP EXPULSIONS': 'C-JJAEP EXPULSIONS',
+                        'N-ECO\. DISADV\. EXPULSIONS|I-SPEC\. ED\. EXPULSIONS': 'D-EXPULSION ACTIONS',
+                        'O-ECO\. DISADV\. DAEP PLACEMENTS|J-SPEC\. ED\. DAEP PLACEMENTS': 'E-DAEP PLACEMENTS',
+                        'P-ECO\. DISADV\. OUT OF SCHOOL SUS.|K-SPEC\. ED\. OUT OF SCHOOL SUS\.': 'F-OUT OF SCHOOL SUSPENSIONS',
+                        'Q-ECO\. DISADV\. IN SCHOOL SUS\.|L-SPEC\. ED\. IN SCHOOL SUS\.': 'G-IN SCHOOL SUSPENSIONS'},
+                    "HEADING NAME": {'SPEC\. ED.*$': 'Special Education',
+                                     'ECO?. DISAD.*$': 'Economic Disadvantage'}
+                    }
+
+    apple = apple.replace(to_replace=appleReplace, regex=True)
+
     # Delete rows appearing to double-count the same expulsions.
     apple = apple[apple["SECTION"].str.contains("JJAEP EXPULSIONS|DISCIPLINE ACTION COUNTS") == False]
 
-    apple = apple.replace(to_replace=appleReplace, regex=True)
+    # setting indexes (new)
+    apple = apple.set_index(["DISTRICT", "SECTION", 'HEADING NAME'])
+
+    new_index = pd.MultiIndex.from_product(apple.index.levels)
+    apple = apple.reindex(new_index)
+
+    # convert missing values to zero, and convert the data back to integers.
+    apple = apple.fillna(0).astype(int)
+
+    # apple = apple.reindex(index=("DISTRICT", "SECTION", "HEADING NAME"))
+    # apple = apple.set_index(["DISTRICT", "SECTION", 'HEADING NAME'])
+    # apple = apple.stack(level=[0,1])
+
+    apple = apple.reset_index().rename(index=str, columns={"level_0": "DISTRICT", "level_1": "SECTION",
+                                                           "level_2": "HEADING NAME"})
+
+    # flattening this again so it can be used for the combine function
+    # apple = apple.set_index(["DISTRICT", "SECTION", "HEADING NAME"])
+    # apple = apple.reset_index(level=["SECTION", 'HEADING NAME'])
+    print(apple[:10])
 
     return apple
 
@@ -149,7 +171,7 @@ def getRatio(distPop, racePop, all_punishments, group_punishments):
     elif all_punishments == 0 or None:
         return 0
     else:
-        disparity = (group_punishments / (max(all_punishments, group_punishments)) \
+        disparity = (group_punishments / (max(all_punishments, group_punishments))
                      / (max(racePop, group_punishments) / distPop)) - 1
         disparity = Decimal(disparity)
         disparity = disparity.quantize(Decimal('0.01'))
@@ -190,13 +212,13 @@ def getFisher(distPop, racePop, all_punishments, group_punishments):
     >>> getFisher(20, 5, 20, 10)
     0.904604
     >>> getFisher(20, 0, 20, 0)
-    (None, None)
+    None
     """
 
     if max(racePop, group_punishments) == 0 or None:
-        return None, None
+        return None
     elif all_punishments == 0 or None:
-        return 1, 0
+        return 0
     else:
         oddsratio, pvalueG = stats.fisher_exact([[racePop, max(distPop - racePop, 0)],
                                                  [group_punishments, max(all_punishments - group_punishments, 0)]],
@@ -229,6 +251,7 @@ def combine(apple, district):
 
 
 apple = actions(actionsPath)
+
 district = populations(districtPath)
 apple = combine(apple, district)
 
@@ -257,9 +280,43 @@ district = district[['DISTRICT', 'DISTNAME', 'DPETALLC', 'ASIAN', 'AMERICAN INDI
                      'TWO OR MORE RACES', 'Special Education', 'WHITE', 'Economic Disadvantage']]
 
 DisparitiesFile = "../data/processed/DistrictDisparities" + str(year) + ".csv"
+PFile = "../data/processed/DistrictDisparitiesP" + str(year) + ".csv"
 DemoFile = "../data/processed/TXdemo" + str(year) + ".csv"
+JSONFile = "../data/processed/DistrictDisparities" + str(year) + ".json"
 
 apple.to_csv(path_or_buf=DisparitiesFile, columns=['DISTRICT', 'SECTION', 'HEADING NAME', "Group Punishments",
                                                    "Disparity", "Scale", "LikelyError"], index=False)
 
 district.to_csv(path_or_buf=DemoFile, index=False)
+
+
+# Reporting the same data in a different form. Three wide tables, each one reporting one value:
+# "Group Punishments", "Disparity", and "Scale". Rows omitted if "LikelyError" == True
+
+PFile = "../data/processed/DistrictDisparitiesP" + str(year) + ".csv"
+DFile = "../data/processed/DistrictDisparitiesD" + str(year) + ".csv"
+SFile = "../data/processed/DistrictDisparitiesS" + str(year) + ".csv"
+
+
+appleT = apple[apple["LikelyError"] == False]
+
+appleP = appleT.pivot_table(values='Group Punishments', columns=['SECTION', 'HEADING NAME'],
+                            index='DISTRICT')
+
+appleP.columns = [' '.join(col).strip() for col in appleP.columns.values]
+
+appleP.to_csv(PFile, float_format='%.0f')
+
+appleD = appleT.pivot_table(values="Disparity", columns=['SECTION', 'HEADING NAME'],
+                            index='DISTRICT')
+
+appleD.columns = [' '.join(col).strip() for col in appleD.columns.values]
+
+appleD.to_csv(DFile, float_format='%.2f')
+
+appleS = appleT.pivot_table(values="Scale", columns=['SECTION', 'HEADING NAME'],
+                            index='DISTRICT')
+
+appleS.columns = [' '.join(col).strip() for col in appleS.columns.values]
+
+appleS.to_csv(SFile)
