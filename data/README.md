@@ -1,9 +1,8 @@
-The CSV files in the /processed/ directory are part of a legacy workflow and hopefully won't be needed any longer. We used a Python script ("../scripts/TXSchoolData.py") to convert files published by TEA, one year at a time, into the CSV files documented below. However, the CSVs later had to be converted to GeoJSON using Ruby scripts like "../scripts/altedu_script.rb". The new approach is to convert the TEA files directly to GeoJSON using the Jupyter notebook "../scripts/TEAtoJSON.ipynb".
+The files DistrictDisparities2016.csv and TXdemo2016.csv in the /processed/ directory are currently in use in the Appleseed map but hopefully won't be needed any longer. We used a Python script ("../scripts/TXSchoolData.py") to convert files published by TEA, one year at a time, into the CSV files documented below. The CSVs later had to be converted to GeoJSON using Ruby scripts like "../scripts/altedu_script.rb" and they only covered one year each. See "../scripts/TEAtoCSVAllYears.ipynb" for documentation for a CSV that includes all years. "../scripts/TEAtoGeoJSON.ipynb" is about using the map's GeoJSON file to store the entirety of the data for all years, which might be impractical.
 
-Below is a description of the columns of the CSVs in the /processed/ directory.
+Below is a description of the columns of the old CSVs.
 
 ### Texas School District Demographics
-- `TXdemo2015.csv`
 - `TXdemo2016.csv`
 
 - `DISTRICT` - number identifier for each school district
@@ -37,7 +36,7 @@ Below is a description of the columns of the CSVs in the /processed/ directory.
 "DPETSPEP": 10.4
 ```
 
-### DistrictDisparities2015.csv
+### DistrictDisparities2016.csv
 
 - `district` - number identifier for each school district
 - `SECTION` - string, one of these four punishments: ["D-EXPULSION ACTIONS", "E-DAEP PLACEMENTS", "F-OUT OF SCHOOL SUSPENSIONS", "G-IN SCHOOL SUSPENSIONS"]
