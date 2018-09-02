@@ -10,7 +10,6 @@ def load_region_file(apple_path: str) -> list:
     return region_records
 
 def get_year(year: int) -> list:
-    # year_col = "YR{}".format(str(year)[-2:])
     dirname=os.path.dirname
     apple_path = os.path.join(dirname(dirname(__file__)), 
                               os.path.join('data', 'from_agency', 'by_region',
@@ -25,7 +24,7 @@ def get_year(year: int) -> list:
 def filter_year_by_column(year_of_records: list, 
                           column_name: str, 
                           pattern: tuple,
-                          keep_matches=False) -> list:
+                          keep_matches: bool = False) -> list:
 
     column_index = year_of_records[0].index(column_name)
     year_of_records[1:] = [row for row in year_of_records[1:] 
@@ -66,5 +65,46 @@ def filter_records(year_of_records: list) -> list:
     
     return year_of_records
 
-a = filter_records(get_year(2008))
-print(a)
+
+def replace_category_names(year_of_records: list) -> list:
+    appleReplace = {
+        "SECTION": {
+            r'A-PARTICIPATION': 'POP',
+            r'D-EXPULSION ACTIONS|N-ECO\. DISADV\. EXPULSIONS|I-SPEC\. ED\. EXPULSIONS': 'EXP',
+            r'E-DAEP PLACEMENTS|O-ECO\. DISADV\. DAEP PLACEMENTS|J-SPEC\.i ED\. DAEP PLACEMENTS': 'DAE',
+            r'F-OUT OF SCHOOL SUSPENSIONS|P-ECO\. DISADV\. OUT OF SCHOOL SUS.|K-SPEC\. ED\. OUT OF SCHOOL SUS\.': 'OSS',
+            r'G-IN SCHOOL SUSPENSIONS|Q-ECO\. DISADV\. IN SCHOOL SUS\.|L-SPEC\. ED\. IN SCHOOL SUS\.': 'ISS'},
+        "HEADING NAME": {r'SPEC\. ED.*$': 'SPE',
+                            r'ECO?. DISAD.*$': 'ECO',
+                            r'HIS(PANIC)?/LATINO': 'HIS',
+                            r'HISPANIC': 'HIS',
+                            r'(BLACK)?( OR |/)?AFRICAN AMERICAN': 'BLA',
+                            r'WHITE': 'WHI',
+                            r'NATIVE AMERICAN':'IND',
+                            r'AMERICAN INDIAN OR ALASKA NAT': 'IND',
+                            r'ASIAN': 'ASI',
+                            r'NATIVE HAWAIIAN/OTHER PACIFIC': 'PCI',
+                            r'TWO OR MORE RACES': 'TWO',
+                            r'DISTRICT CUMULATIVE YEAR END ENROLLMENT': 'ALL'
+                        }
+        }
+    return year_of_records
+
+    
+def number_strings_to_int(row: list) -> list:   
+    row[0] = int(row[0]) # DISTRICT
+    
+    row[-1] = int(row[-1]) # YR[XX]
+    if row[-1] < -8: # -999 is a masked value meaning "at least 1"
+        row[-1] = 1
+    return row
+
+
+if __name__ == "__main__":
+    year = 2008
+    a = filter_records(get_year(year))
+    a[1:] = [number_strings_to_int(row) for row in a[1:]]
+    a = replace_category_names(a)
+    print(a[:10])
+
+# year_col = "YR{}".format(str(year)[-2:])
