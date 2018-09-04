@@ -62,10 +62,14 @@ def mandatory_and_discretionary(year_of_records: list,
     return year_of_records
 
 
-def filter_year_by_column_old(year_of_records: list, 
+def filter_year_by_column(year_of_records: list, 
                           column_index: int, 
                           pattern: tuple,
                           keep_matches: bool = False) -> list:
+    
+    log = logging.getLogger(__name__)
+    log.debug(f'{sum(row[3] == "SPE" for row in year_of_records)}'
+        'SPE rows before filtering')
 
     if keep_matches:
         year_of_records[1:] = [row for row in year_of_records[1:] 
@@ -75,25 +79,10 @@ def filter_year_by_column_old(year_of_records: list,
         year_of_records[1:] = [row for row in year_of_records[1:] 
                         if all(word not in row[column_index]
                             for word in pattern)]
-    return year_of_records
+        
+    log.debug(f'{sum(row[3] == "SPE" for row in year_of_records)}'
+        'SPE rows after filtering')
 
-def filter_year_by_column(year_of_records: list, 
-                          column_index: int, 
-                          pattern: tuple,
-                          keep_matches: bool = False) -> list:
-
-    log.debug(f'{sum(row[3] == "NON" for row in year_of_records)} NON rows before filtering')
-
-    if keep_matches:
-        year_of_records[1:] = [row for row in year_of_records[1:] 
-                                if any(word in row[column_index]
-                                    for word in pattern)]
-        log.debug(f'{sum(row[3] == "NON" for row in year_of_records)} NON rows after filtering all but {pattern}')
-    else:
-        for word in pattern:
-            year_of_records[1:] = [row for row in year_of_records[1:] 
-                            if word not in row[column_index]]
-            log.debug(f'{sum(row[3] == "NON" for row in year_of_records)} NON rows after filtering out {word}')
     return year_of_records
     
 
@@ -123,7 +112,7 @@ def filter_records(year_of_records: list,
                        "DISCRETIONARY", 
                        "NATIVE AMERICAN",
                        "NON",
-                       "SPE"
+                       "SPE",
                        "MAN",
                        "DIS")
 
@@ -140,8 +129,17 @@ def filter_records(year_of_records: list,
                         "AT RISK", 
                         "NON AT", 
                         "UNKNOWN AT",
+                        "UNKNOWN ECO STATUS",
                         "NON ECO DISAD.", 
-                        "NON ECO. DISAD.")
+                        "NON ECO. DISAD.",
+                        "REMOVAL",
+                        "MANSLAUGHTER",
+                        "DISTRICT DISCIPLINE POPULATION",
+                        "DISTRICT DISCIPLINE RECORD COUNT",
+                        "DIST EMPL",
+                        "DISTRICT EMPLOYEE",
+                        "NON-TITLE",
+                        "NON-ILLEGAL")
 
 
     year_of_records = filter_year_by_column(year_of_records, 
