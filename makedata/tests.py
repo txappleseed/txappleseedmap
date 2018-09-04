@@ -9,6 +9,14 @@ from . import collectFromFile
 def load_year_for_testing():
     return collectFromFile.get_year(2008)
 
+@pytest.fixture()
+def load_charter_list():
+    return collectFromFile.get_charters()
+
+@pytest.fixture()
+def load_empty_dict():
+    return collectFromFile.make_empty_dict(2006, 2016)
+
 def test_load_one_year():
     assert load_year_for_testing()[0][0] == 'DISTRICT'
     assert int(load_year_for_testing()[1][0]) == 31901
@@ -65,4 +73,14 @@ def test_replace_category_names_for_one_year():
 def test_get_demo_year():
     assert collectFromFile.get_demo_year(2008)["BLA"][5902] == 1
     assert collectFromFile.get_demo_year(2008)["WHI"][5902] == 93
-    
+
+def test_get_charters():
+    assert 14803 in collectFromFile.get_charters()
+
+def test_add_year_exclude_charters(load_empty_dict):
+    assert 14803 not in collectFromFile.add_year_to_dict(
+            2009, load_empty_dict, False, True)[2009]["ALL"]["POP"].keys()
+
+def test_add_year_include_charters(load_empty_dict):
+    assert 14803 in collectFromFile.add_year_to_dict(
+            2009, load_empty_dict, True, False)[2009]["ALL"]["POP"].keys()

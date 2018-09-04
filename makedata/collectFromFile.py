@@ -22,7 +22,9 @@ def get_year(year: int) -> list:
 
 
 def mandatory_and_discretionary(year_of_records: list, 
-        code_index: int, demo_index: int, punishment_index: int) -> list:
+                                code_index: int, 
+                                demo_index: int, 
+                                punishment_index: int) -> list:
 
     code_headings = {
         "B04": ("EXP", "CNT"),
@@ -70,8 +72,10 @@ def filter_year_by_column(year_of_records: list,
     return year_of_records
     
 
-def filter_records(year_of_records: list, demo_index: int,
+def filter_records(year_of_records: list, 
+                   demo_index: int,
                    punishment_index: int) -> list:
+
     # Keeping only the rows that categorize students by protected class, 
     # or that have totals.
     
@@ -106,7 +110,8 @@ def filter_records(year_of_records: list, demo_index: int,
 
 
 def replace_category_names(year_of_records: list,
-                    demo_index: int, punishment_index: int) -> list:
+                           demo_index: int, 
+                           punishment_index: int) -> list:
     headings = {
         "SECTION": {
             'A-PARTICIPATION': 'POP',
@@ -186,20 +191,26 @@ def get_demo_year(year: int) -> dict:
                     demo_dict[demo][int(row["DISTRICT"])] = float(row[f"DPET{demo}P"])
     return demo_dict
 
+def get_charters() -> set:
+    charters = set()
+    dirname=os.path.dirname
+    district_path = os.path.join(dirname(dirname(__file__)), 
+                            os.path.join('data', 'from_agency', 'districts',
+                            f'district2016.dat'))
+    with open(district_path) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            if row["COMMTYPE"] == "Charters":
+                charters.add(int(row["DISTRICT"]))
+    return charters
 
 
 
-"""    dirname=os.path.dirname
-    apple_path = os.path.join(dirname(dirname(__file__)), 
-                              os.path.join('data', 'from_agency', 'by_region',
-                              'REGION_{}_DISTRICT_summary_{}.csv'))
-    one_year = [load_region_file(apple_path.format(str(region).zfill(2),str(year)[-2:]))
-                for region in range(1,21)]
-    one_year = [row for sublist in one_year for row in sublist]
-    one_year[1:] = [row for row in one_year[1:]
-                    if row != one_year[0] if len(row) == len(one_year[0])]"""
-
-def add_year_to_dict(year: int, d: dict) -> dict:
+def add_year_to_dict(year: int, 
+                     d: dict,
+                     include_charters: bool = False,
+                     include_traditional: bool = True) -> dict:
+    
     year_of_records = get_year(year)
     demo_index = year_of_records[0].index("HEADING NAME")
     code_index = year_of_records[0].index("HEADING")
@@ -213,11 +224,14 @@ def add_year_to_dict(year: int, d: dict) -> dict:
                            for row in year_of_records[1:]]
     year_of_records = replace_category_names(year_of_records,
                                              demo_index, punishment_index)
-    
+    charters = get_charters()
     for row in year_of_records[1:]:
         if row[punishment_index] not in d[year][row[demo_index]]:
             d[year][row[demo_index]][row[punishment_index]] = {}
-        d[year][row[demo_index]][row[punishment_index]][row[0]] = row[-1]
+        if row[0] in charters and include_charters:
+            d[year][row[demo_index]][row[punishment_index]][row[0]] = row[-1]
+        if row[0] not in charters and include_traditional:
+            d[year][row[demo_index]][row[punishment_index]][row[0]] = row[-1]
     return d
 
 
