@@ -61,3 +61,8 @@ def test_replace_category_names_for_one_year():
     a = collectFromFile.filter_records(a,3,1)
     a = collectFromFile.replace_category_names(a,3,1)
     assert max(len(row[1]) for row in a[1:]) == 3
+
+def test_get_demo_year():
+    assert collectFromFile.get_demo_year(2008)["BLA"][5902] == 1
+    assert collectFromFile.get_demo_year(2008)["WHI"][5902] == 93
+    

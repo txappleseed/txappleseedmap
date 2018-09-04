@@ -167,17 +167,44 @@ def make_empty_dict(first_year: int, last_year: int) -> dict:
     return {year: {demo: {} for demo in demos} 
             for year in range(first_year, last_year + 1)}
      
-def get_demo_year(year: int):
-    districtPath = '../data/from_agency/districts/district{}.dat'.format(year)
-    # TODO
-    pass
+def get_demo_year(year: int) -> dict:
+    dirname=os.path.dirname
+    district_path = os.path.join(dirname(dirname(__file__)), 
+                            os.path.join('data', 'from_agency', 'districts',
+                            f'district{year}.dat'))
+    demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 'ASI', 'PCI', 'TWO'}
+
+    # dropping 'DPETALLC', which is also a measure of district population, but it's not
+    # the same as what the TEA uses in the annual discipline reports processed above.
+
+    demo_dict = {demo: {} for demo in demos}
+    with open(district_path) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            for demo in demos:
+                if f"DPET{demo}P" in reader.fieldnames:
+                    demo_dict[demo][int(row["DISTRICT"])] = float(row[f"DPET{demo}P"])
+    return demo_dict
+
+
+
+
+"""    dirname=os.path.dirname
+    apple_path = os.path.join(dirname(dirname(__file__)), 
+                              os.path.join('data', 'from_agency', 'by_region',
+                              'REGION_{}_DISTRICT_summary_{}.csv'))
+    one_year = [load_region_file(apple_path.format(str(region).zfill(2),str(year)[-2:]))
+                for region in range(1,21)]
+    one_year = [row for sublist in one_year for row in sublist]
+    one_year[1:] = [row for row in one_year[1:]
+                    if row != one_year[0] if len(row) == len(one_year[0])]"""
 
 def add_year_to_dict(year: int, d: dict) -> dict:
     year_of_records = get_year(year)
     demo_index = year_of_records[0].index("HEADING NAME")
     code_index = year_of_records[0].index("HEADING")
     punishment_index = year_of_records[0].index("SECTION")
-    
+
     year_of_records = mandatory_and_discretionary(year_of_records, code_index,
                                                 demo_index, punishment_index)
     year_of_records = filter_records(year_of_records, demo_index,
@@ -197,8 +224,9 @@ def add_year_to_dict(year: int, d: dict) -> dict:
 
 if __name__ == "__main__":
     year = 2008
-    d = make_empty_dict(2006, 2016)
-    d = add_year_to_dict(2008, d)
-    print(d[2008]["BLA"])
+    print(get_demo_year(year))
+    """    d = make_empty_dict(2006, 2016)
+        d = add_year_to_dict(2008, d)
+        print(d[2008]["BLA"])"""
     
 # year_col = "YR{}".format(str(year)[-2:])
