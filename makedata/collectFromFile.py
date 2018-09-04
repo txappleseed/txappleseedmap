@@ -67,8 +67,8 @@ def filter_year_by_column(year_of_records: list,
                           keep_matches: bool = False) -> list:
 
     year_of_records[1:] = [row for row in year_of_records[1:] 
-                           if any(word in row[column_index]
-                                  for word in pattern) == keep_matches]
+                           if (any(word in row[column_index]
+                                  for word in pattern) == keep_matches)]
     return year_of_records
     
 
@@ -168,7 +168,8 @@ def number_strings_to_int(row: list) -> list:
 
 def make_empty_dict(first_year: int, last_year: int) -> dict:
     # measurements = {"POP", "ISS", "OSS", "EXP", "DAE"}
-    demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 'ASI', 'PCI', 'TWO', 'ALL'}
+    demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 
+             'ASI', 'PCI', 'TWO', 'ALL', 'NON', 'MAN', 'DIS'}
     return {year: {demo: {} for demo in demos} 
             for year in range(first_year, last_year + 1)}
      
@@ -177,7 +178,8 @@ def get_demo_year(year: int) -> dict:
     district_path = os.path.join(dirname(dirname(__file__)), 
                             os.path.join('data', 'from_agency', 'districts',
                             f'district{year}.dat'))
-    demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 'ASI', 'PCI', 'TWO'}
+    demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 
+             'ASI', 'PCI', 'TWO'}
 
     # dropping 'DPETALLC', which is also a measure of district population, but it's not
     # the same as what the TEA uses in the annual discipline reports processed above.
@@ -191,25 +193,8 @@ def get_demo_year(year: int) -> dict:
                     demo_dict[demo][int(row["DISTRICT"])] = float(row[f"DPET{demo}P"])
     return demo_dict
 
-def get_charters() -> set:
-    charters = set()
-    dirname=os.path.dirname
-    district_path = os.path.join(dirname(dirname(__file__)), 
-                            os.path.join('data', 'from_agency', 'districts',
-                            f'district2016.dat'))
-    with open(district_path) as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            if row["COMMTYPE"] == "Charters":
-                charters.add(int(row["DISTRICT"]))
-    return charters
 
-
-
-def add_year_to_dict(year: int, 
-                     d: dict,
-                     include_charters: bool = False,
-                     include_traditional: bool = True) -> dict:
+def make_year_of_records(year: int) -> list:
     
     year_of_records = get_year(year)
     demo_index = year_of_records[0].index("HEADING NAME")
@@ -222,8 +207,56 @@ def add_year_to_dict(year: int,
                                     punishment_index)
     year_of_records[1:] = [number_strings_to_int(row) 
                            for row in year_of_records[1:]]
-    year_of_records = replace_category_names(year_of_records,
-                                             demo_index, punishment_index)
+    return replace_category_names(year_of_records,
+                                  demo_index, punishment_index)
+
+
+def get_charters() -> set:
+    charters = set()
+    dirname=os.path.dirname
+    district_path = os.path.join(dirname(dirname(__file__)), 
+                            os.path.join('data', 'from_agency', 'districts',
+                            'district2016.dat'))
+    with open(district_path) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            if row["COMMTYPE"] == "Charters":
+                charters.add(int(row["DISTRICT"]))
+    return charters
+
+
+def punishment_totals_for_year(year: int, d: dict) -> dict:
+
+    # Trying two methods to get total disciplinary actions per district:
+    # adding up "Mandatory" and "Discretionary" actions (which are not always 
+    # reported), and adding up actions against special ed and non-special ed 
+    # students. Relying on whichever number is higher, on the assumption that
+    # if actions are reported anywhere, they probably really happened.
+
+    for action in ("ISS", "OSS", "EXP", "DAE"):
+        for district in set(d[year]["WHI"][action].keys() | 
+                            d[year]["BLA"][action].keys()):
+            sn = d[year]["SPE"].get(action, {}).get(district, 0)
+            sn += d[year]["NON"].get(action, {}).get(district, 0)
+            md = d[year]["MAN"].get(action, {}).get(district, 0)
+            md += d[year]["DIS"].get(action, {}).get(district, 0)
+            if action not in d[year]["ALL"]:
+                d[year]["ALL"][action] = {}
+            d[year]["ALL"][action][district] = max(sn, md)
+    d[year].pop("NON", None)
+    d[year].pop("MAN", None)
+    d[year].pop("DIS", None)
+    return d
+
+
+def add_year_to_dict(year_of_records: list, 
+                     year: int,
+                     d: dict,
+                     include_charters: bool = False,
+                     include_traditional: bool = True) -> dict:      
+    
+    demo_index = year_of_records[0].index("HEADING NAME")
+    punishment_index = year_of_records[0].index("SECTION")                               
     charters = get_charters()
     for row in year_of_records[1:]:
         if row[punishment_index] not in d[year][row[demo_index]]:
@@ -237,8 +270,8 @@ def add_year_to_dict(year: int,
 
 
 if __name__ == "__main__":
-    year = 2008
-    print(get_demo_year(year))
+    year = 2009
+    print(make_year_of_records(year))
     """    d = make_empty_dict(2006, 2016)
         d = add_year_to_dict(2008, d)
         print(d[2008]["BLA"])"""

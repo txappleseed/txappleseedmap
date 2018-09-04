@@ -17,6 +17,17 @@ def load_charter_list():
 def load_empty_dict():
     return collectFromFile.make_empty_dict(2006, 2016)
 
+@pytest.fixture()
+def load_year_list():
+    return collectFromFile.make_year_of_records(2009)
+
+@pytest.fixture()
+def load_dict_with_year(load_year_list, load_empty_dict):
+    return collectFromFile.add_year_to_dict(load_year_list,
+                                            2009,
+                                            load_empty_dict)
+
+
 def test_load_one_year():
     assert load_year_for_testing()[0][0] == 'DISTRICT'
     assert int(load_year_for_testing()[1][0]) == 31901
@@ -77,10 +88,27 @@ def test_get_demo_year():
 def test_get_charters():
     assert 14803 in collectFromFile.get_charters()
 
-def test_add_year_exclude_charters(load_empty_dict):
+def test_add_year_exclude_charters(load_year_list, load_empty_dict):
+    year = 2009
     assert 14803 not in collectFromFile.add_year_to_dict(
-            2009, load_empty_dict, False, True)[2009]["ALL"]["POP"].keys()
+            load_year_list, year, load_empty_dict, False, True)[2009]["ALL"]["POP"].keys()
+    assert collectFromFile.add_year_to_dict(
+            load_year_list, year, load_empty_dict, 
+            False, True)[year]["HIS"]["DAE"][31912] == 349
 
-def test_add_year_include_charters(load_empty_dict):
+def test_add_year_include_charters(load_year_list, load_empty_dict):
+    year = 2009
     assert 14803 in collectFromFile.add_year_to_dict(
-            2009, load_empty_dict, True, False)[2009]["ALL"]["POP"].keys()
+            load_year_list, year, load_empty_dict, True, False)[year]["ALL"]["POP"].keys()
+    assert 31912 not in collectFromFile.add_year_to_dict(
+            load_year_list, year, load_empty_dict, True, False)[year]["HIS"]["DAE"].keys()
+
+def test_punishment_totals_for_year(load_dict_with_year):
+    year = 2009
+    action = "OSS"
+    assert 31912 in set(load_dict_with_year[year]["WHI"][action].keys() | 
+                            load_dict_with_year[year]["BLA"][action].keys())
+    assert load_dict_with_year[year]["NON"][action][31912] == 276
+    assert collectFromFile.punishment_totals_for_year(
+            year, load_dict_with_year)[year]["ALL"][action][31912] == max(
+                    276+79, 43+312)
