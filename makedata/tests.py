@@ -27,21 +27,21 @@ SHORT_DATA = [["DISTRICT","SECTION","HEADING","HEADING NAME","YR08"],
                 "COUNT OF STUDENTS EXPELLED","-99999999"]]
 
 def test_relabel_mandatory_and_discretionary():
-    assert collectFromFile.mandatory_and_discretionary(SHORT_DATA)[-2][1] == \
-        "B-DISCIPLINE DATA TRENDS"
-    assert collectFromFile.mandatory_and_discretionary(SHORT_DATA)[-1][1] == \
-        "EXP"
-    assert collectFromFile.mandatory_and_discretionary(SHORT_DATA)[-1][3] == \
-        "CNT"
+    assert collectFromFile.mandatory_and_discretionary(
+            SHORT_DATA,2,3,1)[-2][1] == "B-DISCIPLINE DATA TRENDS"
+    assert collectFromFile.mandatory_and_discretionary(
+            SHORT_DATA,2,3,1)[-1][1] == "EXP"
+    assert collectFromFile.mandatory_and_discretionary(
+            SHORT_DATA,2,3,1)[-1][3] == "CNT"
 
 def test_filter_year_by_column(load_year_for_testing):
     assert len(collectFromFile.filter_year_by_column(
-        SHORT_DATA, "SECTION", 
+        SHORT_DATA, 1, 
         ("IN SCHOOL SUSPENSION", "OUT OF SCHOOL SUSPENSIONS"), 
         keep_matches=True)) == 4
     
     assert len(collectFromFile.filter_year_by_column(
-        load_year_for_testing, "SECTION", 
+        load_year_for_testing, 1, 
         ("IN SCHOOL SUSPENSION", "OUT OF SCHOOL SUSPENSIONS"), 
         keep_matches=True)) == 6569
 
@@ -50,12 +50,14 @@ def test_int_values_for_row():
         "F-OUT OF SCHOOL SUSPENSIONS", "C16", "AFRICAN AMERICAN", 1]
 
 def test_replace_category_names_for_sample_data():
-    assert collectFromFile.replace_category_names(SHORT_DATA)[1][1] == "ISS"
-    assert collectFromFile.replace_category_names(SHORT_DATA)[2][3] == "WHI"
+    assert collectFromFile.replace_category_names(SHORT_DATA, 3, 1)[1][1] \
+            == "ISS"
+    assert collectFromFile.replace_category_names(SHORT_DATA, 3, 1)[2][3] \
+            == "WHI"
 
 def test_replace_category_names_for_one_year():
     a = load_year_for_testing()
-    a = collectFromFile.mandatory_and_discretionary(a)
-    a = collectFromFile.filter_records(a)
-    a = collectFromFile.replace_category_names(a)
+    a = collectFromFile.mandatory_and_discretionary(a,2,3,1)
+    a = collectFromFile.filter_records(a,3,1)
+    a = collectFromFile.replace_category_names(a,3,1)
     assert max(len(row[1]) for row in a[1:]) == 3

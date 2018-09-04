@@ -10,6 +10,8 @@ requests = "*"
 
 [dev-packages]
 pytest = "*"
+pylint = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.6"

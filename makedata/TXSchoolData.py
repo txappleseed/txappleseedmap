@@ -42,7 +42,7 @@ last_year = 2016
 
 pdict = {"EXPULSIONS":"EXP","DAEP REMOVALS":"DAE","IN SCHOOL SUSPENSIONS":"ISS","OUT OF SCHOOL SUSPENSIONS":"OSS"}
 
-p_or_pop = ["POP", "ISS", "OSS", "EXP", "DAE"]
+measurements = {"POP", "ISS", "OSS", "EXP", "DAE"}
 
 demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 'ASI', 'PCI', 'TWO', 'ALL'}
 
@@ -79,23 +79,23 @@ def formatDF(apple, year, year_col):
     appleReplace = {year_col:
                         {-99999999: 1, -999999: 1, -999: 1},
                     "SECTION": {
-                        'A-PARTICIPATION': 'POP',
-                        'D-EXPULSION ACTIONS|N-ECO\. DISADV\. EXPULSIONS|I-SPEC\. ED\. EXPULSIONS': 'EXP',
-                        'E-DAEP PLACEMENTS|O-ECO\. DISADV\. DAEP PLACEMENTS|J-SPEC\. ED\. DAEP PLACEMENTS': 'DAE',
-                        'F-OUT OF SCHOOL SUSPENSIONS|P-ECO\. DISADV\. OUT OF SCHOOL SUS.|K-SPEC\. ED\. OUT OF SCHOOL SUS\.': 'OSS',
-                        'G-IN SCHOOL SUSPENSIONS|Q-ECO\. DISADV\. IN SCHOOL SUS\.|L-SPEC\. ED\. IN SCHOOL SUS\.': 'ISS'},
-                    "HEADING NAME": {'SPEC\. ED.*$': 'SPE',
-                                     'ECO?. DISAD.*$': 'ECO',
-                                     'HIS(PANIC)?/LATINO': 'HIS',
-                                     'HISPANIC': 'HIS',
-                                     '(BLACK)?( OR |/)?AFRICAN AMERICAN': 'BLA',
-                                     'WHITE': 'WHI',
-                                     'NATIVE AMERICAN':'IND',
-                                     'AMERICAN INDIAN OR ALASKA NAT': 'IND',
-                                     'ASIAN': 'ASI',
-                                     'NATIVE HAWAIIAN/OTHER PACIFIC': 'PCI',
-                                     'TWO OR MORE RACES': 'TWO',
-                                     'DISTRICT CUMULATIVE YEAR END ENROLLMENT': 'ALL'
+                        r'A-PARTICIPATION': 'POP',
+                        r'D-EXPULSION ACTIONS|N-ECO\. DISADV\. EXPULSIONS|I-SPEC\. ED\. EXPULSIONS': 'EXP',
+                        r'E-DAEP PLACEMENTS|O-ECO\. DISADV\. DAEP PLACEMENTS|J-SPEC\.i ED\. DAEP PLACEMENTS': 'DAE',
+                        r'F-OUT OF SCHOOL SUSPENSIONS|P-ECO\. DISADV\. OUT OF SCHOOL SUS.|K-SPEC\. ED\. OUT OF SCHOOL SUS\.': 'OSS',
+                        r'G-IN SCHOOL SUSPENSIONS|Q-ECO\. DISADV\. IN SCHOOL SUS\.|L-SPEC\. ED\. IN SCHOOL SUS\.': 'ISS'},
+                    "HEADING NAME": {r'SPEC\. ED.*$': 'SPE',
+                                     r'ECO?. DISAD.*$': 'ECO',
+                                     r'HIS(PANIC)?/LATINO': 'HIS',
+                                     r'HISPANIC': 'HIS',
+                                     r'(BLACK)?( OR |/)?AFRICAN AMERICAN': 'BLA',
+                                     r'WHITE': 'WHI',
+                                     r'NATIVE AMERICAN':'IND',
+                                     r'AMERICAN INDIAN OR ALASKA NAT': 'IND',
+                                     r'ASIAN': 'ASI',
+                                     r'NATIVE HAWAIIAN/OTHER PACIFIC': 'PCI',
+                                     r'TWO OR MORE RACES': 'TWO',
+                                     r'DISTRICT CUMULATIVE YEAR END ENROLLMENT': 'ALL'
                                     }
                     }
 

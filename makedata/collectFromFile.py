@@ -21,10 +21,8 @@ def get_year(year: int) -> list:
     return one_year
 
 
-def mandatory_and_discretionary(year_of_records: list) -> list:
-    heading_name_index = year_of_records[0].index("HEADING NAME")
-    code_index = year_of_records[0].index("HEADING")
-    section_index = year_of_records[0].index("SECTION")
+def mandatory_and_discretionary(year_of_records: list, 
+        code_index: int, demo_index: int, punishment_index: int) -> list:
 
     code_headings = {
         "B04": ("EXP", "CNT"),
@@ -56,24 +54,24 @@ def mandatory_and_discretionary(year_of_records: list) -> list:
 
     for row in year_of_records:
         if row[code_index] in code_headings:
-            row[section_index] = code_headings[row[code_index]][0]
-            row[heading_name_index] = code_headings[row[code_index]][1]
+            row[punishment_index] = code_headings[row[code_index]][0]
+            row[demo_index] = code_headings[row[code_index]][1]
     return year_of_records
 
 
 def filter_year_by_column(year_of_records: list, 
-                          column_name: str, 
+                          column_index: int, 
                           pattern: tuple,
                           keep_matches: bool = False) -> list:
 
-    column_index = year_of_records[0].index(column_name)
     year_of_records[1:] = [row for row in year_of_records[1:] 
                            if any(word in row[column_index]
                                   for word in pattern) == keep_matches]
     return year_of_records
     
 
-def filter_records(year_of_records: list) -> list:
+def filter_records(year_of_records: list, demo_index: int,
+                   punishment_index: int) -> list:
     # Keeping only the rows that categorize students by protected class, 
     # or that have totals.
     
@@ -90,24 +88,26 @@ def filter_records(year_of_records: list) -> list:
                         "NON ECO DISAD.", "NON ECO. DISAD.", "DISCIPLINE DATA TRENDS")
 
     year_of_records = filter_year_by_column(year_of_records, 
-                          "HEADING NAME", heading_name_in, keep_matches=True)
+                          demo_index, heading_name_in, keep_matches=True)
 
     year_of_records = filter_year_by_column(year_of_records, 
-                          "HEADING NAME", heading_name_out, keep_matches=False)
+                          demo_index, heading_name_out, keep_matches=False)
 
     # Delete rows appearing to double-count the same expulsions.
     
-    section_out = ("M-ECO. DISADV. JJAEP PLACEMENTS", "H-SPEC. ED. JJAEP EXPULSIONS",
-                  "JJAEP EXPULSIONS", "DISCIPLINE ACTION COUNTS")
+    section_out = ("M-ECO. DISADV. JJAEP PLACEMENTS", 
+                   "H-SPEC. ED. JJAEP EXPULSIONS",
+                   "JJAEP EXPULSIONS", "DISCIPLINE ACTION COUNTS")
     
     year_of_records = filter_year_by_column(year_of_records, 
-                          "SECTION", section_out, keep_matches=False)
+                          punishment_index, section_out, keep_matches=False)
     
     return year_of_records
 
 
-def replace_category_names(year_of_records: list) -> list:
-    appleReplace = {
+def replace_category_names(year_of_records: list,
+                    demo_index: int, punishment_index: int) -> list:
+    headings = {
         "SECTION": {
             'A-PARTICIPATION': 'POP',
             'D-EXPULSION ACTIONS': 'EXP', 
@@ -145,11 +145,11 @@ def replace_category_names(year_of_records: list) -> list:
             'DISTRICT CUMULATIVE YEAR END ENROLLMENT': 'ALL',
                         }
         }
-    for column_name in appleReplace:
-        column_index = year_of_records[0].index(column_name)
-        for row in year_of_records[1:]:
-            if len(row[column_index]) > 3:
-                row[column_index] = appleReplace[column_name][row[column_index]]
+    for row in year_of_records[1:]:
+        if len(row[demo_index]) > 3:
+            row[demo_index] = headings["HEADING NAME"][row[demo_index]]
+        if len(row[punishment_index]) > 3:
+            row[punishment_index] = headings["SECTION"][row[punishment_index]]
     return year_of_records
 
     
@@ -161,20 +161,44 @@ def number_strings_to_int(row: list) -> list:
         row[-1] = 1
     return row
 
-def make_empty_dict(first_year, last_year):
+def make_empty_dict(first_year: int, last_year: int) -> dict:
     # measurements = {"POP", "ISS", "OSS", "EXP", "DAE"}
     demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 'ASI', 'PCI', 'TWO', 'ALL'}
     return {year: {demo: {} for demo in demos} 
             for year in range(first_year, last_year + 1)}
      
+def get_demo_year(year: int):
+    districtPath = '../data/from_agency/districts/district{}.dat'.format(year)
+    # TODO
+    pass
+
+def add_year_to_dict(year: int, d: dict) -> dict:
+    year_of_records = get_year(year)
+    demo_index = year_of_records[0].index("HEADING NAME")
+    code_index = year_of_records[0].index("HEADING")
+    punishment_index = year_of_records[0].index("SECTION")
+    
+    year_of_records = mandatory_and_discretionary(year_of_records, code_index,
+                                                demo_index, punishment_index)
+    year_of_records = filter_records(year_of_records, demo_index,
+                                    punishment_index)
+    year_of_records[1:] = [number_strings_to_int(row) 
+                           for row in year_of_records[1:]]
+    year_of_records = replace_category_names(year_of_records,
+                                             demo_index, punishment_index)
+    
+    for row in year_of_records[1:]:
+        if row[punishment_index] not in d[year][row[demo_index]]:
+            d[year][row[demo_index]][row[punishment_index]] = {}
+        d[year][row[demo_index]][row[punishment_index]][row[0]] = row[-1]
+    return d
+
+
 
 if __name__ == "__main__":
-    year = 2016
-    a = get_year(year)
-    a = mandatory_and_discretionary(a)
-    a = filter_records(a)
-    a[1:] = [number_strings_to_int(row) for row in a[1:]]
-    a = replace_category_names(a)
-    print(a[:10])
+    year = 2008
+    d = make_empty_dict(2006, 2016)
+    d = add_year_to_dict(2008, d)
+    print(d[2008]["BLA"])
     
 # year_col = "YR{}".format(str(year)[-2:])
