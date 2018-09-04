@@ -1,4 +1,5 @@
 import csv
+import logging
 import os
 
 def load_region_file(apple_path: str) -> list:
@@ -61,14 +62,38 @@ def mandatory_and_discretionary(year_of_records: list,
     return year_of_records
 
 
+def filter_year_by_column_old(year_of_records: list, 
+                          column_index: int, 
+                          pattern: tuple,
+                          keep_matches: bool = False) -> list:
+
+    if keep_matches:
+        year_of_records[1:] = [row for row in year_of_records[1:] 
+                                if any(word in row[column_index]
+                                    for word in pattern)]
+    else:
+        year_of_records[1:] = [row for row in year_of_records[1:] 
+                        if all(word not in row[column_index]
+                            for word in pattern)]
+    return year_of_records
+
 def filter_year_by_column(year_of_records: list, 
                           column_index: int, 
                           pattern: tuple,
                           keep_matches: bool = False) -> list:
 
-    year_of_records[1:] = [row for row in year_of_records[1:] 
-                           if (any(word in row[column_index]
-                                  for word in pattern) == keep_matches)]
+    log.debug(f'{sum(row[3] == "NON" for row in year_of_records)} NON rows before filtering')
+
+    if keep_matches:
+        year_of_records[1:] = [row for row in year_of_records[1:] 
+                                if any(word in row[column_index]
+                                    for word in pattern)]
+        log.debug(f'{sum(row[3] == "NON" for row in year_of_records)} NON rows after filtering all but {pattern}')
+    else:
+        for word in pattern:
+            year_of_records[1:] = [row for row in year_of_records[1:] 
+                            if word not in row[column_index]]
+            log.debug(f'{sum(row[3] == "NON" for row in year_of_records)} NON rows after filtering out {word}')
     return year_of_records
     
 
@@ -76,23 +101,48 @@ def filter_records(year_of_records: list,
                    demo_index: int,
                    punishment_index: int) -> list:
 
+    # TODO: these filter functions are throwing out the MAN, DIS,
+    # SPE, and NON rows for some reason. Make it stop.
+
     # Keeping only the rows that categorize students by protected class, 
     # or that have totals.
     
-    heading_name_in = ("WHITE", "AFRICAN AMERICAN", "AMERICAN INDIAN OR ALASKA NAT",
-                "HISPANIC", "NATIVE HAWAIIAN", "ASIAN", "TWO OR MORE RACES", "SPEC. ED",
-                "ECO. DISAD", "ECO DISAD.", "TOTAL", "DISTRICT CUMULATIVE YEAR END ENROLLMENT",             
-                "MANDATORY", "DISCRETIONARY", "NATIVE AMERICAN")
+    heading_name_in = ("WHITE", 
+                       "AFRICAN AMERICAN", 
+                       "AMERICAN INDIAN OR ALASKA NAT",
+                       "HISPANIC", 
+                       "NATIVE HAWAIIAN", 
+                       "ASIAN", 
+                       "TWO OR MORE RACES", 
+                       "SPEC. ED",
+                       "ECO. DISAD", 
+                       "ECO DISAD.", 
+                       "TOTAL", 
+                       "DISTRICT CUMULATIVE YEAR END ENROLLMENT",    
+                       "MANDATORY", 
+                       "DISCRETIONARY", 
+                       "NATIVE AMERICAN",
+                       "NON",
+                       "SPE"
+                       "MAN",
+                       "DIS")
+
+    year_of_records = filter_year_by_column(year_of_records, 
+                          demo_index, heading_name_in, keep_matches=True)
 
     # Getting rid of rows that count students instead of incidents, or 
     # non-disadvantaged kids.
     
-    heading_name_out = ("SPEC. ED. STUDENTS", "EXPULSIONS TO JJAEP", "ECO DISAD. STUDENTS",
-                        "ECO. DISAD. STUDENTS", "AT RISK", "NON AT", "UNKNOWN AT",
-                        "NON ECO DISAD.", "NON ECO. DISAD.", "DISCIPLINE DATA TRENDS")
+    heading_name_out = ("SPEC. ED. STUDENTS", 
+                        "EXPULSIONS TO JJAEP", 
+                        "ECO DISAD. STUDENTS",
+                        "ECO. DISAD. STUDENTS", 
+                        "AT RISK", 
+                        "NON AT", 
+                        "UNKNOWN AT",
+                        "NON ECO DISAD.", 
+                        "NON ECO. DISAD.")
 
-    year_of_records = filter_year_by_column(year_of_records, 
-                          demo_index, heading_name_in, keep_matches=True)
 
     year_of_records = filter_year_by_column(year_of_records, 
                           demo_index, heading_name_out, keep_matches=False)
@@ -101,10 +151,11 @@ def filter_records(year_of_records: list,
     
     section_out = ("M-ECO. DISADV. JJAEP PLACEMENTS", 
                    "H-SPEC. ED. JJAEP EXPULSIONS",
-                   "JJAEP EXPULSIONS", "DISCIPLINE ACTION COUNTS")
+                   "JJAEP EXPULSIONS", 
+                   "DISCIPLINE ACTION COUNTS")
     
     year_of_records = filter_year_by_column(year_of_records, 
-                          punishment_index, section_out, keep_matches=False)
+                         punishment_index, section_out, keep_matches=False)
     
     return year_of_records
 
@@ -271,7 +322,10 @@ def add_year_to_dict(year_of_records: list,
 
 if __name__ == "__main__":
     year = 2009
-    print(make_year_of_records(year))
+    # print(make_year_of_records(year))
+    log = logging.getLogger(__name__)
+    logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
+    log.debug(filter_records(mandatory_and_discretionary(get_year(2009),2,3,1),3,1))
     """    d = make_empty_dict(2006, 2016)
         d = add_year_to_dict(2008, d)
         print(d[2008]["BLA"])"""
