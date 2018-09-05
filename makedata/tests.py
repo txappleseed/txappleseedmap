@@ -113,6 +113,16 @@ def test_punishment_totals_for_year(load_dict_with_year):
     assert load_dict_with_year[year]["SPE"][action][31912] == 79
     assert load_dict_with_year[year]["MAN"][action][31912] == 43
     assert load_dict_with_year[year]["DIS"][action][31912] == 312
-    assert collectFromFile.punishment_totals_for_year(
-            year, load_dict_with_year)[year]["ALL"][action][31912] == max(
-                    276+79, 43+312)
+    test_dict = collectFromFile.punishment_totals_for_year(
+            year, load_dict_with_year)
+    assert test_dict[year]["ALL"][action][31912] == max(276+79, 43+312)
+    assert test_dict[year]["ALL"]["EXP"][101909] == 6
+
+def test_demo_populations_for_year(load_dict_with_year):
+    year = 2008
+    test_dict = collectFromFile.punishment_totals_for_year(
+            year, load_dict_with_year)
+    test_dict = collectFromFile.add_demo_populations(
+        year, load_dict_with_year
+    )
+    assert test_dict[year]["BLA"]["POP"][61906] == 26

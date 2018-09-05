@@ -69,7 +69,7 @@ def filter_year_by_column(year_of_records: list,
     
     log = logging.getLogger(__name__)
     log.debug(f'{sum(row[3] == "SPE" for row in year_of_records)}'
-        'SPE rows before filtering')
+        ' SPE rows before filtering')
 
     if keep_matches:
         year_of_records[1:] = [row for row in year_of_records[1:] 
@@ -81,7 +81,7 @@ def filter_year_by_column(year_of_records: list,
                             for word in pattern)]
         
     log.debug(f'{sum(row[3] == "SPE" for row in year_of_records)}'
-        'SPE rows after filtering')
+        ' SPE rows after filtering')
 
     return year_of_records
     
@@ -89,9 +89,6 @@ def filter_year_by_column(year_of_records: list,
 def filter_records(year_of_records: list, 
                    demo_index: int,
                    punishment_index: int) -> list:
-
-    # TODO: these filter functions are throwing out the MAN, DIS,
-    # SPE, and NON rows for some reason. Make it stop.
 
     # Keeping only the rows that categorize students by protected class, 
     # or that have totals.
@@ -221,26 +218,6 @@ def make_empty_dict(first_year: int, last_year: int) -> dict:
              'ASI', 'PCI', 'TWO', 'ALL', 'NON', 'MAN', 'DIS'}
     return {year: {demo: {} for demo in demos} 
             for year in range(first_year, last_year + 1)}
-     
-def get_demo_year(year: int) -> dict:
-    dirname=os.path.dirname
-    district_path = os.path.join(dirname(dirname(__file__)), 
-                            os.path.join('data', 'from_agency', 'districts',
-                            f'district{year}.dat'))
-    demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 
-             'ASI', 'PCI', 'TWO'}
-
-    # dropping 'DPETALLC', which is also a measure of district population, but it's not
-    # the same as what the TEA uses in the annual discipline reports processed above.
-
-    demo_dict = {demo: {} for demo in demos}
-    with open(district_path) as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            for demo in demos:
-                if f"DPET{demo}P" in reader.fieldnames:
-                    demo_dict[demo][int(row["DISTRICT"])] = float(row[f"DPET{demo}P"])
-    return demo_dict
 
 
 def make_year_of_records(year: int) -> list:
@@ -297,6 +274,40 @@ def punishment_totals_for_year(year: int, d: dict) -> dict:
     d[year].pop("DIS", None)
     return d
 
+     
+def get_demo_year(year: int) -> dict:
+    dirname=os.path.dirname
+    district_path = os.path.join(dirname(dirname(__file__)), 
+                            os.path.join('data', 'from_agency', 'districts',
+                            f'district{year}.dat'))
+    demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 
+             'ASI', 'PCI', 'TWO'}
+
+    # dropping 'DPETALLC', which is also a measure of district population,
+    # but isn't what TEA uses in the discipline reports processed above.
+
+    demo_dict = {demo: {} for demo in demos}
+    with open(district_path) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            for demo in demos:
+                if f"DPET{demo}P" in reader.fieldnames:
+                    demo_dict[demo][int(row["DISTRICT"])] = float(
+                            row[f"DPET{demo}P"])
+    return demo_dict
+
+
+def add_demo_populations(year: int, d: dict) -> dict:
+    demo_dict = get_demo_year(year)
+    for demo in (demo for demo in demo_dict if demo != "ALL"):
+        if "POP" not in d[year][demo]:
+            d[year][demo]["POP"] = {}
+        for district in demo_dict[demo]:
+            d[year][demo]["POP"][district] = int(d[year]["ALL"]["POP"][district] 
+                    * demo_dict[demo][district] // 100)
+    return d
+
+
 
 def add_year_to_dict(year_of_records: list, 
                      year: int,
@@ -308,24 +319,29 @@ def add_year_to_dict(year_of_records: list,
     punishment_index = year_of_records[0].index("SECTION")                               
     charters = get_charters()
     for row in year_of_records[1:]:
-        if row[punishment_index] not in d[year][row[demo_index]]:
+        if row[punishment_index] not in d[year].get(row[demo_index], {}):
             d[year][row[demo_index]][row[punishment_index]] = {}
         if row[0] in charters and include_charters:
             d[year][row[demo_index]][row[punishment_index]][row[0]] = row[-1]
         if row[0] not in charters and include_traditional:
             d[year][row[demo_index]][row[punishment_index]][row[0]] = row[-1]
+
     return d
 
 
 
 if __name__ == "__main__":
     year = 2009
-    # print(make_year_of_records(year))
     log = logging.getLogger(__name__)
     logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
-    log.debug(filter_records(mandatory_and_discretionary(get_year(2009),2,3,1),3,1))
-    """    d = make_empty_dict(2006, 2016)
-        d = add_year_to_dict(2008, d)
-        print(d[2008]["BLA"])"""
+    # log.debug(filter_records(mandatory_and_discretionary(get_year(2009),2,3,1),3,1)
+    # print(get_demo_year(2009))
+    y = make_year_of_records(2009)
+    d = make_empty_dict(2006, 2016)
+    d = add_year_to_dict(y, year, d)
+    d = punishment_totals_for_year(year, d)
+    d = add_demo_populations(year, d)
+
+    log.debug(d[year]["BLA"])
     
 # year_col = "YR{}".format(str(year)[-2:])
