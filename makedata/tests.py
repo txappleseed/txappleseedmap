@@ -119,7 +119,7 @@ def test_punishment_totals_for_year(load_dict_with_year):
     assert test_dict[year]["ALL"]["EXP"][101909] == 6
 
 def test_demo_populations_for_year(load_dict_with_year):
-    year = 2008
+    year = 2009
     test_dict = collectFromFile.punishment_totals_for_year(
             year, load_dict_with_year)
     test_dict = collectFromFile.add_demo_populations(

@@ -303,10 +303,11 @@ def add_demo_populations(year: int, d: dict) -> dict:
         if "POP" not in d[year][demo]:
             d[year][demo]["POP"] = {}
         for district in demo_dict[demo]:
-            d[year][demo]["POP"][district] = int(d[year]["ALL"]["POP"][district] 
-                    * demo_dict[demo][district] // 100)
+            if d[year]["ALL"]["POP"].get(district, None):
+                d[year][demo]["POP"][district] = int(
+                        d[year]["ALL"]["POP"][district] 
+                        * demo_dict[demo][district] // 100)
     return d
-
 
 
 def add_year_to_dict(year_of_records: list, 
