@@ -310,12 +310,12 @@ def add_demo_populations(year: int, d: dict) -> dict:
     return d
 
 
-def add_year_to_dict(year_of_records: list, 
-                     year: int,
+def add_year_to_dict(year: int,
                      d: dict,
                      include_charters: bool = False,
                      include_traditional: bool = True) -> dict:      
     
+    year_of_records = make_year_of_records(year)
     demo_index = year_of_records[0].index("HEADING NAME")
     punishment_index = year_of_records[0].index("SECTION")                               
     charters = get_charters()
@@ -326,6 +326,8 @@ def add_year_to_dict(year_of_records: list,
             d[year][row[demo_index]][row[punishment_index]][row[0]] = row[-1]
         if row[0] not in charters and include_traditional:
             d[year][row[demo_index]][row[punishment_index]][row[0]] = row[-1]
+    d = punishment_totals_for_year(year, d)
+    d = add_demo_populations(year, d)
 
     return d
 
@@ -337,11 +339,9 @@ if __name__ == "__main__":
     logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
     # log.debug(filter_records(mandatory_and_discretionary(get_year(2009),2,3,1),3,1)
     # print(get_demo_year(2009))
-    y = make_year_of_records(2009)
     d = make_empty_dict(2006, 2016)
-    d = add_year_to_dict(y, year, d)
-    d = punishment_totals_for_year(year, d)
-    d = add_demo_populations(year, d)
+    d = add_year_to_dict(year, d)
+
 
     log.debug(d[year]["BLA"])
     

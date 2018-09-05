@@ -23,11 +23,14 @@ def load_year_list():
     return collectFromFile.make_year_of_records(2009)
 
 @pytest.fixture()
-def load_dict_with_year(load_year_list, load_empty_dict):
-    return collectFromFile.add_year_to_dict(load_year_list,
-                                            2009,
-                                            load_empty_dict)
+def load_dict_with_year(load_empty_dict):
+    return collectFromFile.add_year_to_dict(2009, load_empty_dict)
 
+@pytest.fixture()
+def load_dict_with_year_charters(load_empty_dict):
+    return collectFromFile.add_year_to_dict(2009, 
+                                            load_empty_dict, 
+                                            True, False)
 
 def test_load_one_year():
     assert load_year_for_testing()[0][0] == 'DISTRICT'
@@ -89,40 +92,25 @@ def test_get_demo_year():
 def test_get_charters():
     assert 14803 in collectFromFile.get_charters()
 
-def test_add_year_exclude_charters(load_year_list, load_empty_dict):
+def test_add_year_exclude_charters(load_dict_with_year):
     year = 2009
-    assert 14803 not in collectFromFile.add_year_to_dict(
-            load_year_list, year, load_empty_dict, False, True)[2009]["ALL"]["POP"].keys()
-    assert collectFromFile.add_year_to_dict(
-            load_year_list, year, load_empty_dict, 
-            False, True)[year]["HIS"]["DAE"][31912] == 349
+    assert 14803 not in load_dict_with_year[2009]["ALL"]["POP"].keys()
+    assert load_dict_with_year[year]["HIS"]["DAE"][31912] == 349
 
-def test_add_year_include_charters(load_year_list, load_empty_dict):
+def test_add_year_include_charters(load_dict_with_year_charters):
     year = 2009
-    assert 14803 in collectFromFile.add_year_to_dict(
-            load_year_list, year, load_empty_dict, True, False)[year]["ALL"]["POP"].keys()
-    assert 31912 not in collectFromFile.add_year_to_dict(
-            load_year_list, year, load_empty_dict, True, False)[year]["HIS"]["DAE"].keys()
+    assert 14803 in load_dict_with_year_charters[year]["ALL"]["POP"].keys()
+    assert 31912 not in load_dict_with_year_charters[year]["HIS"]["DAE"].keys()
 
 def test_punishment_totals_for_year(load_dict_with_year):
     year = 2009
     action = "DAE"
     assert 31912 in set(load_dict_with_year[year]["WHI"][action].keys() | 
                             load_dict_with_year[year]["BLA"][action].keys())
-    assert load_dict_with_year[year]["NON"][action][31912] == 276
-    assert load_dict_with_year[year]["SPE"][action][31912] == 79
-    assert load_dict_with_year[year]["MAN"][action][31912] == 43
-    assert load_dict_with_year[year]["DIS"][action][31912] == 312
-    test_dict = collectFromFile.punishment_totals_for_year(
-            year, load_dict_with_year)
-    assert test_dict[year]["ALL"][action][31912] == max(276+79, 43+312)
-    assert test_dict[year]["ALL"]["EXP"][101909] == 6
+    
+    assert load_dict_with_year[year]["ALL"][action][31912] == max(276+79, 43+312)
+    assert load_dict_with_year[year]["ALL"]["EXP"][101909] == 6
 
 def test_demo_populations_for_year(load_dict_with_year):
     year = 2009
-    test_dict = collectFromFile.punishment_totals_for_year(
-            year, load_dict_with_year)
-    test_dict = collectFromFile.add_demo_populations(
-        year, load_dict_with_year
-    )
-    assert test_dict[year]["BLA"]["POP"][61906] == 26
+    assert load_dict_with_year[year]["BLA"]["POP"][61906] == 26
