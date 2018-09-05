@@ -114,3 +114,8 @@ def test_punishment_totals_for_year(load_dict_with_year):
 def test_demo_populations_for_year(load_dict_with_year):
     year = 2009
     assert load_dict_with_year[year]["BLA"]["POP"][61906] == 26
+
+def test_statewide_populations_for_year(load_dict_with_year):
+    year = 2009
+    assert load_dict_with_year[year]["ALL"]["POP"][0] == 5068223
+    assert load_dict_with_year[year]["ASI"]["EXP"][0] == 34

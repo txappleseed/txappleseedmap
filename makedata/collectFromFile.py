@@ -310,6 +310,14 @@ def add_demo_populations(year: int, d: dict) -> dict:
     return d
 
 
+def add_statewide_totals(year: int, d: dict) -> dict:
+    for demo in d[year]:
+        for punishment in d[year][demo]:
+            d[year][demo][punishment][0] = sum(
+                d[year][demo][punishment].values()
+            )
+    return d
+
 def add_year_to_dict(year: int,
                      d: dict,
                      include_charters: bool = False,
@@ -328,6 +336,7 @@ def add_year_to_dict(year: int,
             d[year][row[demo_index]][row[punishment_index]][row[0]] = row[-1]
     d = punishment_totals_for_year(year, d)
     d = add_demo_populations(year, d)
+    d = add_statewide_totals(year, d)
 
     return d
 
