@@ -388,6 +388,27 @@ def add_scale_statistic(year: int, d: dict) -> dict:
     return d
 
 
+def add_district_to_state_scale_statistic(year: int, d: dict) -> dict:
+    
+    # This compares the overall population of a district against the
+    # overall population of the state, using the same statistic
+    # that compares a demographic within a district to the district
+    # as a whole.
+    
+    demo = "ALL"
+    for punishment in (p for p in d[year][demo] if p != "POP"):
+        for district in (d for d in d[year][demo][punishment] if d != 0):
+            d[year][demo][punishment][district] = {
+                "C": d[year][demo][punishment][district],
+                "S": binomial_scale(
+                    d[year]["ALL"][punishment].get(district, 0),
+                    d[year]["ALL"][punishment][0],
+                    d[year]["ALL"]["POP"][district],
+                    d[year]["ALL"]["POP"][0]
+                )}
+    return d
+
+
 def add_year_to_dict(year: int,
                      d: dict,
                      include_charters: bool = False,
@@ -407,7 +428,13 @@ def add_year_to_dict(year: int,
     d = punishment_totals_for_year(year, d)
     d = add_demo_populations(year, d)
     d = add_statewide_totals(year, d)
+
+    # The next two steps will break if done out of order because the action
+    # count gets moved to a nested dict with keys "C" and "S".
+
     d = add_scale_statistic(year, d)
+    d = add_district_to_state_scale_statistic(year, d)
+    
 
     return d
 
@@ -421,5 +448,5 @@ if __name__ == "__main__":
     # print(get_demo_year(2009))
     d = make_empty_dict(2006, 2016)
     d = add_year_to_dict(year, d)
-    log.debug(d[year]["BLA"])
+    log.debug(d[year]["ALL"])
 

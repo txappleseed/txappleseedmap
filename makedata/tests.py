@@ -108,8 +108,9 @@ def test_punishment_totals_for_year(load_dict_with_year):
     assert 31912 in set(load_dict_with_year[year]["WHI"][action].keys() | 
                             load_dict_with_year[year]["BLA"][action].keys())
     
-    assert load_dict_with_year[year]["ALL"][action][31912] == max(276+79, 43+312)
-    assert load_dict_with_year[year]["ALL"]["EXP"][101909] == 6
+    assert load_dict_with_year[year]["ALL"][action][31912]["C"] == \
+            max(276+79, 43+312)
+    assert load_dict_with_year[year]["ALL"]["EXP"][101909]["C"] == 6
 
 def test_demo_populations_for_year(load_dict_with_year):
     year = 2009
@@ -129,3 +130,9 @@ def test_binomial_scaling_calculation():
 def test_add_scale_variable_to_dict(load_dict_with_year):
     year = 2009
     assert load_dict_with_year[year]["BLA"]["OSS"][101902]["S"] == 10
+
+def test_calculate_districtwide_scale_variable(load_dict_with_year):
+    year = 2009
+    assert load_dict_with_year[year]["ALL"]["POP"][101914] == 59604
+    assert load_dict_with_year[year]["ALL"]["ISS"][101914]["C"] == 8773
+    assert load_dict_with_year[year]["ALL"]["ISS"][101914]["S"] == 0
