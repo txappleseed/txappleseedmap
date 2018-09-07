@@ -95,7 +95,7 @@ def test_get_charters():
 def test_add_year_exclude_charters(load_dict_with_year):
     year = 2009
     assert 14803 not in load_dict_with_year[2009]["ALL"]["POP"].keys()
-    assert load_dict_with_year[year]["HIS"]["DAE"][31912] == 349
+    assert load_dict_with_year[year]["HIS"]["DAE"][31912]["C"] == 349
 
 def test_add_year_include_charters(load_dict_with_year_charters):
     year = 2009
@@ -125,3 +125,7 @@ def test_binomial_scaling_calculation():
     assert collectFromFile.binomial_scale(3, 50, 30, 100) == 2
     assert collectFromFile.binomial_scale(15, 50, 30, 100) == 5
     assert collectFromFile.binomial_scale(40, 50, 30, 100) == 10
+
+def test_add_scale_variable_to_dict(load_dict_with_year):
+    year = 2009
+    assert load_dict_with_year[year]["BLA"]["OSS"][101902]["S"] == 10

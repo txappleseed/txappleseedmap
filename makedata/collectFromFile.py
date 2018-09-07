@@ -1,10 +1,9 @@
 import csv
 import logging
 import os
+import random
 
-import numpy as np
 import scipy.stats as stats
-
 
 
 def load_region_file(apple_path: str) -> list:
@@ -71,10 +70,6 @@ def filter_year_by_column(year_of_records: list,
                           column_index: int, 
                           pattern: tuple,
                           keep_matches: bool = False) -> list:
-    
-    log = logging.getLogger(__name__)
-    log.debug(f'{sum(row[3] == "SPE" for row in year_of_records)}'
-        ' SPE rows before filtering')
 
     if keep_matches:
         year_of_records[1:] = [row for row in year_of_records[1:] 
@@ -84,9 +79,6 @@ def filter_year_by_column(year_of_records: list,
         year_of_records[1:] = [row for row in year_of_records[1:] 
                         if all(word not in row[column_index]
                             for word in pattern)]
-        
-    log.debug(f'{sum(row[3] == "SPE" for row in year_of_records)}'
-        ' SPE rows after filtering')
 
     return year_of_records
     
@@ -337,9 +329,6 @@ def monte_carlo_scale(member_punishments: int,
     samples = sorted([sum(random.randrange(all_pop) < member_pop
                    for p in range(all_punishments))
                for sample in range(1000)])
-    print(f"The fifth percentile is {samples[50]}, \
-            the 95th percentile is {samples[950]}, and \
-            the group members' outcome was {member_punishments}.")
     
     random.seed(555)
     scale = 0
@@ -360,10 +349,15 @@ def binomial_scale(member_punishments: int,
                       member_pop: int,
                       all_pop: int) -> int:
 
+    # This finds how many standard deviations a group's
+    # punishment count is from the mean of a random distribution.
+    # If it's within one standard deviation of the mean, it returns 5.
+    # Five standard deviations below the mean would return the minimum, 0.
+    # Five standard deviations above the mean would return the max, 10.
+
     p = member_pop / all_pop
     std_intervals = [stats.binom.interval(alpha, all_punishments, p)
                      for alpha in (.68, .95, .997, .999937, .9999994)]
-    print(std_intervals)
     low_thresholds = (i[0] for i in std_intervals)
     high_thresholds = (i[1] for i in std_intervals)
     return sum(member_punishments >= t for t in low_thresholds) + \
@@ -371,11 +365,27 @@ def binomial_scale(member_punishments: int,
 
 
 def add_scale_statistic(year: int, d: dict) -> dict:
-    for demo in d[year]:
-        for punishment in d[year][demo]:
-            for district in d[year][demo][punishment]:
-                pass
-    pass
+    for demo in (demo for demo in d[year] if demo != "ALL"):
+        for punishment in (p for p in d[year][demo] if p != "POP"):
+            for district in (d for d in d[year][demo][punishment] if d != 0):
+                if district not in d[year][demo]["POP"]:
+
+                    # Dummy scale variable because no demo count available.
+                    # Region should be grayed out on the map.
+
+                    d[year][demo][punishment][district] = {
+                        "C": d[year][demo][punishment][district],
+                        "S": -1}
+                else:
+                    d[year][demo][punishment][district] = {
+                        "C": d[year][demo][punishment][district],
+                        "S": binomial_scale(
+                            d[year][demo][punishment][district],
+                            d[year]["ALL"][punishment].get(district, 0),
+                            d[year][demo]["POP"][district],
+                            d[year]["ALL"]["POP"][district]
+                            )}
+    return d
 
 
 def add_year_to_dict(year: int,
@@ -397,6 +407,7 @@ def add_year_to_dict(year: int,
     d = punishment_totals_for_year(year, d)
     d = add_demo_populations(year, d)
     d = add_statewide_totals(year, d)
+    d = add_scale_statistic(year, d)
 
     return d
 
@@ -408,12 +419,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
     # log.debug(filter_records(mandatory_and_discretionary(get_year(2009),2,3,1),3,1)
     # print(get_demo_year(2009))
-    # d = make_empty_dict(2006, 2016)
-    # d = add_year_to_dict(year, d)
-    # log.debug(d[year]["BLA"])
-    
-print(binomial_scale(member_punishments=20, 
-                      all_punishments=50, 
-                      member_pop=30,
-                      all_pop=100))
+    d = make_empty_dict(2006, 2016)
+    d = add_year_to_dict(year, d)
+    log.debug(d[year]["BLA"])
 
