@@ -119,3 +119,9 @@ def test_statewide_populations_for_year(load_dict_with_year):
     year = 2009
     assert load_dict_with_year[year]["ALL"]["POP"][0] == 5068223
     assert load_dict_with_year[year]["ASI"]["EXP"][0] == 34
+
+def test_binomial_scaling_calculation():
+    assert collectFromFile.binomial_scale(0, 50, 30, 100) == 0
+    assert collectFromFile.binomial_scale(3, 50, 30, 100) == 2
+    assert collectFromFile.binomial_scale(15, 50, 30, 100) == 5
+    assert collectFromFile.binomial_scale(40, 50, 30, 100) == 10

@@ -2,6 +2,11 @@ import csv
 import logging
 import os
 
+import numpy as np
+import scipy.stats as stats
+
+
+
 def load_region_file(apple_path: str) -> list:
     with open(apple_path) as csvfile:
         reader = csv.reader(csvfile)
@@ -318,6 +323,61 @@ def add_statewide_totals(year: int, d: dict) -> dict:
             )
     return d
 
+
+def monte_carlo_scale(member_punishments: int, 
+                      all_punishments: int, 
+                      member_pop: int,
+                      all_pop: int) -> int:
+
+    # This function is too expensive and slow. Its only advantage 
+    # is that it would avoid the need to import numpy and scipy.
+    # Import random to experiment with it.
+    # The binomial_scale function is in use instead.
+
+    samples = sorted([sum(random.randrange(all_pop) < member_pop
+                   for p in range(all_punishments))
+               for sample in range(1000)])
+    print(f"The fifth percentile is {samples[50]}, \
+            the 95th percentile is {samples[950]}, and \
+            the group members' outcome was {member_punishments}.")
+    
+    random.seed(555)
+    scale = 0
+    for low_threshold in (0, len(samples) * .022, len(samples) * .158):
+        if member_punishments >= samples[int(low_threshold)]:
+            scale += 1
+    for high_threshold in (len(samples) * .84, 
+                           len(samples) * .976, 
+                           len(samples) -1 ):
+        if member_punishments > samples[int(high_threshold)]:
+            scale += 1
+
+    return scale
+
+
+def binomial_scale(member_punishments: int, 
+                      all_punishments: int, 
+                      member_pop: int,
+                      all_pop: int) -> int:
+
+    p = member_pop / all_pop
+    std_intervals = [stats.binom.interval(alpha, all_punishments, p)
+                     for alpha in (.68, .95, .997, .999937, .9999994)]
+    print(std_intervals)
+    low_thresholds = (i[0] for i in std_intervals)
+    high_thresholds = (i[1] for i in std_intervals)
+    return sum(member_punishments >= t for t in low_thresholds) + \
+           sum(member_punishments > t for t in high_thresholds)
+
+
+def add_scale_statistic(year: int, d: dict) -> dict:
+    for demo in d[year]:
+        for punishment in d[year][demo]:
+            for district in d[year][demo][punishment]:
+                pass
+    pass
+
+
 def add_year_to_dict(year: int,
                      d: dict,
                      include_charters: bool = False,
@@ -348,10 +408,12 @@ if __name__ == "__main__":
     logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
     # log.debug(filter_records(mandatory_and_discretionary(get_year(2009),2,3,1),3,1)
     # print(get_demo_year(2009))
-    d = make_empty_dict(2006, 2016)
-    d = add_year_to_dict(year, d)
-
-
-    log.debug(d[year]["BLA"])
+    # d = make_empty_dict(2006, 2016)
+    # d = add_year_to_dict(year, d)
+    # log.debug(d[year]["BLA"])
     
-# year_col = "YR{}".format(str(year)[-2:])
+print(binomial_scale(member_punishments=20, 
+                      all_punishments=50, 
+                      member_pop=30,
+                      all_pop=100))
+
