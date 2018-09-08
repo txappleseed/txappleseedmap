@@ -212,7 +212,7 @@ def number_strings_to_int(row: list) -> list:
     return row
 
 def make_empty_dict(first_year: int, last_year: int) -> dict:
-    # measurements = {"POP", "ISS", "OSS", "EXP", "DAE"}
+    
     demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 
              'ASI', 'PCI', 'TWO', 'ALL', 'NON', 'MAN', 'DIS'}
     return {year: {demo: {} for demo in demos} 
@@ -261,13 +261,13 @@ def punishment_totals_for_year(year: int, d: dict) -> dict:
     for action in ("ISS", "OSS", "EXP", "DAE"):
         for district in set(d[year]["WHI"][action].keys() | 
                             d[year]["BLA"][action].keys()):
-            sn = d[year]["SPE"].get(action, {}).get(district, 0)
-            sn += d[year]["NON"].get(action, {}).get(district, 0)
-            md = d[year]["MAN"].get(action, {}).get(district, 0)
-            md += d[year]["DIS"].get(action, {}).get(district, 0)
+            sn = d[year]["SPE"].get(action, {}).get(district, {}).get("C", 0)
+            sn += d[year]["NON"].get(action, {}).get(district, {}).get("C", 0)
+            md = d[year]["MAN"].get(action, {}).get(district, {}).get("C", 0)
+            md += d[year]["DIS"].get(action, {}).get(district, {}).get("C", 0)
             if action not in d[year]["ALL"]:
                 d[year]["ALL"][action] = {}
-            d[year]["ALL"][action][district] = max(sn, md)
+            d[year]["ALL"][action][district] = {"C": max(sn, md)}
     d[year].pop("NON", None)
     d[year].pop("MAN", None)
     d[year].pop("DIS", None)
@@ -303,18 +303,19 @@ def add_demo_populations(year: int, d: dict) -> dict:
             d[year][demo]["POP"] = {}
         for district in demo_dict[demo]:
             if d[year]["ALL"]["POP"].get(district, None):
-                d[year][demo]["POP"][district] = int(
-                        d[year]["ALL"]["POP"][district] 
-                        * demo_dict[demo][district] // 100)
+                d[year][demo]["POP"][district] = {"C": int(
+                        d[year]["ALL"]["POP"][district]["C"] 
+                        * demo_dict[demo][district] // 100)}
     return d
 
 
 def add_statewide_totals(year: int, d: dict) -> dict:
     for demo in d[year]:
         for punishment in d[year][demo]:
-            d[year][demo][punishment][0] = sum(
-                d[year][demo][punishment].values()
-            )
+            d[year][demo][punishment][0] = {"C": sum(
+                d[year][demo][punishment][district]["C"]
+                for district in d[year][demo][punishment]
+            )}
     return d
 
 
@@ -400,43 +401,33 @@ def add_scale_statistic(year: int, d: dict) -> dict:
     for demo in (demo for demo in d[year] if demo != "ALL"):
         for punishment in (p for p in d[year][demo] if p != "POP"):
             for district in (d for d in d[year][demo][punishment] if d != 0):
-                if district not in d[year][demo]["POP"]:
-
-                    # No scale variable because no demo count available.
-                    # Region should be grayed out on the map.
-
-                    d[year][demo][punishment][district] = {
-                        "C": d[year][demo][punishment][district]}
-                else:
-                    d[year][demo][punishment][district] = {
-                        "C": d[year][demo][punishment][district],
-                        "S": binomial_scale(
-                            d[year][demo][punishment][district],
-                            d[year]["ALL"][punishment].get(district, 0),
-                            d[year][demo]["POP"][district],
-                            d[year]["ALL"]["POP"][district]
-                            )}
+                # No scale variable if the demo's population is unknown.
+                if district in d[year][demo]["POP"]:
+                    d[year][demo][punishment][district]["S"] = binomial_scale(
+                            d[year][demo][punishment][district]["C"],
+                            d[year]["ALL"][punishment].get(district, {}).get("C", 0),
+                            d[year][demo]["POP"][district]["C"],
+                            d[year]["ALL"]["POP"][district]["C"]
+                            )
     return d
 
 
 def add_district_to_state_scale_statistic(year: int, d: dict) -> dict:
     
     # This compares the overall population of a district against the
-    # overall population of the state, using the same statistic
+    # overall population of the state, using the same test
     # that compares a demographic within a district to the district
     # as a whole.
     
     demo = "ALL"
     for punishment in (p for p in d[year][demo] if p != "POP"):
         for district in (d for d in d[year][demo][punishment] if d != 0):
-            d[year][demo][punishment][district] = {
-                "C": d[year][demo][punishment][district],
-                "S": binomial_scale(
-                    d[year]["ALL"][punishment].get(district, 0),
-                    d[year]["ALL"][punishment][0],
-                    d[year]["ALL"]["POP"][district],
-                    d[year]["ALL"]["POP"][0]
-                )}
+            d[year][demo][punishment][district]["S"] = binomial_scale(
+                    d[year]["ALL"][punishment].get(district, {}).get("C", 0),
+                    d[year]["ALL"][punishment][0]["C"],
+                    d[year]["ALL"]["POP"][district]["C"],
+                    d[year]["ALL"]["POP"][0]["C"]
+                )
     return d
 
 
@@ -453,9 +444,9 @@ def add_year_to_dict(year: int,
         if row[punishment_index] not in d[year].get(row[demo_index], {}):
             d[year][row[demo_index]][row[punishment_index]] = {}
         if row[0] in charters and include_charters:
-            d[year][row[demo_index]][row[punishment_index]][int(row[0])] = row[-1]
+            d[year][row[demo_index]][row[punishment_index]][int(row[0])] = {"C": row[-1]}
         if row[0] not in charters and include_traditional:
-            d[year][row[demo_index]][row[punishment_index]][int(row[0])] = row[-1]
+            d[year][row[demo_index]][row[punishment_index]][int(row[0])] = {"C": row[-1]}
     d = punishment_totals_for_year(year, d)
     d = add_demo_populations(year, d)
     d = add_statewide_totals(year, d)

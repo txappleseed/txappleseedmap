@@ -114,12 +114,12 @@ def test_punishment_totals_for_year(load_dict_with_year):
 
 def test_demo_populations_for_year(load_dict_with_year):
     year = 2009
-    assert load_dict_with_year[year]["BLA"]["POP"][61906] == 26
+    assert load_dict_with_year[year]["BLA"]["POP"][61906]["C"] == 26
 
 def test_statewide_populations_for_year(load_dict_with_year):
     year = 2009
-    assert load_dict_with_year[year]["ALL"]["POP"][0] == 5068223
-    assert load_dict_with_year[year]["ASI"]["EXP"][0] == 34
+    assert load_dict_with_year[year]["ALL"]["POP"][0]["C"] == 5068223
+    assert load_dict_with_year[year]["ASI"]["EXP"][0]["C"] == 34
 
 def test_binomial_scaling_calculation():
     assert collectFromFile.binomial_scale(0, 50, 30, 100) == 0
@@ -133,8 +133,15 @@ def test_add_scale_variable_to_dict(load_dict_with_year):
 
 def test_calculate_districtwide_scale_variable(load_dict_with_year):
     year = 2009
-    assert load_dict_with_year[year]["ALL"]["POP"][101914] == 59604
+    assert load_dict_with_year[year]["ALL"]["POP"][101914]["C"] == 59604
     assert load_dict_with_year[year]["ALL"]["ISS"][101914]["C"] == 8773
     assert load_dict_with_year[year]["ALL"]["ISS"][101914]["S"] == 0
 
-# Find out how to make the VS Code debugger break on the RuntimeWarning
+def test_unavailable_scale_variable_omitted(load_dict_with_year):
+    
+    # If the scale can't be calculated, it should be omitted, not
+    # left as a dummy or null.
+
+    year = 2009
+    assert "C" in load_dict_with_year[year]["ASI"]["ISS"][31901]
+    assert "S" not in load_dict_with_year[year]["ASI"]["ISS"][31901]
