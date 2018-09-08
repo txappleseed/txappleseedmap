@@ -378,7 +378,7 @@ def binomial_scale(member_punishments: int,
                       member_pop,
                       all_pop):
         return -1
-        
+
     # Finding out how many standard deviations a group's
     # punishment count is from the mean of a random distribution.
     # If it's within one standard deviation of the mean, it returns 5.
@@ -392,8 +392,8 @@ def binomial_scale(member_punishments: int,
                      ]
     low_thresholds = (i[0] for i in std_intervals)
     high_thresholds = (i[1] for i in std_intervals)
-    return sum(member_punishments >= t for t in low_thresholds) + \
-           sum(member_punishments > t for t in high_thresholds)
+    return int(sum(member_punishments >= t for t in low_thresholds) + \
+           sum(member_punishments > t for t in high_thresholds))
 
 
 def add_scale_statistic(year: int, d: dict) -> dict:
@@ -402,12 +402,11 @@ def add_scale_statistic(year: int, d: dict) -> dict:
             for district in (d for d in d[year][demo][punishment] if d != 0):
                 if district not in d[year][demo]["POP"]:
 
-                    # Dummy scale variable because no demo count available.
+                    # No scale variable because no demo count available.
                     # Region should be grayed out on the map.
 
                     d[year][demo][punishment][district] = {
-                        "C": d[year][demo][punishment][district],
-                        "S": -1}
+                        "C": d[year][demo][punishment][district]}
                 else:
                     d[year][demo][punishment][district] = {
                         "C": d[year][demo][punishment][district],
@@ -454,9 +453,9 @@ def add_year_to_dict(year: int,
         if row[punishment_index] not in d[year].get(row[demo_index], {}):
             d[year][row[demo_index]][row[punishment_index]] = {}
         if row[0] in charters and include_charters:
-            d[year][row[demo_index]][row[punishment_index]][row[0]] = row[-1]
+            d[year][row[demo_index]][row[punishment_index]][int(row[0])] = row[-1]
         if row[0] not in charters and include_traditional:
-            d[year][row[demo_index]][row[punishment_index]][row[0]] = row[-1]
+            d[year][row[demo_index]][row[punishment_index]][int(row[0])] = row[-1]
     d = punishment_totals_for_year(year, d)
     d = add_demo_populations(year, d)
     d = add_statewide_totals(year, d)
@@ -469,26 +468,25 @@ def add_year_to_dict(year: int,
     return d
 
 
-def dict_to_json(d: dict) -> None:
+def dict_to_json(d: dict, first_year: int, last_year: int) -> None:
+    if first_year == last_year:
+        filename_year = str(first_year)
+    else:
+        filename_year = f"{first_year}-{last_year}"
+    dirname=os.path.dirname
     data_path = os.path.join(dirname(dirname(__file__)), 
-                            os.path.join('data', 'from_agency', 'by_region',
-                            'schoolToPrison.json'))
+                            os.path.join('data', 'processed',
+                            f'schoolToPrison{filename_year}.json'))
     
     with open(data_path, 'w') as fp:
         json.dump(d, fp)
 
-"""if __name__ == "__main__":
+if __name__ == "__main__":
     year = 2009
-    log = logging.getLogger(__name__)
-    logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
+    # log = logging.getLogger(__name__)
+    # logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
     # log.debug(filter_records(mandatory_and_discretionary(get_year(2009),2,3,1),3,1)
     # print(get_demo_year(2009))
-    d = make_empty_dict(2006, 2016)
+    d = make_empty_dict(year, year)
     d = add_year_to_dict(year, d)
-    log.debug(d[year]["ALL"])
-"""
-all_punishments = 3
-p = .3
-print([0 > np.nan_to_num(stats.binom.interval(alpha, all_punishments, p)[0])
-                     for alpha in (.68, .95, .997, .999937, .9999994)])
-print(binomial_scale(0, 0, 0, 100))
+    dict_to_json(d, year, year)
