@@ -136,3 +136,5 @@ def test_calculate_districtwide_scale_variable(load_dict_with_year):
     assert load_dict_with_year[year]["ALL"]["POP"][101914] == 59604
     assert load_dict_with_year[year]["ALL"]["ISS"][101914]["C"] == 8773
     assert load_dict_with_year[year]["ALL"]["ISS"][101914]["S"] == 0
+
+# Find out how to make the VS Code debugger break on the RuntimeWarning

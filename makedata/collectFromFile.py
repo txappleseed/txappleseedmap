@@ -1,8 +1,10 @@
 import csv
+import json
 import logging
 import os
 import random
 
+import numpy as np
 import scipy.stats as stats
 
 
@@ -316,6 +318,22 @@ def add_statewide_totals(year: int, d: dict) -> dict:
     return d
 
 
+def impossible(member_punishments: int, 
+                      all_punishments: int, 
+                      member_pop: int,
+                      all_pop: int) -> bool:
+    
+    # Tells scale function to return a dummy variable 
+    # of -1 for any "impossible" statistics
+
+    if member_punishments > max(all_punishments,8): 
+        # eight because TEA could report 2 masked columns with 4 each
+        return True
+    if member_pop == 0 and member_punishments > 0:
+        return True
+    return False
+
+
 def monte_carlo_scale(member_punishments: int, 
                       all_punishments: int, 
                       member_pop: int,
@@ -325,6 +343,12 @@ def monte_carlo_scale(member_punishments: int,
     # is that it would avoid the need to import numpy and scipy.
     # Import random to experiment with it.
     # The binomial_scale function is in use instead.
+
+    if impossible(member_punishments, 
+                      all_punishments,
+                      member_pop,
+                      all_pop):
+        return -1
 
     samples = sorted([sum(random.randrange(all_pop) < member_pop
                    for p in range(all_punishments))
@@ -349,7 +373,13 @@ def binomial_scale(member_punishments: int,
                       member_pop: int,
                       all_pop: int) -> int:
 
-    # This finds how many standard deviations a group's
+    if impossible(member_punishments, 
+                      all_punishments,
+                      member_pop,
+                      all_pop):
+        return -1
+        
+    # Finding out how many standard deviations a group's
     # punishment count is from the mean of a random distribution.
     # If it's within one standard deviation of the mean, it returns 5.
     # Five standard deviations below the mean would return the minimum, 0.
@@ -357,7 +387,9 @@ def binomial_scale(member_punishments: int,
 
     p = member_pop / all_pop
     std_intervals = [stats.binom.interval(alpha, all_punishments, p)
-                     for alpha in (.68, .95, .997, .999937, .9999994)]
+                     if all_punishments > 0 else (0, 0)
+                     for alpha in (.68, .95, .997, .999937, .9999994)
+                     ]
     low_thresholds = (i[0] for i in std_intervals)
     high_thresholds = (i[1] for i in std_intervals)
     return sum(member_punishments >= t for t in low_thresholds) + \
@@ -434,13 +466,18 @@ def add_year_to_dict(year: int,
 
     d = add_scale_statistic(year, d)
     d = add_district_to_state_scale_statistic(year, d)
-    
-
     return d
 
 
+def dict_to_json(d: dict) -> None:
+    data_path = os.path.join(dirname(dirname(__file__)), 
+                            os.path.join('data', 'from_agency', 'by_region',
+                            'schoolToPrison.json'))
+    
+    with open(data_path, 'w') as fp:
+        json.dump(d, fp)
 
-if __name__ == "__main__":
+"""if __name__ == "__main__":
     year = 2009
     log = logging.getLogger(__name__)
     logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
@@ -449,4 +486,9 @@ if __name__ == "__main__":
     d = make_empty_dict(2006, 2016)
     d = add_year_to_dict(year, d)
     log.debug(d[year]["ALL"])
-
+"""
+all_punishments = 3
+p = .3
+print([0 > np.nan_to_num(stats.binom.interval(alpha, all_punishments, p)[0])
+                     for alpha in (.68, .95, .997, .999937, .9999994)])
+print(binomial_scale(0, 0, 0, 100))
