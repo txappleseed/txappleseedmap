@@ -124,18 +124,21 @@ def filter_records(year_of_records: list,
                         "ECO. DISAD. STUDENTS", 
                         "AT RISK", 
                         "NON AT", 
+                        "NON TITLE",
+                        "NON-TITLE",
+                        "NON-ILLEGAL",
                         "UNKNOWN AT",
                         "UNKNOWN ECO STATUS",
                         "NON ECO DISAD.", 
                         "NON ECO. DISAD.",
                         "REMOVAL",
                         "MANSLAUGHTER",
+                        "DISRUPTIVE",
                         "DISTRICT DISCIPLINE POPULATION",
                         "DISTRICT DISCIPLINE RECORD COUNT",
-                        "DIST EMPL",
+                        "DIST EMP",
                         "DISTRICT EMPLOYEE",
-                        "NON-TITLE",
-                        "NON-ILLEGAL")
+                        )
 
 
     year_of_records = filter_year_by_column(year_of_records, 
@@ -459,25 +462,47 @@ def add_year_to_dict(year: int,
     return d
 
 
-def dict_to_json(d: dict, first_year: int, last_year: int) -> None:
+def dict_to_json(d: dict, first_year: int, last_year: int,
+              include_charters: bool = False,
+              include_traditional: bool = True) -> None:
     if first_year == last_year:
         filename_year = str(first_year)
     else:
         filename_year = f"{first_year}-{last_year}"
+    if not include_traditional:
+        charter_status = "ChartersOnly"
+    elif include_charters:
+        charter_status = "WithCharters"
+    else:
+        charter_status = ""
     dirname=os.path.dirname
     data_path = os.path.join(dirname(dirname(__file__)), 
                             os.path.join('data', 'processed',
-                            f'schoolToPrison{filename_year}.json'))
+                            f'stpp{charter_status}{filename_year}.json'))
     
     with open(data_path, 'w') as fp:
         json.dump(d, fp)
+    return None
+
+
+def make_data(first_year: int, last_year: int = 0,
+              include_charters: bool = False,
+              include_traditional: bool = True) -> None:
+    
+    if last_year < first_year:
+        last_year = first_year
+        print(f'Making statistics for just the year {first_year}')
+    else:
+        print(f'Making statistics for years {first_year} through {last_year}')
+    d = make_empty_dict(first_year, last_year)
+    for year in range(first_year, last_year + 1):
+        d = add_year_to_dict(year, d, include_charters, include_traditional)
+    dict_to_json(d, first_year, last_year, 
+                 include_charters, include_traditional)
+    return None
+
 
 if __name__ == "__main__":
-    year = 2009
-    # log = logging.getLogger(__name__)
-    # logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
-    # log.debug(filter_records(mandatory_and_discretionary(get_year(2009),2,3,1),3,1)
-    # print(get_demo_year(2009))
-    d = make_empty_dict(year, year)
-    d = add_year_to_dict(year, d)
-    dict_to_json(d, year, year)
+    first_year = 2006
+    last_year = 2016
+    make_data(first_year, last_year)
