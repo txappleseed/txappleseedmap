@@ -4,6 +4,7 @@ import logging
 import os
 import random
 
+import click
 import numpy as np
 import scipy.stats as stats
 
@@ -482,27 +483,76 @@ def dict_to_json(d: dict, first_year: int, last_year: int,
     
     with open(data_path, 'w') as fp:
         json.dump(d, fp)
+        print(f"🍏 Data saved to {data_path}")
     return None
 
 
-def make_data(first_year: int, last_year: int = 0,
+def TEA_to_dict(first_year: int, last_year: int,
               include_charters: bool = False,
-              include_traditional: bool = True) -> None:
+              include_traditional: bool = True) -> d:
     
-    if last_year < first_year:
-        last_year = first_year
-        print(f'Making statistics for just the year {first_year}')
+    if last_year == first_year:
+        click.secho(
+            f'Making statistics for just the year {first_year}', fg='green')
     else:
-        print(f'Making statistics for years {first_year} through {last_year}')
+        click.echo(
+            f'Making statistics for years {first_year} through {last_year}')
     d = make_empty_dict(first_year, last_year)
-    for year in range(first_year, last_year + 1):
-        d = add_year_to_dict(year, d, include_charters, include_traditional)
-    dict_to_json(d, first_year, last_year, 
-                 include_charters, include_traditional)
+    
+    with click.progressbar(range(first_year, last_year + 1),
+                            label='🍎 Calculating odds that race affected '
+                            'student outcomes') as bar:
+        for year in bar:
+            d = add_year_to_dict(year, d, include_charters, include_traditional)
+    return d
+
+@click.command()
+@click.option('--include-charters', is_flag=True, 
+              help="Include statistics about charter schools")
+@click.option('--charters-only', is_flag=True, help="Include charter "
+              "schools, and also omit traditional districts")
+@click.option('--first-year', '-f', type=click.IntRange(2006, None), 
+              default=2006, help="The first year of data to process. 2006 is "
+              "the earliest year known to have been covered by the "
+              "Texas Education Agency")
+@click.option('--last-year', '-l', type=click.IntRange(2006, None), 
+              default=2016, help="The last year of data to process")
+@click.option('--download/--no-download', default=False, 
+              help="Connects to the TEA's server and tries to download "
+              "data in the TEA's format to '../data/from_agency/")
+@click.option('--skip-processing/--no-skip', default=False, 
+              help="Skips the process of converting data from the TEA's "
+              "format into a new format")
+@click.option('--out', type=click.File('w'), 
+              help='Output file. If none is provided, the script will '
+              'output to "../data/processed/"')
+
+def makedata(include_charters: bool,
+             charters_only: bool,
+             first_year: int, 
+             last_year: int,
+             download: bool,
+             skip_processing: bool,
+             out: click.File) -> None:
+
+    """
+    This script takes Texas Education Agency data about school district
+    demographics and disciplinary actions, calculates a statistic about
+    the probability that race affected discipline outcomes within each
+    district, and puts the data together in JSON or CSV format for the
+    Texas Appleseed "School to Prison Pipeline" map.
+    See www.texasdisciplinelab.org.
+    """
+    print(include_charters)
+    print(charters_only)
+    print(first_year)
+    print(last_year)
+    print(download)
+    print(skip_processing)
+    print(out)
+
     return None
 
-
-if __name__ == "__main__":
-    first_year = 2006
-    last_year = 2016
-    make_data(first_year, last_year)
+    # make_data(2009)
+"""    dict_to_json(d, first_year, last_year, 
+                 include_charters, include_traditional)"""
