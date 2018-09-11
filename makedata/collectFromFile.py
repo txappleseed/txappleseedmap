@@ -3,10 +3,15 @@ import json
 import logging
 import os
 import random
+import time
+
 
 import click
 import numpy as np
+import requests
 import scipy.stats as stats
+
+    
 
 
 def load_region_file(apple_path: str) -> list:
@@ -352,7 +357,7 @@ def monte_carlo_scale(member_punishments: int,
     if 9 > member_punishments > all_punishments:
         # because TEA could report 2 masked columns with 4 each
         all_punishments = member_punishments
-    
+        
     if impossible(member_punishments, 
                       all_punishments,
                       member_pop,
@@ -420,12 +425,17 @@ def binomial_scale(member_punishments: int,
 
 
 def add_scale_statistic(year: int, d: dict) -> dict:
-    for demo in (demo for demo in d[year] if demo != "ALL"):
-        for punishment in (p for p in d[year][demo] if p != "POP"):
-            for district in (d for d in d[year][demo][punishment] if d != 0):
-                # No scale variable if the demo's population is unknown.
-                if district in d[year][demo]["POP"]:
-                    d[year][demo][punishment][district]["S"] = binomial_scale(
+    with click.progressbar(
+           (demo for demo in d[year] if demo != "ALL"),
+            label=f'Calculating year {year} for Appleseed map 🍎', 
+            length=4) as bar:
+        for demo in bar:
+            for punishment in (p for p in d[year][demo] if p != "POP"):
+                for district in (d for d in d[year][demo][punishment] 
+                                if d != 0):
+                    # No scale variable if the demo's population is unknown.
+                    if district in d[year][demo]["POP"]:
+                        d[year][demo][punishment][district]["S"] = binomial_scale(
                             d[year][demo][punishment][district]["C"],
                             d[year]["ALL"][punishment].get(district, {}).get("C", 0),
                             d[year][demo]["POP"][district]["C"],
@@ -472,10 +482,6 @@ def add_year_to_dict(year: int,
     d = punishment_totals_for_year(year, d)
     d = add_demo_populations(year, d)
     d = add_statewide_totals(year, d)
-
-    # The next two steps will break if done out of order because the action
-    # count gets moved to a nested dict with keys "C" and "S".
-
     d = add_scale_statistic(year, d)
     d = add_district_to_state_scale_statistic(year, d)
     return d
@@ -517,12 +523,74 @@ def TEA_to_dict(first_year: int, last_year: int,
             f'Making statistics for years {first_year} through {last_year}')
     d = make_empty_dict(first_year, last_year)
     
-    with click.progressbar(range(first_year, last_year + 1),
-                            label='🍎 Calculating odds that race affected '
-                            'student outcomes') as bar:
-        for year in bar:
-            d = add_year_to_dict(year, d, include_charters, include_traditional)
+    for year in range(first_year, last_year + 1):
+        d = add_year_to_dict(year, d, include_charters, include_traditional)
     return d
+
+
+def download_regions_from_TEA(first_year: int,
+                              last_year: int) -> None:
+
+    # Downloads district disciplinary report records for the specified years
+    # from the Texas Education Agency's website.
+
+    dirname=os.path.dirname
+    for year in range(first_year, last_year + 1):
+        for region in range(1,21):
+            r = str(region).zfill(2)
+            y = str(year)[-2:]
+            district_path = os.path.join(
+                dirname(dirname(__file__)), 
+                os.path.join('data', 'from_agency', 'by_region',
+                f'REGION_{r}_DISTRICT_summary_{y}.csv'))
+            payload = {'_service': 'marykay', 
+                       '_program': 'adhoc.download_static_summary.sas',
+                       'report_type':'csv',
+                       'agg_level':'DISTRICT',
+                       'referrer': 'Download_Region_Districts.html', 
+                       '_debug':"0", 
+                       'school_yr': y, 
+                       'region': r}
+            request = requests.post(
+                "https://rptsvr1.tea.texas.gov/cgi/sas/broker", 
+                verify=False, # verify=False overrides the SSL error
+                data=payload) 
+
+            with open(district_path, "w") as f:
+                f.write(request.text)
+                click.echo(f"Saving {district_path}")
+                f.close()
+            time.sleep(2)
+    return None
+
+
+def download_perfreports_from_TEA(first_year: int,
+                              last_year: int) -> None:
+
+    # Downloads Snapshot district statistics for the specified years
+    # from the Texas Education Agency's website.
+
+    dirname=os.path.dirname
+    for year in range(first_year, last_year + 1):
+        y = str(year)[-2:]
+        year_path = os.path.join(
+            dirname(dirname(__file__)), 
+            os.path.join('data', 'from_agency', 'districts',
+            f'district20{y}.dat'))
+        payload = {'level': 'district', 
+                    'set': y,
+                    'suf':'.dat'}
+        request = requests.post(
+            "https://rptsvr1.tea.texas.gov/perfreport/snapshot/push.cgi",
+            verify=False, # verify=False overrides the SSL error
+            data=payload) 
+
+        with open(year_path, "w") as f:
+            f.write(request.text)
+            click.echo(f"Saving {year_path}")
+            f.close()
+        time.sleep(2)
+    return None
 
 @click.command()
 @click.option('--include-charters', is_flag=True, 
@@ -537,13 +605,15 @@ def TEA_to_dict(first_year: int, last_year: int,
               default=2016, help="The last year of data to process")
 @click.option('--download/--no-download', default=False, 
               help="Connects to the TEA's server and tries to download "
-              "data in the TEA's format to '../data/from_agency/")
+              "data in the TEA's format to '../data/from_agency/'. "
+              "This currently generates an InsecureRequestWarning "
+              "because SSL validation is not working.")
 @click.option('--skip-processing/--no-skip', default=False, 
               help="Skips the process of converting data from the TEA's "
               "format into a new format")
 @click.option('--out', type=click.File('w'), 
               help='Output file. If none is provided, the script will '
-              'output to "../data/processed/"')
+              'output to "../data/processed/sttp{years}.{format}"')
 
 def cli(include_charters: bool,
              charters_only: bool,
@@ -561,16 +631,20 @@ def cli(include_charters: bool,
     Texas Appleseed "School to Prison Pipeline" map.
     See www.texasdisciplinelab.org.
     """
+    if download:
+        download_perfreports_from_TEA(first_year, last_year)
+        download_regions_from_TEA(first_year, last_year)
+
     print(include_charters)
     print(charters_only)
     print(first_year)
     print(last_year)
-    print(download)
+    
     print(skip_processing)
     print(out)
 
     return None
 
-TEA_to_dict(2009, 2009)
+
 """    dict_to_json(d, first_year, last_year, 
                  include_charters, include_traditional)"""
