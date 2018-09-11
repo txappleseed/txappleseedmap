@@ -11,7 +11,6 @@ import numpy as np
 import requests
 import scipy.stats as stats
 
-    
 
 
 def load_region_file(apple_path: str) -> list:
@@ -507,7 +506,7 @@ def dict_to_json(d: dict, first_year: int, last_year: int,
     
     with open(data_path, 'w') as fp:
         json.dump(d, fp)
-        print(f"🍏 Data saved to {data_path}")
+        print(f"🍏🍏🍏 Data saved to {data_path} 🍏🍏🍏")
     return None
 
 
@@ -592,6 +591,7 @@ def download_perfreports_from_TEA(first_year: int,
         time.sleep(2)
     return None
 
+
 @click.command()
 @click.option('--include-charters', is_flag=True, 
               help="Include statistics about charter schools")
@@ -614,7 +614,6 @@ def download_perfreports_from_TEA(first_year: int,
 @click.option('--out', type=click.File('w'), 
               help='Output file. If none is provided, the script will '
               'output to "../data/processed/sttp{years}.{format}"')
-
 def cli(include_charters: bool,
              charters_only: bool,
              first_year: int, 
@@ -631,9 +630,29 @@ def cli(include_charters: bool,
     Texas Appleseed "School to Prison Pipeline" map.
     See www.texasdisciplinelab.org.
     """
+    
+    include_traditional = True
+    if charters_only:
+        include_charters = True
+        include_traditional = False
+
     if download:
         download_perfreports_from_TEA(first_year, last_year)
         download_regions_from_TEA(first_year, last_year)
+    
+    if not skip_processing:
+        # TODO: Write checks to see if files are available before making the dict
+        # and before writing an output file
+
+        d = TEA_to_dict(first_year, last_year,
+              include_charters,
+              include_traditional)
+        # TODO: Move the output steps so skip_processing doesn't block them
+        # TODO: Make the output functions handle user-specified outfile
+        # TODO: both flat and nested-folder CSV output options?
+
+        dict_to_json(d, first_year, last_year,
+                     include_charters, include_traditional)
 
     print(include_charters)
     print(charters_only)

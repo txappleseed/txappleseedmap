@@ -2,6 +2,7 @@
 
 import pytest
 import logging
+import os
 
 from makedata import collectFromFile
 
