@@ -389,16 +389,30 @@ def binomial_scale(member_punishments: int,
     # If it's within one standard deviation of the mean, it returns 5.
     # Five standard deviations below the mean would return the minimum, 0.
     # Five standard deviations above the mean would return the max, 10.
+    # See https://en.wikipedia.org/wiki/Binomial_test
 
     p = member_pop / all_pop
-    std_intervals = [stats.binom.interval(alpha, all_punishments, p)
-                     if all_punishments > 0 else (0, 0)
-                     for alpha in (.68, .95, .997, .999937, .9999994)
-                     ]
-    low_thresholds = (i[0] for i in std_intervals)
-    high_thresholds = (i[1] for i in std_intervals)
-    return int(sum(member_punishments >= t for t in low_thresholds) + \
-           sum(member_punishments > t for t in high_thresholds))
+    score = 5
+    if member_punishments / member_pop > all_punishments / all_pop:
+        tail = 'greater'
+    elif member_punishments / member_pop < all_punishments / all_pop:
+        tail = 'less'
+    else:
+        return score
+    pvalue = stats.binom_test(member_punishments,
+                               all_punishments, 
+                               p, 
+                               alternative=tail)
+
+    # relying on https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule
+    # to find one-sided odds of being 1-5 standard deviations away from mean
+
+    std_intervals = (.5/3, .5/22, .5/370, .5/15787, .5/1744278)
+    if tail == 'greater':
+        score += sum(pvalue < t for t in std_intervals)
+    else:
+        score -= sum(pvalue < t for t in std_intervals)
+    return score
 
 
 def add_scale_statistic(year: int, d: dict) -> dict:
