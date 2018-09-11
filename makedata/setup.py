@@ -1,8 +1,10 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-    name='discipline_disparities_data',
+    name='makedata',
     version='0.1',
+    packages=find_packages(),
+    include_package_data=True,
     py_modules=['collectFromFile'],
     install_requires=[
         'click',

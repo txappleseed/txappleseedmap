@@ -264,7 +264,8 @@ def punishment_totals_for_year(year: int, d: dict) -> dict:
 
     for action in ("ISS", "OSS", "EXP", "DAE"):
         for district in set(d[year]["WHI"][action].keys() | 
-                            d[year]["BLA"][action].keys()):
+                            d[year]["BLA"][action].keys() | 
+                            d[year]["HIS"][action].keys()):
             sn = d[year]["SPE"].get(action, {}).get(district, {}).get("C", 0)
             sn += d[year]["NON"].get(action, {}).get(district, {}).get("C", 0)
             md = d[year]["MAN"].get(action, {}).get(district, {}).get("C", 0)
@@ -331,8 +332,7 @@ def impossible(member_punishments: int,
     # Tells scale function to return a dummy variable 
     # of -1 for any "impossible" statistics
 
-    if member_punishments > max(all_punishments,8): 
-        # eight because TEA could report 2 masked columns with 4 each
+    if member_punishments > all_punishments:
         return True
     if member_pop == 0 and member_punishments > 0:
         return True
@@ -349,6 +349,10 @@ def monte_carlo_scale(member_punishments: int,
     # Import random to experiment with it.
     # The binomial_scale function is in use instead.
 
+    if 9 > member_punishments > all_punishments:
+        # because TEA could report 2 masked columns with 4 each
+        all_punishments = member_punishments
+    
     if impossible(member_punishments, 
                       all_punishments,
                       member_pop,
@@ -503,7 +507,7 @@ def dict_to_json(d: dict, first_year: int, last_year: int,
 
 def TEA_to_dict(first_year: int, last_year: int,
               include_charters: bool = False,
-              include_traditional: bool = True) -> d:
+              include_traditional: bool = True) -> dict:
     
     if last_year == first_year:
         click.secho(
@@ -541,7 +545,7 @@ def TEA_to_dict(first_year: int, last_year: int,
               help='Output file. If none is provided, the script will '
               'output to "../data/processed/"')
 
-def makedata(include_charters: bool,
+def cli(include_charters: bool,
              charters_only: bool,
              first_year: int, 
              last_year: int,
@@ -567,6 +571,6 @@ def makedata(include_charters: bool,
 
     return None
 
-    # make_data(2009)
+TEA_to_dict(2009, 2009)
 """    dict_to_json(d, first_year, last_year, 
                  include_charters, include_traditional)"""

@@ -1,10 +1,9 @@
-# try moving tests to tests/ and using "python -m pytest tests/"
-# not just "pytest tests.py"
+# use pytest tests/tests.py
 
 import pytest
 import logging
 
-from . import collectFromFile
+from makedata import collectFromFile
 
 @pytest.fixture()
 def load_year_for_testing():
