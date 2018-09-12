@@ -527,6 +527,17 @@ def TEA_to_dict(first_year: int, last_year: int,
     return d
 
 
+def download_one_file(url: str,
+                      payload: dict) -> str:
+    
+    request = requests.post(
+        url,
+        verify=False, # verify=False overrides the SSL error
+        data=payload)
+    time.sleep(2)
+    return request.text
+
+
 def download_regions_from_TEA(first_year: int,
                               last_year: int) -> None:
 
@@ -550,16 +561,13 @@ def download_regions_from_TEA(first_year: int,
                        '_debug':"0", 
                        'school_yr': y, 
                        'region': r}
-            request = requests.post(
-                "https://rptsvr1.tea.texas.gov/cgi/sas/broker", 
-                verify=False, # verify=False overrides the SSL error
-                data=payload) 
-
+            report = download_one_file(
+                "https://rptsvr1.tea.texas.gov/cgi/sas/broker",
+                payload)
             with open(district_path, "w") as f:
-                f.write(request.text)
+                f.write(report)
                 click.echo(f"Saving {district_path}")
                 f.close()
-            time.sleep(2)
     return None
 
 
@@ -579,30 +587,27 @@ def download_perfreports_from_TEA(first_year: int,
         payload = {'level': 'district', 
                     'set': y,
                     'suf':'.dat'}
-        request = requests.post(
-            "https://rptsvr1.tea.texas.gov/perfreport/snapshot/push.cgi",
-            verify=False, # verify=False overrides the SSL error
-            data=payload) 
-
+        report = download_one_file(
+                "https://rptsvr1.tea.texas.gov/perfreport/snapshot/push.cgi",
+                payload)
         with open(year_path, "w") as f:
-            f.write(request.text)
+            f.write(report)
             click.echo(f"Saving {year_path}")
             f.close()
-        time.sleep(2)
     return None
 
 
 @click.command()
 @click.option('--include-charters', is_flag=True, 
-              help="Include statistics about charter schools")
+              help="Include statistics about charter schools.")
 @click.option('--charters-only', is_flag=True, help="Include charter "
-              "schools, and also omit traditional districts")
-@click.option('--first-year', '-f', type=click.IntRange(2006, None), 
+              "schools, and also omit traditional districts.")
+@click.option('--first-year', '-f', type=click.IntRange(2006, 2050), 
               default=2006, help="The first year of data to process. 2006 is "
               "the earliest year known to have been covered by the "
-              "Texas Education Agency")
-@click.option('--last-year', '-l', type=click.IntRange(2006, None), 
-              default=2016, help="The last year of data to process")
+              "Texas Education Agency.")
+@click.option('--last-year', '-l', type=click.IntRange(2006, 2050), 
+              default=2016, help="The last year of data to process.")
 @click.option('--download/--no-download', default=False, 
               help="Connects to the TEA's server and tries to download "
               "data in the TEA's format to '../data/from_agency/'. "
@@ -610,10 +615,19 @@ def download_perfreports_from_TEA(first_year: int,
               "because SSL validation is not working.")
 @click.option('--skip-processing/--no-skip', default=False, 
               help="Skips the process of converting data from the TEA's "
-              "format into a new format")
+              "format into a new format.")
+@click.option('--json', 'format', flag_value='json',
+              default=True, help="Exports a single json file.")
+@click.option('--csv', 'format', flag_value='csv', help="Exports a single "
+              "csv file with all the data, where the first two columns "
+              "(district and year) form the key.")
+@click.option('--nested', 'format', flag_value='nested', help="Exports "
+              "nested directories labeled by year, demographic, and "
+              "punishment, containing CSVs each containing the data "
+              "corresponding to one possible user query.")
 @click.option('--out', type=click.File('w'), 
               help='Output file. If none is provided, the script will '
-              'output to "../data/processed/sttp{years}.{format}"')
+              'output to "../data/processed/sttp{years}.{format}."')
 def cli(include_charters: bool,
              charters_only: bool,
              first_year: int, 
@@ -645,8 +659,9 @@ def cli(include_charters: bool,
         # and before writing an output file
 
         d = TEA_to_dict(first_year, last_year,
-              include_charters,
-              include_traditional)
+                        include_charters,
+                        include_traditional)
+        
         # TODO: Move the output steps so skip_processing doesn't block them
         # TODO: Make the output functions handle user-specified outfile
         # TODO: both flat and nested-folder CSV output options?
