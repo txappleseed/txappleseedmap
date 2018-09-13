@@ -7,7 +7,7 @@ import time
 
 
 import click
-import numpy as np
+# import numpy as np
 import requests
 import scipy.stats as stats
 
@@ -420,7 +420,7 @@ def binomial_scale(member_punishments: int,
         score += sum(pvalue < t for t in std_intervals)
     else:
         score -= sum(pvalue < t for t in std_intervals)
-    return score
+    return int(score)
 
 
 def add_scale_statistic(year: int, d: dict) -> dict:
@@ -475,15 +475,62 @@ def add_year_to_dict(year: int,
         if row[punishment_index] not in d[year].get(row[demo_index], {}):
             d[year][row[demo_index]][row[punishment_index]] = {}
         if row[0] in charters and include_charters:
-            d[year][row[demo_index]][row[punishment_index]][int(row[0])] = {"C": row[-1]}
+            d[year][row[demo_index]][row[punishment_index]]\
+                [int(row[0])] = {"C": row[-1]}
         if row[0] not in charters and include_traditional:
-            d[year][row[demo_index]][row[punishment_index]][int(row[0])] = {"C": row[-1]}
+            d[year][row[demo_index]][row[punishment_index]]\
+                [int(row[0])] = {"C": row[-1]}
     d = punishment_totals_for_year(year, d)
     d = add_demo_populations(year, d)
     d = add_statewide_totals(year, d)
     d = add_scale_statistic(year, d)
     d = add_district_to_state_scale_statistic(year, d)
     return d
+
+
+def make_csv_row_all(d: dict, year: int, 
+                      demo: str, p: str, 
+                      district: int) -> list:
+    pass
+
+
+def make_csv_row_demo(d: dict, year: int, 
+                      demo: str, p: str, 
+                      district: int) -> list:
+
+    return [district,
+            d[year][demo].get(p, {}).get(district, {}).get("C", None),
+            d[year][demo].get(p, {}).get(district, {}).get("S", None),
+            d[year][demo].get("POP", {}).get(district, {}).get("C", None),
+            d[year]["ALL"][p][district]["C"],
+            d[year]["ALL"]["POP"][district]["C"]]
+
+
+def dict_to_nested(d: dict, first_year: int, last_year: int,
+              include_charters: bool = False,
+              include_traditional: bool = True) -> None:
+    for year in d:
+        for demo in d[year]:
+            for p in (p for p in d[year][demo] if p != "POP"):
+                view = [
+                    ["district",
+                    "groupActions",
+                    "scale",
+                    "groupPop",
+                    "allActions",
+                    "allPop"]
+                ]
+                for district in d[year][demo][p]:
+                    if demo != "ALL":
+                        view.append(make_csv_row_demo(
+                            d, year, demo, p, district))
+                    else:           
+                        view.append(make_csv_row_all(
+                            d, year, demo, p, district))
+                # TODO: export
+
+    return None
+
 
 
 def dict_to_json(d: dict, first_year: int, last_year: int,
@@ -597,6 +644,37 @@ def download_perfreports_from_TEA(first_year: int,
     return None
 
 
+def check_for_input_files(first_year: int,
+                          last_year: int) -> bool:
+    
+    dirname=os.path.dirname
+    for year in range(first_year, last_year + 1):
+        y = str(year)[-2:]
+        for region in range(1,21):
+            r = str(region).zfill(2)
+            district_path = os.path.join(
+                dirname(dirname(__file__)), 
+                os.path.join('data', 'from_agency', 'by_region',
+                f'REGION_{r}_DISTRICT_summary_{y}.csv'))
+            if not os.path.isfile(district_path):
+                click.echo(f'Unable to find the needed file {district_path}. '
+                    'Try running this script with the --download flag. '
+                    'The data folder should be in the same directory as '
+                    'the makedata folder, not inside the makedata folder.')
+                return False
+        year_path = os.path.join(
+            dirname(dirname(__file__)), 
+            os.path.join('data', 'from_agency', 'districts',
+            f'district20{y}.dat'))
+        if not os.path.isfile(year_path):
+            click.echo(f'Unable to find the needed file {year_path}. Try '
+                    'running this script with the --download flag. The '
+                    'data folder should be in the same directory as the '
+                    'makedata folder, not inside the makedata folder.')
+            return False
+    return True
+
+
 @click.command()
 @click.option('--include-charters', is_flag=True, 
               help="Include statistics about charter schools.")
@@ -625,16 +703,13 @@ def download_perfreports_from_TEA(first_year: int,
               "nested directories labeled by year, demographic, and "
               "punishment, containing CSVs each containing the data "
               "corresponding to one possible user query.")
-@click.option('--out', type=click.File('w'), 
-              help='Output file. If none is provided, the script will '
-              'output to "../data/processed/sttp{years}.{format}."')
 def cli(include_charters: bool,
              charters_only: bool,
              first_year: int, 
              last_year: int,
              download: bool,
              skip_processing: bool,
-             out: click.File) -> None:
+             format: str) -> None:
 
     """
     This script takes Texas Education Agency data about school district
@@ -642,7 +717,7 @@ def cli(include_charters: bool,
     the probability that race affected discipline outcomes within each
     district, and puts the data together in JSON or CSV format for the
     Texas Appleseed "School to Prison Pipeline" map.
-    See www.texasdisciplinelab.org.
+    (See www.texasdisciplinelab.org.)
     """
     
     include_traditional = True
@@ -655,30 +730,22 @@ def cli(include_charters: bool,
         download_regions_from_TEA(first_year, last_year)
     
     if not skip_processing:
-        # TODO: Write checks to see if files are available before making the dict
-        # and before writing an output file
-
-        d = TEA_to_dict(first_year, last_year,
-                        include_charters,
-                        include_traditional)
-        
+        if check_for_input_files(first_year, last_year):
+            d = TEA_to_dict(first_year, last_year,
+                            include_charters,
+                            include_traditional)
+            dict_to_json(d, first_year, last_year,
+                     include_charters, include_traditional)
         # TODO: Move the output steps so skip_processing doesn't block them
         # TODO: Make the output functions handle user-specified outfile
         # TODO: both flat and nested-folder CSV output options?
 
-        dict_to_json(d, first_year, last_year,
-                     include_charters, include_traditional)
-
-    print(include_charters)
-    print(charters_only)
-    print(first_year)
-    print(last_year)
-    
-    print(skip_processing)
-    print(out)
 
     return None
 
 
-"""    dict_to_json(d, first_year, last_year, 
-                 include_charters, include_traditional)"""
+"""
+@click.option('--out', type=click.File('w'), 
+              help='Output file. If none is provided, the script will '
+              'output to "../data/processed/sttp{years}.{format}."')
+"""

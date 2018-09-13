@@ -144,3 +144,21 @@ def test_unavailable_scale_variable_omitted(load_dict_with_year):
     year = 2009
     assert "C" in load_dict_with_year[year]["ASI"]["ISS"][31901]
     assert "S" not in load_dict_with_year[year]["ASI"]["ISS"][31901]
+
+def test_make_csv_row_demo(load_dict_with_year):
+    assert collectFromFile.make_csv_row_demo(load_dict_with_year, 
+        2009, "BLA", "OSS", 101902) == [
+            101902, 9333, 10, 20240, 17982, 67468]
+    assert collectFromFile.make_csv_row_demo(load_dict_with_year, 
+        2009, "TWO", "EXP", 3903) == [
+            3903, None, None, None, 12, 9346]
+
+def test_make_csv_row_all(load_dict_with_year):
+    assert collectFromFile.make_csv_row_all(load_dict_with_year, 
+        2009, "ALL", "OSS", 101902) == [
+            101902, 17982, 10, 67468, 586027, 5174949]
+
+def test_make_csv_row_no_actions(load_dict_with_year):
+    assert collectFromFile.make_csv_row_all(load_dict_with_year, 
+        2009, "ALL", "EXP", 1909) == [
+            1909, 0, 4, 443, 6868, 5174949]
