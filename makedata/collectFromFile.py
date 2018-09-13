@@ -488,15 +488,11 @@ def add_year_to_dict(year: int,
     return d
 
 
-def make_csv_row_all(d: dict, year: int, 
-                      demo: str, p: str, 
-                      district: int) -> list:
-    pass
-
-
 def make_csv_row_demo(d: dict, year: int, 
                       demo: str, p: str, 
                       district: int) -> list:
+
+    # district,groupActions,scale,groupPop,allActions,allPop
 
     return [district,
             d[year][demo].get(p, {}).get(district, {}).get("C", None),
@@ -504,6 +500,18 @@ def make_csv_row_demo(d: dict, year: int,
             d[year][demo].get("POP", {}).get(district, {}).get("C", None),
             d[year]["ALL"][p][district]["C"],
             d[year]["ALL"]["POP"][district]["C"]]
+
+
+def make_csv_row_all(d: dict, year: int, 
+                      demo: str, p: str, 
+                      district: int) -> list:
+
+    return [district,
+            d[year]["ALL"][p].get(district, {}).get("C", None),
+            d[year]["ALL"][p].get(district, {}).get("S", None),
+            d[year]["ALL"]["POP"].get(district, {}).get("C", None),
+            d[year]["ALL"][p][0]["C"],
+            d[year]["ALL"]["POP"][0]["C"]]
 
 
 def dict_to_nested(d: dict, first_year: int, last_year: int,

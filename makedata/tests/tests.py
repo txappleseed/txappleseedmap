@@ -111,6 +111,10 @@ def test_punishment_totals_for_year(load_dict_with_year):
             max(276+79, 43+312)
     assert load_dict_with_year[year]["ALL"]["EXP"][101909]["C"] == 6
 
+def test_punishment_total_is_zero(load_dict_with_year):
+    assert load_dict_with_year[2009]["WHI"]["EXP"][1909]["C"] == 0
+    assert load_dict_with_year[2009]["ALL"]["EXP"][1909]["C"] == 0
+
 def test_demo_populations_for_year(load_dict_with_year):
     year = 2009
     assert load_dict_with_year[year]["BLA"]["POP"][61906]["C"] == 26
@@ -156,9 +160,9 @@ def test_make_csv_row_demo(load_dict_with_year):
 def test_make_csv_row_all(load_dict_with_year):
     assert collectFromFile.make_csv_row_all(load_dict_with_year, 
         2009, "ALL", "OSS", 101902) == [
-            101902, 17982, 10, 67468, 586027, 5174949]
+            101902, 17982, 10, 67468, 583121, 5068223]
 
 def test_make_csv_row_no_actions(load_dict_with_year):
     assert collectFromFile.make_csv_row_all(load_dict_with_year, 
         2009, "ALL", "EXP", 1909) == [
-            1909, 0, 4, 443, 6868, 5174949]
+            1909, 0, 4, 443, 7196, 5068223]
