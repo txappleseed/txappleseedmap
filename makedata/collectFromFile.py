@@ -490,7 +490,7 @@ def make_csv_row_demo(d: dict, year: int,
             d[year][demo].get(p, {}).get(district, {}).get("C", None),
             d[year][demo].get(p, {}).get(district, {}).get("S", None),
             d[year][demo].get("POP", {}).get(district, {}).get("C", None),
-            d[year]["ALL"][p][district]["C"],
+            d[year]["ALL"][p].get(district, {}).get("C", None),
             d[year]["ALL"]["POP"][district]["C"]]
 
 
@@ -521,14 +521,37 @@ def dict_to_nested(d: dict, first_year: int, last_year: int,
                     "allPop"]
                 ]
                 for district in d[year][demo][p]:
-                    if demo != "ALL":
-                        view.append(make_csv_row_demo(
-                            d, year, demo, p, district))
-                    else:           
+                    if demo == "ALL":
                         view.append(make_csv_row_all(
                             d, year, demo, p, district))
-                # TODO: export
-
+                    else:           
+                        view.append(make_csv_row_demo(
+                            d, year, demo, p, district))
+                dirname=os.path.dirname
+                if not include_traditional:
+                    charter_status = "ChartersOnly"
+                elif include_charters:
+                    charter_status = "WithCharters"
+                else:
+                    charter_status = ""
+                csv_path = os.path.join(dirname(dirname(__file__)), 
+                            os.path.join('data', str(year), demo,
+                            f'{p}{charter_status}.csv'))
+                directory = os.path.dirname(csv_path)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                with open(csv_path, 'w', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerows(view)
+    
+    first_path = os.path.join(dirname(dirname(__file__)), 
+                            os.path.join('data', str(first_year)))
+    last_path = os.path.join(dirname(dirname(__file__)), 
+                            os.path.join('data', str(last_year)))
+    if first_year == last_year:
+        print(f"🍏🍏🍏 Data saved to {first_path} 🍏🍏🍏")
+    else:
+        print(f"🍏🍏🍏 Data saved to {first_path} through {last_path} 🍏🍏🍏")
     return None
 
 
@@ -735,18 +758,14 @@ def cli(include_charters: bool,
             d = TEA_to_dict(first_year, last_year,
                             include_charters,
                             include_traditional)
-            dict_to_json(d, first_year, last_year,
-                     include_charters, include_traditional)
-        # TODO: Move the output steps so skip_processing doesn't block them
-        # TODO: Make the output functions handle user-specified outfile
-        # TODO: both flat and nested-folder CSV output options?
+            if format == "json":
+                dict_to_json(d, first_year, last_year,
+                        include_charters, include_traditional)
+            if format == "nested":
+                dict_to_nested(d, first_year, last_year,
+                        include_charters, include_traditional)
 
+        # TODO: Make the output functions handle user-specified outfile
+        # TODO: flat CSV output option in addition to nested folders?
 
     return None
-
-
-"""
-@click.option('--out', type=click.File('w'), 
-              help='Output file. If none is provided, the script will '
-              'output to "../data/processed/sttp{years}.{format}."')
-"""
