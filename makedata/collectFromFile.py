@@ -260,11 +260,12 @@ def get_charters() -> set:
 
 def punishment_totals_for_year(year: int, d: dict) -> dict:
 
-    # Trying two methods to get total disciplinary actions per district:
-    # adding up "Mandatory" and "Discretionary" actions (which are not always 
-    # reported), and adding up actions against special ed and non-special ed 
-    # students. Relying on whichever number is higher, on the assumption that
-    # if actions are reported anywhere, they probably really happened.
+    """
+    Trying two methods to get total disciplinary actions per district:
+    adding up "Mandatory" and "Discretionary" actions (which are not always 
+    reported), and adding up actions against special ed and non-special ed 
+    students. Relying on whichever number is higher, on the assumption that
+    if actions are reported anywhere, they probably really happened."""
 
     for action in ("ISS", "OSS", "EXP", "DAE"):
         for district in set(d[year]["WHI"][action].keys() | 
@@ -333,8 +334,9 @@ def impossible(member_punishments: int,
                       member_pop: int,
                       all_pop: int) -> bool:
     
-    # Tells scale function to return a dummy variable 
-    # of -1 for any "impossible" statistics
+    """
+    Tells scale function to return a dummy variable 
+    of -1 for any "impossible" statistics."""
 
     if member_punishments > all_punishments:
         return True
@@ -392,12 +394,14 @@ def binomial_scale(member_punishments: int,
                       all_pop):
         return -1
 
-    # Finding out how many standard deviations a group's
-    # punishment count is from the mean of a random distribution.
-    # If it's within one standard deviation of the mean, it returns 5.
-    # Five standard deviations below the mean would return the minimum, 0.
-    # Five standard deviations above the mean would return the max, 10.
-    # See https://en.wikipedia.org/wiki/Binomial_test
+    """    
+    Finds out how many standard deviations a group's punishment 
+    count is from the mean of a random distribution. A result that
+    seems to be the result of impossible/erroneous data gets a 1. 
+    A result within one standard deviation of the mean gets a 5. Five 
+    standard deviations below the mean would return the minimum, 0.
+    Five standard deviations above the mean would return the max, 10.
+    See https://en.wikipedia.org/wiki/Binomial_test"""
 
     p = member_pop / all_pop
     score = 5
@@ -445,10 +449,11 @@ def add_scale_statistic(year: int, d: dict) -> dict:
 
 def add_district_to_state_scale_statistic(year: int, d: dict) -> dict:
     
-    # This compares the overall population of a district against the
-    # overall population of the state, using the same test
-    # that compares a demographic within a district to the district
-    # as a whole.
+    """
+    Compares the overall population of a district against the
+    overall population of the state, using the same test
+    that compares a demographic within a district to the district
+    as a whole."""
     
     demo = "ALL"
     for punishment in (p for p in d[year][demo] if p != "POP"):
@@ -629,8 +634,9 @@ def download_regions_from_TEA(first_year: int,
 def download_perfreports_from_TEA(first_year: int,
                               last_year: int) -> None:
 
-    # Downloads Snapshot district statistics for the specified years
-    # from the Texas Education Agency's website.
+    """
+    Downloads Snapshot district statistics for the specified years
+    from the Texas Education Agency's website."""
 
     dirname=os.path.dirname
     for year in range(first_year, last_year + 1):
