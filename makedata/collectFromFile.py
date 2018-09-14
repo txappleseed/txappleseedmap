@@ -267,9 +267,9 @@ def punishment_totals_for_year(year: int, d: dict) -> dict:
     if actions are reported anywhere, they probably really happened."""
 
     for action in ("ISS", "OSS", "EXP", "DAE"):
-        for district in set(d[year]["WHI"][action].keys() | 
-                            d[year]["BLA"][action].keys() | 
-                            d[year]["HIS"][action].keys()):
+        for district in set(d[year]["BLA"][action].keys() | 
+                            d[year]["HIS"][action].keys() | 
+                            d[year]["WHI"][action].keys()):
             sn = d[year]["SPE"].get(action, {}).get(district, {}).get("C", 0)
             sn += d[year]["NON"].get(action, {}).get(district, {}).get("C", 0)
             md = d[year]["MAN"].get(action, {}).get(district, {}).get("C", 0)
@@ -344,43 +344,6 @@ def impossible(member_punishments: int,
     return False
 
 
-def monte_carlo_scale(member_punishments: int, 
-                      all_punishments: int, 
-                      member_pop: int,
-                      all_pop: int) -> int:
-
-    # This function is too expensive and slow. Its only advantage 
-    # is that it would avoid the need to import numpy and scipy.
-    # Import random to experiment with it.
-    # The binomial_scale function is in use instead.
-
-    if 9 > member_punishments > all_punishments:
-        # because TEA could report 2 masked columns with 4 each
-        all_punishments = member_punishments
-        
-    if impossible(member_punishments, 
-                      all_punishments,
-                      member_pop,
-                      all_pop):
-        return -1
-
-    samples = sorted([sum(random.randrange(all_pop) < member_pop
-                   for p in range(all_punishments))
-               for sample in range(1000)])
-    
-    random.seed(555)
-    scale = 0
-    for low_threshold in (0, len(samples) * .022, len(samples) * .158):
-        if member_punishments >= samples[int(low_threshold)]:
-            scale += 1
-    for high_threshold in (len(samples) * .84, 
-                           len(samples) * .976, 
-                           len(samples) -1 ):
-        if member_punishments > samples[int(high_threshold)]:
-            scale += 1
-
-    return scale
-
 
 def binomial_scale(member_punishments: int, 
                       all_punishments: int, 
@@ -402,8 +365,10 @@ def binomial_scale(member_punishments: int,
     Five standard deviations above the mean would return the max, 10.
     See https://en.wikipedia.org/wiki/Binomial_test"""
 
-    p = member_pop / all_pop
     score = 5
+    if member_pop == member_punishments == 0:
+        return score
+    p = member_pop / all_pop
     if member_punishments / member_pop > all_punishments / all_pop:
         tail = 'greater'
     elif member_punishments / member_pop < all_punishments / all_pop:
@@ -466,6 +431,28 @@ def add_district_to_state_scale_statistic(year: int, d: dict) -> dict:
     return d
 
 
+def add_zeros_to_dict(year: int,
+                      d: dict) -> dict:
+    
+    """
+    Fills in a zero if a district makes no report of taking an action
+    against a member of a certain demographic, but the district did
+    report ISS or OSS against a Black, Hispanic, or White student.
+    """
+    
+    for demo in d[year]:
+        for p in (p for p in d[year][demo] if p != "POP"):
+            for district in set(d[year]["BLA"]["ISS"].keys() | 
+                            d[year]["HIS"]["ISS"].keys() | 
+                            d[year]["WHI"]["ISS"].keys() | 
+                            d[year]["BLA"]["OSS"].keys() | 
+                            d[year]["HIS"]["OSS"].keys() |
+                            d[year]["WHI"]["OSS"].keys()):
+                count = d[year][demo][p].get(district, {}).get("C", 0)
+                d[year][demo][p][district] = {"C": count}
+    return d
+
+
 def add_year_to_dict(year: int,
                      d: dict,
                      include_charters: bool = False,
@@ -484,6 +471,7 @@ def add_year_to_dict(year: int,
         if row[0] not in charters and include_traditional:
             d[year][row[demo_index]][row[punishment_index]]\
                 [int(row[0])] = {"C": row[-1]}
+    d = add_zeros_to_dict(year, d)
     d = punishment_totals_for_year(year, d)
     d = add_demo_populations(year, d)
     d = add_statewide_totals(year, d)

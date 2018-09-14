@@ -165,4 +165,4 @@ def test_make_csv_row_all(load_dict_with_year):
 def test_make_csv_row_no_actions(load_dict_with_year):
     assert collectFromFile.make_csv_row_all(load_dict_with_year, 
         2009, "ALL", "EXP", 1909) == [
-            1909, 0, 4, 443, 7196, 5068223]
+            1909, 0, 5, 443, 7196, 5068223]
