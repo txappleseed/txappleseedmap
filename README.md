@@ -1,4 +1,6 @@
 # School District Discipline Map
+[![Build Status](https://travis-ci.com/mscarey/txappleseedmap.svg?branch=cli)](https://travis-ci.com/mscarey/txappleseedmap)
+
 maps for the Texas Appleseed "School to Prison Pipeline" projects
 
 http://txappleseed.github.io/txappleseedmap/
@@ -13,7 +15,6 @@ School District level data comes from [disciplinary data products](http://ritter
 Some additional data is available from open records requests to the Texas Education Agency, but not currently in use. See Open Austin's [#texasappleseed Slack channel](https://open-austin.slack.com) for more information.
 
 ### Data Preparation
-
 The script TXSchoolData.py (in the /scripts/ directory) was used to produce DistrictDisparities2015.csv and TXDemo2015.csv for the "School to Prison Pipeline" map. The map currently displays a single year of data derived from these files.
 
 We're interested in making data viewable from more than just the current year. Data from the years 2006-2016 is stored in /geojson/districts\_with\_data.geojson and in /topojson/districts\_with\_data.json. The TopoJSON is a smaller file but is less human-readable. These files were created with /scripts/TEAtoJSON.ipynb.
