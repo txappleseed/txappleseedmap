@@ -7,7 +7,6 @@ import time
 
 
 import click
-# import numpy as np
 import requests
 import scipy.stats as stats
 

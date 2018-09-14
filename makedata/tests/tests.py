@@ -85,8 +85,8 @@ def test_replace_category_names_for_one_year():
     assert max(len(row[1]) for row in a[1:]) == 3
 
 def test_get_demo_year():
-    assert collectFromFile.get_demo_year(2008)["BLA"][5902] == 1
-    assert collectFromFile.get_demo_year(2008)["WHI"][5902] == 93
+    assert collectFromFile.get_demo_year(2009)["BLA"][5902] == 1
+    assert collectFromFile.get_demo_year(2009)["WHI"][5902] == 93
 
 def test_get_charters():
     assert 14803 in collectFromFile.get_charters()
