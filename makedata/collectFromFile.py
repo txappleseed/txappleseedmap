@@ -1,6 +1,5 @@
 import csv
 import json
-import logging
 import os
 import random
 import time
@@ -588,8 +587,8 @@ def TEA_to_dict(first_year: int, last_year: int,
         click.secho(
             f'Making statistics for just the year {first_year}', fg='green')
     else:
-        click.echo(
-            f'Making statistics for years {first_year} through {last_year}')
+        click.secho(
+            f'Making statistics for years {first_year} through {last_year}', fg='green')
     d = make_empty_dict(first_year, last_year)
     
     for year in range(first_year, last_year + 1):

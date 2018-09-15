@@ -1,0 +1,11 @@
+collectFromFile.py
+setup.py
+collectFromFile.egg-info/PKG-INFO
+collectFromFile.egg-info/SOURCES.txt
+collectFromFile.egg-info/dependency_links.txt
+collectFromFile.egg-info/entry_points.txt
+collectFromFile.egg-info/requires.txt
+collectFromFile.egg-info/top_level.txt
+tests/__init__.py
+tests/download_tests.py
+tests/tests.py
