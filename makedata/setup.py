@@ -8,7 +8,6 @@ setup(
     py_modules=['collectFromFile'],
     install_requires=[
         'click',
-        'numpy',
         'scipy',
         'requests',
     ],

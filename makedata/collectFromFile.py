@@ -549,9 +549,9 @@ def dict_to_nested(d: dict, first_year: int, last_year: int,
     last_path = os.path.join(dirname(dirname(__file__)), 
                             os.path.join('data', str(last_year)))
     if first_year == last_year:
-        print(f"🍏🍏🍏 Data saved to {first_path} 🍏🍏🍏")
+        click.echo(f"🍏🍏🍏 Data saved to {first_path} 🍏🍏🍏")
     else:
-        print(f"🍏🍏🍏 Data saved to {first_path} through {last_path} 🍏🍏🍏")
+        click.echo(f"🍏🍏🍏 Data saved to {first_path} through {last_path} 🍏🍏🍏")
     return None
 
 
@@ -576,7 +576,7 @@ def dict_to_json(d: dict, first_year: int, last_year: int,
     
     with open(data_path, 'w') as fp:
         json.dump(d, fp)
-        print(f"🍏🍏🍏 Data saved to {data_path} 🍏🍏🍏")
+        click.echo(f"🍏🍏🍏 Data saved to {data_path} 🍏🍏🍏")
     return None
 
 
