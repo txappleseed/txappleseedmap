@@ -1,0 +1,9 @@
+language: python
+python: 3.6
+
+branches:
+  only:
+  - cli
+
+# command to run tests
+script: pytest makedata/tests/tests.py
