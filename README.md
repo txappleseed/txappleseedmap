@@ -12,25 +12,25 @@ http://www.texasdisciplinelab.org/
 
 This project documents incidents when public schools applied one of four punishments:
 
-EXP: EXPULSIONS
-DAE: DAEP REMOVALS
-ISS: IN SCHOOL SUSPENSIONS
-OSS: OUT OF SCHOOL SUSPENSIONS
+* EXP: Expulsions
+* DAE: Disciplinary Alternative Education Program Removals
+* ISS: In School Suspensions
+* OSS: Out of School Suspensions
 
 to one of ten categories of students, with the following abbreviations:
 
-SPE: SPECIAL EDUCATION 
-ECO: ECONOMIC DISADVANTAGE
-HIS: HISPANIC
-BLA: BLACK OR AFRICAN AMERICAN
-WHI: WHITE
-IND: NATIVE AMERICAN
-ASI: ASIAN
-PCI: NATIVE HAWAIIAN/OTHER PACIFIC
-TWO: TWO OR MORE RACES
-ALL: ALL STUDENTS
+* SPE: SPECIAL EDUCATION 
+* ECO: ECONOMIC DISADVANTAGE
+* HIS: HISPANIC
+* BLA: BLACK OR AFRICAN AMERICAN
+* WHI: WHITE
+* IND: NATIVE AMERICAN
+* ASI: ASIAN
+* PCI: NATIVE HAWAIIAN/OTHER PACIFIC
+* TWO: TWO OR MORE RACES
+* ALL: ALL STUDENTS
 
-For each category, the data records a count of incidents, as well as a scale statistic used for coloring the map. The scale statistic is in a range from 0 to 10, where 5 represents outcomes consistent with a random distribution. The number of steps above or below zero should represent about how many standard deviations the actual outcome is above or below a random distribution.
+For each category, the data records a count of incidents, as well as an integer scale statistic used for coloring the map. The scale statistic is in the range from 0 to 10, where 5 represents outcomes consistent with a random distribution. The number of steps above or below zero should represent how many standard deviations the actual outcome is above or below a random distribution.
 
 
 School District level data comes from [disciplinary data products](http://ritter.tea.state.tx.us/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html) and [District and Charter Detail Data](http://ritter.tea.state.tx.us/perfreport/snapshot/download.html) published on the Texas Education Agency website.
@@ -68,7 +68,7 @@ You can use the `-f` and `-l` flags to set the first and last years of the range
 
 ```$ collectFromFile -f 2012 -l 2015```
 
-If you use the `--nested` flag, instead of a JSON file you'll output a collection of nested folders containing CSVs. Each file will have the statistics to populate a map about one type of action taken against one demographic group in one year.
+If you use the `--nested` flag, instead of a JSON file you'll get a collection of nested folders containing CSVs. Each file will have the statistics to populate a map about one type of action taken against one demographic group in one year.
 
 ```$ collectFromFile --nested```
 
