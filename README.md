@@ -46,7 +46,9 @@ This project includes a command line utility for generating the data used to pop
 
 To set up a Python environment that can run the utility, use pipenv. If needed, follow the [pipenv installation instructions](https://pipenv.readthedocs.io/en/latest/) before you continue. Once pipenv is installed, use this pipenv command to install the Python libraries you need:
 
-```$ pipenv install```
+```$ pipenv install --dev```
+
+If you need to install or manage different versions of Python in order to run the required version for this project (pipenv will give you a warning), consider [pyenv](https://github.com/pyenv/pyenv) which pipenv integrates with directly.
 
 Next, activate the Pipenv shell. This loads a virtual environment for running the utility.
 
