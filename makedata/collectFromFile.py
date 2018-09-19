@@ -15,12 +15,12 @@ def load_region_file(apple_path: str) -> list:
     with open(apple_path) as csvfile:
         reader = csv.reader(csvfile)
         region_records = [row[3:] # ignoring district names for now
-                          for row in reader] 
+                          for row in reader]
     return region_records
 
 def get_year(year: int) -> list:
     dirname=os.path.dirname
-    apple_path = os.path.join(dirname(dirname(__file__)), 
+    apple_path = os.path.join(dirname(dirname(__file__)),
                               os.path.join('data', 'from_agency', 'by_region',
                               'REGION_{}_DISTRICT_summary_{}.csv'))
     one_year = [load_region_file(apple_path.format(str(region).zfill(2),str(year)[-2:]))
@@ -31,9 +31,9 @@ def get_year(year: int) -> list:
     return one_year
 
 
-def mandatory_and_discretionary(year_of_records: list, 
-                                code_index: int, 
-                                demo_index: int, 
+def mandatory_and_discretionary(year_of_records: list,
+                                code_index: int,
+                                demo_index: int,
                                 punishment_index: int) -> list:
 
     code_headings = {
@@ -71,68 +71,68 @@ def mandatory_and_discretionary(year_of_records: list,
     return year_of_records
 
 
-def filter_year_by_column(year_of_records: list, 
-                          column_index: int, 
+def filter_year_by_column(year_of_records: list,
+                          column_index: int,
                           pattern: tuple,
                           keep_matches: bool = False) -> list:
 
     if keep_matches:
-        year_of_records[1:] = [row for row in year_of_records[1:] 
+        year_of_records[1:] = [row for row in year_of_records[1:]
                                 if any(word in row[column_index]
                                     for word in pattern)]
     else:
-        year_of_records[1:] = [row for row in year_of_records[1:] 
+        year_of_records[1:] = [row for row in year_of_records[1:]
                         if all(word not in row[column_index]
                             for word in pattern)]
 
     return year_of_records
-    
 
-def filter_records(year_of_records: list, 
+
+def filter_records(year_of_records: list,
                    demo_index: int,
                    punishment_index: int) -> list:
 
-    # Keeping only the rows that categorize students by protected class, 
+    # Keeping only the rows that categorize students by protected class,
     # or that have totals.
-    
-    heading_name_in = ("WHITE", 
-                       "AFRICAN AMERICAN", 
+
+    heading_name_in = ("WHITE",
+                       "AFRICAN AMERICAN",
                        "AMERICAN INDIAN OR ALASKA NAT",
-                       "HISPANIC", 
-                       "NATIVE HAWAIIAN", 
-                       "ASIAN", 
-                       "TWO OR MORE RACES", 
+                       "HISPANIC",
+                       "NATIVE HAWAIIAN",
+                       "ASIAN",
+                       "TWO OR MORE RACES",
                        "SPEC. ED",
-                       "ECO. DISAD", 
-                       "ECO DISAD.", 
-                       "TOTAL", 
-                       "DISTRICT CUMULATIVE YEAR END ENROLLMENT",    
-                       "MANDATORY", 
-                       "DISCRETIONARY", 
+                       "ECO. DISAD",
+                       "ECO DISAD.",
+                       "TOTAL",
+                       "DISTRICT CUMULATIVE YEAR END ENROLLMENT",
+                       "MANDATORY",
+                       "DISCRETIONARY",
                        "NATIVE AMERICAN",
                        "NON",
                        "SPE",
                        "MAN",
                        "DIS")
 
-    year_of_records = filter_year_by_column(year_of_records, 
+    year_of_records = filter_year_by_column(year_of_records,
                           demo_index, heading_name_in, keep_matches=True)
 
-    # Getting rid of rows that count students instead of incidents, or 
+    # Getting rid of rows that count students instead of incidents, or
     # non-disadvantaged kids.
-    
-    heading_name_out = ("SPEC. ED. STUDENTS", 
-                        "EXPULSIONS TO JJAEP", 
+
+    heading_name_out = ("SPEC. ED. STUDENTS",
+                        "EXPULSIONS TO JJAEP",
                         "ECO DISAD. STUDENTS",
-                        "ECO. DISAD. STUDENTS", 
-                        "AT RISK", 
-                        "NON AT", 
+                        "ECO. DISAD. STUDENTS",
+                        "AT RISK",
+                        "NON AT",
                         "NON TITLE",
                         "NON-TITLE",
                         "NON-ILLEGAL",
                         "UNKNOWN AT",
                         "UNKNOWN ECO STATUS",
-                        "NON ECO DISAD.", 
+                        "NON ECO DISAD.",
                         "NON ECO. DISAD.",
                         "REMOVAL",
                         "MANSLAUGHTER",
@@ -144,29 +144,29 @@ def filter_records(year_of_records: list,
                         )
 
 
-    year_of_records = filter_year_by_column(year_of_records, 
+    year_of_records = filter_year_by_column(year_of_records,
                           demo_index, heading_name_out, keep_matches=False)
 
     # Delete rows appearing to double-count the same expulsions.
-    
-    section_out = ("M-ECO. DISADV. JJAEP PLACEMENTS", 
+
+    section_out = ("M-ECO. DISADV. JJAEP PLACEMENTS",
                    "H-SPEC. ED. JJAEP EXPULSIONS",
-                   "JJAEP EXPULSIONS", 
+                   "JJAEP EXPULSIONS",
                    "DISCIPLINE ACTION COUNTS")
-    
-    year_of_records = filter_year_by_column(year_of_records, 
+
+    year_of_records = filter_year_by_column(year_of_records,
                          punishment_index, section_out, keep_matches=False)
-    
+
     return year_of_records
 
 
 def replace_category_names(year_of_records: list,
-                           demo_index: int, 
+                           demo_index: int,
                            punishment_index: int) -> list:
     headings = {
         "SECTION": {
             'A-PARTICIPATION': 'POP',
-            'D-EXPULSION ACTIONS': 'EXP', 
+            'D-EXPULSION ACTIONS': 'EXP',
             'N-ECO. DISADV. EXPULSIONS': 'EXP',
             'I-SPEC. ED. EXPULSIONS': 'EXP',
             'E-DAEP PLACEMENTS': 'DAE',
@@ -208,25 +208,25 @@ def replace_category_names(year_of_records: list,
             row[punishment_index] = headings["SECTION"][row[punishment_index]]
     return year_of_records
 
-    
-def number_strings_to_int(row: list) -> list:   
+
+def number_strings_to_int(row: list) -> list:
     row[0] = int(row[0]) # DISTRICT
-    
+
     row[-1] = int(row[-1]) # YR[XX]
     if row[-1] < -8: # -999+ is a masked value meaning "1 to 4"
         row[-1] = 1
     return row
 
 def make_empty_dict(first_year: int, last_year: int) -> dict:
-    
-    demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 
+
+    demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND',
              'ASI', 'PCI', 'TWO', 'ALL', 'NON', 'MAN', 'DIS'}
-    return {year: {demo: {} for demo in demos} 
+    return {year: {demo: {} for demo in demos}
             for year in range(first_year, last_year + 1)}
 
 
 def make_year_of_records(year: int) -> list:
-    
+
     year_of_records = get_year(year)
     demo_index = year_of_records[0].index("HEADING NAME")
     code_index = year_of_records[0].index("HEADING")
@@ -236,7 +236,7 @@ def make_year_of_records(year: int) -> list:
                                                 demo_index, punishment_index)
     year_of_records = filter_records(year_of_records, demo_index,
                                     punishment_index)
-    year_of_records[1:] = [number_strings_to_int(row) 
+    year_of_records[1:] = [number_strings_to_int(row)
                            for row in year_of_records[1:]]
     return replace_category_names(year_of_records,
                                   demo_index, punishment_index)
@@ -245,7 +245,7 @@ def make_year_of_records(year: int) -> list:
 def get_charters() -> set:
     charters = set()
     dirname=os.path.dirname
-    district_path = os.path.join(dirname(dirname(__file__)), 
+    district_path = os.path.join(dirname(dirname(__file__)),
                             os.path.join('data', 'from_agency', 'districts',
                             'district2016.dat'))
     with open(district_path) as csvfile:
@@ -260,14 +260,14 @@ def punishment_totals_for_year(year: int, d: dict) -> dict:
 
     """
     Trying two methods to get total disciplinary actions per district:
-    adding up "Mandatory" and "Discretionary" actions (which are not always 
-    reported), and adding up actions against special ed and non-special ed 
+    adding up "Mandatory" and "Discretionary" actions (which are not always
+    reported), and adding up actions against special ed and non-special ed
     students. Relying on whichever number is higher, on the assumption that
     if actions are reported anywhere, they probably really happened."""
 
     for action in ("ISS", "OSS", "EXP", "DAE"):
-        for district in set(d[year]["BLA"][action].keys() | 
-                            d[year]["HIS"][action].keys() | 
+        for district in set(d[year]["BLA"][action].keys() |
+                            d[year]["HIS"][action].keys() |
                             d[year]["WHI"][action].keys()):
             sn = d[year]["SPE"].get(action, {}).get(district, {}).get("C", 0)
             sn += d[year]["NON"].get(action, {}).get(district, {}).get("C", 0)
@@ -281,13 +281,13 @@ def punishment_totals_for_year(year: int, d: dict) -> dict:
     d[year].pop("DIS", None)
     return d
 
-     
+
 def get_demo_year(year: int) -> dict:
     dirname=os.path.dirname
-    district_path = os.path.join(dirname(dirname(__file__)), 
+    district_path = os.path.join(dirname(dirname(__file__)),
                             os.path.join('data', 'from_agency', 'districts',
                             f'district{year}.dat'))
-    demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND', 
+    demos = {'SPE', 'ECO', 'HIS', 'BLA', 'WHI', 'IND',
              'ASI', 'PCI', 'TWO'}
 
     # dropping 'DPETALLC', which is also a measure of district population,
@@ -312,7 +312,7 @@ def add_demo_populations(year: int, d: dict) -> dict:
         for district in demo_dict[demo]:
             if d[year]["ALL"]["POP"].get(district, None):
                 d[year][demo]["POP"][district] = {"C": int(
-                        d[year]["ALL"]["POP"][district]["C"] 
+                        d[year]["ALL"]["POP"][district]["C"]
                         * demo_dict[demo][district] // 100)}
     return d
 
@@ -327,13 +327,13 @@ def add_statewide_totals(year: int, d: dict) -> dict:
     return d
 
 
-def impossible(member_punishments: int, 
-                      all_punishments: int, 
+def impossible(member_punishments: int,
+                      all_punishments: int,
                       member_pop: int,
                       all_pop: int) -> bool:
-    
+
     """
-    Tells scale function to return a dummy variable 
+    Tells scale function to return a dummy variable
     of -1 for any "impossible" statistics."""
 
     if member_punishments > all_punishments:
@@ -344,22 +344,22 @@ def impossible(member_punishments: int,
 
 
 
-def binomial_scale(member_punishments: int, 
-                      all_punishments: int, 
+def binomial_scale(member_punishments: int,
+                      all_punishments: int,
                       member_pop: int,
                       all_pop: int) -> int:
 
-    if impossible(member_punishments, 
+    if impossible(member_punishments,
                       all_punishments,
                       member_pop,
                       all_pop):
         return -1
 
-    """    
-    Finds out how many standard deviations a group's punishment 
+    """
+    Finds out how many standard deviations a group's punishment
     count is from the mean of a random distribution. A result that
-    seems to be the result of impossible/erroneous data gets a 1. 
-    A result within one standard deviation of the mean gets a 5. Five 
+    seems to be the result of impossible/erroneous data gets a 1.
+    A result within one standard deviation of the mean gets a 5. Five
     standard deviations below the mean would return the minimum, 0.
     Five standard deviations above the mean would return the max, 10.
     See https://en.wikipedia.org/wiki/Binomial_test"""
@@ -375,8 +375,8 @@ def binomial_scale(member_punishments: int,
     else:
         return score
     pvalue = stats.binom_test(member_punishments,
-                               all_punishments, 
-                               p, 
+                               all_punishments,
+                               p,
                                alternative=tail)
 
     # relying on https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule
@@ -393,11 +393,11 @@ def binomial_scale(member_punishments: int,
 def add_scale_statistic(year: int, d: dict) -> dict:
     with click.progressbar(
            (demo for demo in d[year] if demo != "ALL"),
-            label=f'Calculating year {year} for Appleseed map 🍎', 
+            label=f'Calculating year {year} for Appleseed map 🍎',
             length=4) as bar:
         for demo in bar:
             for punishment in (p for p in d[year][demo] if p != "POP"):
-                for district in (d for d in d[year][demo][punishment] 
+                for district in (d for d in d[year][demo][punishment]
                                 if d != 0):
                     # No scale variable if the demo's population is unknown.
                     if district in d[year][demo]["POP"]:
@@ -411,13 +411,13 @@ def add_scale_statistic(year: int, d: dict) -> dict:
 
 
 def add_district_to_state_scale_statistic(year: int, d: dict) -> dict:
-    
+
     """
     Compares the overall population of a district against the
     overall population of the state, using the same test
     that compares a demographic within a district to the district
     as a whole."""
-    
+
     demo = "ALL"
     for punishment in (p for p in d[year][demo] if p != "POP"):
         for district in (d for d in d[year][demo][punishment] if d != 0):
@@ -432,19 +432,19 @@ def add_district_to_state_scale_statistic(year: int, d: dict) -> dict:
 
 def add_zeros_to_dict(year: int,
                       d: dict) -> dict:
-    
+
     """
     Fills in a zero if a district makes no report of taking an action
     against a member of a certain demographic, but the district did
     report ISS or OSS against a Black, Hispanic, or White student.
     """
-    
+
     for demo in d[year]:
         for p in (p for p in d[year][demo] if p != "POP"):
-            for district in set(d[year]["BLA"]["ISS"].keys() | 
-                            d[year]["HIS"]["ISS"].keys() | 
-                            d[year]["WHI"]["ISS"].keys() | 
-                            d[year]["BLA"]["OSS"].keys() | 
+            for district in set(d[year]["BLA"]["ISS"].keys() |
+                            d[year]["HIS"]["ISS"].keys() |
+                            d[year]["WHI"]["ISS"].keys() |
+                            d[year]["BLA"]["OSS"].keys() |
                             d[year]["HIS"]["OSS"].keys() |
                             d[year]["WHI"]["OSS"].keys()):
                 count = d[year][demo][p].get(district, {}).get("C", 0)
@@ -455,11 +455,11 @@ def add_zeros_to_dict(year: int,
 def add_year_to_dict(year: int,
                      d: dict,
                      include_charters: bool = False,
-                     include_traditional: bool = True) -> dict:      
-    
+                     include_traditional: bool = True) -> dict:
+
     year_of_records = make_year_of_records(year)
     demo_index = year_of_records[0].index("HEADING NAME")
-    punishment_index = year_of_records[0].index("SECTION")                               
+    punishment_index = year_of_records[0].index("SECTION")
     charters = get_charters()
     for row in year_of_records[1:]:
         if row[punishment_index] not in d[year].get(row[demo_index], {}):
@@ -479,8 +479,8 @@ def add_year_to_dict(year: int,
     return d
 
 
-def make_csv_row_demo(d: dict, year: int, 
-                      demo: str, p: str, 
+def make_csv_row_demo(d: dict, year: int,
+                      demo: str, p: str,
                       district: int) -> list:
 
     # district,groupActions,scale,groupPop,allActions,allPop
@@ -493,8 +493,8 @@ def make_csv_row_demo(d: dict, year: int,
             d[year]["ALL"]["POP"][district]["C"]]
 
 
-def make_csv_row_all(d: dict, year: int, 
-                      demo: str, p: str, 
+def make_csv_row_all(d: dict, year: int,
+                      demo: str, p: str,
                       district: int) -> list:
 
     return [district,
@@ -523,7 +523,7 @@ def dict_to_nested(d: dict, first_year: int, last_year: int,
                     if demo == "ALL":
                         view.append(make_csv_row_all(
                             d, year, demo, p, district))
-                    else:           
+                    else:
                         view.append(make_csv_row_demo(
                             d, year, demo, p, district))
                 dirname=os.path.dirname
@@ -533,7 +533,7 @@ def dict_to_nested(d: dict, first_year: int, last_year: int,
                     charter_status = "WithCharters"
                 else:
                     charter_status = ""
-                csv_path = os.path.join(dirname(dirname(__file__)), 
+                csv_path = os.path.join(dirname(dirname(__file__)),
                             os.path.join('data', str(year), demo,
                             f'{p}{charter_status}.csv'))
                 directory = os.path.dirname(csv_path)
@@ -542,10 +542,10 @@ def dict_to_nested(d: dict, first_year: int, last_year: int,
                 with open(csv_path, 'w', newline='') as f:
                     writer = csv.writer(f)
                     writer.writerows(view)
-    
-    first_path = os.path.join(dirname(dirname(__file__)), 
+
+    first_path = os.path.join(dirname(dirname(__file__)),
                             os.path.join('data', str(first_year)))
-    last_path = os.path.join(dirname(dirname(__file__)), 
+    last_path = os.path.join(dirname(dirname(__file__)),
                             os.path.join('data', str(last_year)))
     if first_year == last_year:
         click.echo(f"🍏🍏🍏 Data saved to {first_path} 🍏🍏🍏")
@@ -569,10 +569,12 @@ def dict_to_json(d: dict, first_year: int, last_year: int,
     else:
         charter_status = ""
     dirname=os.path.dirname
-    data_path = os.path.join(dirname(dirname(__file__)), 
+    data_path = os.path.join(dirname(dirname(__file__)),
                             os.path.join('data', 'processed',
                             f'stpp{charter_status}{filename_year}.json'))
-    
+    directory = dirname(data_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     with open(data_path, 'w') as fp:
         json.dump(d, fp)
         click.echo(f"🍏🍏🍏 Data saved to {data_path} 🍏🍏🍏")
@@ -582,7 +584,7 @@ def dict_to_json(d: dict, first_year: int, last_year: int,
 def TEA_to_dict(first_year: int, last_year: int,
               include_charters: bool = False,
               include_traditional: bool = True) -> dict:
-    
+
     if last_year == first_year:
         click.secho(
             f'Making statistics for just the year {first_year}', fg='green')
@@ -590,7 +592,7 @@ def TEA_to_dict(first_year: int, last_year: int,
         click.secho(
             f'Making statistics for years {first_year} through {last_year}', fg='green')
     d = make_empty_dict(first_year, last_year)
-    
+
     for year in range(first_year, last_year + 1):
         d = add_year_to_dict(year, d, include_charters, include_traditional)
     return d
@@ -598,7 +600,7 @@ def TEA_to_dict(first_year: int, last_year: int,
 
 def download_one_file(url: str,
                       payload: dict) -> str:
-    
+
     request = requests.post(
         url,
         verify=False, # verify=False overrides the SSL error
@@ -619,16 +621,16 @@ def download_regions_from_TEA(first_year: int,
             r = str(region).zfill(2)
             y = str(year)[-2:]
             district_path = os.path.join(
-                dirname(dirname(__file__)), 
+                dirname(dirname(__file__)),
                 os.path.join('data', 'from_agency', 'by_region',
                 f'REGION_{r}_DISTRICT_summary_{y}.csv'))
-            payload = {'_service': 'marykay', 
+            payload = {'_service': 'marykay',
                        '_program': 'adhoc.download_static_summary.sas',
                        'report_type':'csv',
                        'agg_level':'DISTRICT',
-                       'referrer': 'Download_Region_Districts.html', 
-                       '_debug':"0", 
-                       'school_yr': y, 
+                       'referrer': 'Download_Region_Districts.html',
+                       '_debug':"0",
+                       'school_yr': y,
                        'region': r}
             report = download_one_file(
                 "https://rptsvr1.tea.texas.gov/cgi/sas/broker",
@@ -651,10 +653,10 @@ def download_perfreports_from_TEA(first_year: int,
     for year in range(first_year, last_year + 1):
         y = str(year)[-2:]
         year_path = os.path.join(
-            dirname(dirname(__file__)), 
+            dirname(dirname(__file__)),
             os.path.join('data', 'from_agency', 'districts',
             f'district20{y}.dat'))
-        payload = {'level': 'district', 
+        payload = {'level': 'district',
                     'set': y,
                     'suf':'.dat'}
         report = download_one_file(
@@ -669,14 +671,14 @@ def download_perfreports_from_TEA(first_year: int,
 
 def check_for_input_files(first_year: int,
                           last_year: int) -> bool:
-    
+
     dirname=os.path.dirname
     for year in range(first_year, last_year + 1):
         y = str(year)[-2:]
         for region in range(1,21):
             r = str(region).zfill(2)
             district_path = os.path.join(
-                dirname(dirname(__file__)), 
+                dirname(dirname(__file__)),
                 os.path.join('data', 'from_agency', 'by_region',
                 f'REGION_{r}_DISTRICT_summary_{y}.csv'))
             if not os.path.isfile(district_path):
@@ -686,7 +688,7 @@ def check_for_input_files(first_year: int,
                     'the makedata folder, not inside the makedata folder.')
                 return False
         year_path = os.path.join(
-            dirname(dirname(__file__)), 
+            dirname(dirname(__file__)),
             os.path.join('data', 'from_agency', 'districts',
             f'district20{y}.dat'))
         if not os.path.isfile(year_path):
@@ -699,22 +701,22 @@ def check_for_input_files(first_year: int,
 
 
 @click.command()
-@click.option('--include-charters', is_flag=True, 
+@click.option('--include-charters', is_flag=True,
               help="Include statistics about charter schools.")
 @click.option('--charters-only', is_flag=True, help="Include charter "
               "schools, and also omit traditional districts.")
-@click.option('--first-year', '-f', type=click.IntRange(2006, 2050), 
+@click.option('--first-year', '-f', type=click.IntRange(2006, 2050),
               default=2006, help="The first year of data to process. 2006 is "
               "the earliest year known to have been covered by the "
               "Texas Education Agency.")
-@click.option('--last-year', '-l', type=click.IntRange(2006, 2050), 
+@click.option('--last-year', '-l', type=click.IntRange(2006, 2050),
               default=2016, help="The last year of data to process.")
-@click.option('--download/--no-download', default=False, 
+@click.option('--download/--no-download', default=False,
               help="Connects to the TEA's server and tries to download "
               "data in the TEA's format to '../data/from_agency/'. "
               "This currently generates an InsecureRequestWarning "
               "because SSL validation is not working.")
-@click.option('--skip-processing/--no-skip', default=False, 
+@click.option('--skip-processing/--no-skip', default=False,
               help="Skips the process of converting data from the TEA's "
               "format into a new format.")
 @click.option('--json', 'format', flag_value='json',
@@ -728,7 +730,7 @@ def check_for_input_files(first_year: int,
               "corresponding to one possible user query.")
 def cli(include_charters: bool,
              charters_only: bool,
-             first_year: int, 
+             first_year: int,
              last_year: int,
              download: bool,
              skip_processing: bool,
@@ -742,7 +744,7 @@ def cli(include_charters: bool,
     Texas Appleseed "School to Prison Pipeline" map.
     (See www.texasdisciplinelab.org.)
     """
-    
+
     include_traditional = True
     if charters_only:
         include_charters = True
@@ -751,7 +753,7 @@ def cli(include_charters: bool,
     if download:
         download_perfreports_from_TEA(first_year, last_year)
         download_regions_from_TEA(first_year, last_year)
-    
+
     if not skip_processing:
         if check_for_input_files(first_year, last_year):
             d = TEA_to_dict(first_year, last_year,

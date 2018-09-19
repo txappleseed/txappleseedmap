@@ -27,9 +27,25 @@ def load_dict_with_year(load_empty_dict):
 
 @pytest.fixture()
 def load_dict_with_year_charters(load_empty_dict):
-    return collectFromFile.add_year_to_dict(2009, 
-                                            load_empty_dict, 
+    return collectFromFile.add_year_to_dict(2009,
+                                            load_empty_dict,
                                             True, False)
+
+@pytest.fixture()
+def dump_dict_to_dir(load_dict_with_year, tmpdir, monkeypatch):
+    def _test_helper(first_year, last_year, include_charters,
+                        include_traditional, test_data_dir_exists = False):
+        fake_proj_dir = tmpdir.mkdir('test_dir')
+        fake_src_file = fake_proj_dir.mkdir('makedata').join('fake_src.py')
+        if test_data_dir_exists:
+            fake_data_dir = fake_proj_dir.mkdir('data')
+        with monkeypatch.context() as m:
+            monkeypatch.setattr(collectFromFile, "__file__", fake_src_file)
+            collectFromFile.dict_to_json(load_dict_with_year, first_year,
+            last_year, include_charters, include_traditional)
+        return fake_proj_dir
+
+    return _test_helper
 
 def test_load_one_year():
     assert load_year_for_testing()[0][0] == 'DISTRICT'
@@ -41,7 +57,7 @@ SHORT_DATA = [["DISTRICT","SECTION","HEADING","HEADING NAME","YR08"],
             ["184907","G-IN SCHOOL SUSPENSIONS","C25","WHITE","509"],
             ["184907","I-SPEC. ED. EXPULSIONS","D04",
                 "SPEC. ED. STUDENTS EXPELLED","-99999999"],
-            ["126901", "F-OUT OF SCHOOL SUSPENSIONS", "C16", 
+            ["126901", "F-OUT OF SCHOOL SUSPENSIONS", "C16",
                 "AFRICAN AMERICAN", "-99999999"],
             ["126901","B-DISCIPLINE DATA TRENDS","B03",
                 "DISCRETIONARY EXPULSIONS TO JJAEP","-99999999"],
@@ -58,17 +74,17 @@ def test_relabel_mandatory_and_discretionary():
 
 def test_filter_year_by_column(load_year_for_testing):
     assert len(collectFromFile.filter_year_by_column(
-        SHORT_DATA, 1, 
-        ("IN SCHOOL SUSPENSION", "OUT OF SCHOOL SUSPENSIONS"), 
+        SHORT_DATA, 1,
+        ("IN SCHOOL SUSPENSION", "OUT OF SCHOOL SUSPENSIONS"),
         keep_matches=True)) == 4
-    
+
     assert len(collectFromFile.filter_year_by_column(
-        load_year_for_testing, 1, 
-        ("IN SCHOOL SUSPENSION", "OUT OF SCHOOL SUSPENSIONS"), 
+        load_year_for_testing, 1,
+        ("IN SCHOOL SUSPENSION", "OUT OF SCHOOL SUSPENSIONS"),
         keep_matches=True)) == 6583
 
 def test_int_values_for_row():
-    assert collectFromFile.number_strings_to_int(SHORT_DATA[-1]) == [126901, 
+    assert collectFromFile.number_strings_to_int(SHORT_DATA[-1]) == [126901,
         "F-OUT OF SCHOOL SUSPENSIONS", "C16", "AFRICAN AMERICAN", 1]
 
 def test_replace_category_names_for_sample_data():
@@ -104,9 +120,9 @@ def test_add_year_include_charters(load_dict_with_year_charters):
 def test_punishment_totals_for_year(load_dict_with_year):
     year = 2009
     action = "DAE"
-    assert 31912 in set(load_dict_with_year[year]["WHI"][action].keys() | 
+    assert 31912 in set(load_dict_with_year[year]["WHI"][action].keys() |
                             load_dict_with_year[year]["BLA"][action].keys())
-    
+
     assert load_dict_with_year[year]["ALL"][action][31912]["C"] == \
             max(276+79, 43+312)
     assert load_dict_with_year[year]["ALL"]["EXP"][101909]["C"] == 6
@@ -141,7 +157,7 @@ def test_calculate_districtwide_scale_variable(load_dict_with_year):
     assert load_dict_with_year[year]["ALL"]["ISS"][101914]["S"] == 0
 
 def test_unavailable_scale_variable_omitted(load_dict_with_year):
-    
+
     # If the scale can't be calculated, it should be omitted, not
     # left as a dummy or null.
 
@@ -150,19 +166,44 @@ def test_unavailable_scale_variable_omitted(load_dict_with_year):
     assert "S" not in load_dict_with_year[year]["ASI"]["ISS"][31901]
 
 def test_make_csv_row_demo(load_dict_with_year):
-    assert collectFromFile.make_csv_row_demo(load_dict_with_year, 
+    assert collectFromFile.make_csv_row_demo(load_dict_with_year,
         2009, "BLA", "OSS", 101902) == [
             101902, 9333, 10, 20240, 17982, 67468]
-    assert collectFromFile.make_csv_row_demo(load_dict_with_year, 
+    assert collectFromFile.make_csv_row_demo(load_dict_with_year,
         2009, "TWO", "EXP", 3903) == [
             3903, None, None, None, 12, 9346]
 
 def test_make_csv_row_all(load_dict_with_year):
-    assert collectFromFile.make_csv_row_all(load_dict_with_year, 
+    assert collectFromFile.make_csv_row_all(load_dict_with_year,
         2009, "ALL", "OSS", 101902) == [
             101902, 17982, 10, 67468, 583121, 5068223]
 
 def test_make_csv_row_no_actions(load_dict_with_year):
-    assert collectFromFile.make_csv_row_all(load_dict_with_year, 
+    assert collectFromFile.make_csv_row_all(load_dict_with_year,
         2009, "ALL", "EXP", 1909) == [
             1909, 0, 5, 443, 7196, 5068223]
+
+def test_json_dump_path_creation(dump_dict_to_dir):
+    d = dump_dict_to_dir(2010, 2012, False, True)
+    assert os.path.exists(os.path.join(d, 'data', 'processed',
+                                       'stpp2010-2012.json'))
+
+def test_json_dump_path_exists(dump_dict_to_dir):
+    d = dump_dict_to_dir(2010, 2012, False, True, test_data_dir_exists = True)
+    assert os.path.exists(os.path.join(d, 'data', 'processed',
+                                       'stpp2010-2012.json'))
+
+def test_json_dump_path_one_year(dump_dict_to_dir):
+    d = dump_dict_to_dir(2010, 2010, False, True, test_data_dir_exists = True)
+    assert os.path.exists(os.path.join(d, 'data', 'processed',
+                                       'stpp2010.json'))
+
+def test_json_dump_charter_only(dump_dict_to_dir):
+    d = dump_dict_to_dir(2010, 2012, True, False, test_data_dir_exists = True)
+    assert os.path.exists(os.path.join(d, 'data', 'processed',
+                                       'stppChartersOnly2010-2012.json'))
+
+def test_json_dump_with_charters(dump_dict_to_dir):
+    d = dump_dict_to_dir(2010, 2012, True, True, test_data_dir_exists = True)
+    assert os.path.exists(os.path.join(d, 'data', 'processed',
+                                       'stppWithCharters2010-2012.json'))
