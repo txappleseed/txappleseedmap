@@ -4,3 +4,4 @@
 .swp
 .DS_Store
 makedata/.pytest_cache/
+data/
