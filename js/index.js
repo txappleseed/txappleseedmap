@@ -87,6 +87,24 @@ var PageControl = (function(){
             "ISS"       : "ISS"
         };
 
+        this.punishmentToProcessedDataKey = {
+            "Expulsion" : "EXP",
+            "AltEdu"    : "DAE",
+            "OSS"       : "OSS",
+            "ISS"       : "ISS"
+        };
+
+        this.groupToProcessedDataKey = {
+            black_or_african_american: "BLA",
+            asian: "ASI",
+            hispanic_latino: "HIS",
+            american_indian_or_alaska_nat: "IND",
+            special_education: "SPE",
+            two_or_more_races: "TWO",
+            white: "WHI",
+            native_hawaiian_other_pacific: "PCI",
+        };
+
         // Dictionary that maps option values to GeoJSON data file paths
         this.dataFiles = {
             "Expulsion" : "topojson/expulsion_topo.json",
@@ -137,6 +155,7 @@ var PageControl = (function(){
     };
 
     Map.prototype.setUp = function () {
+        this.loadData();
         var mapClass = this,
             mapObject = this.mapObject,
             tileLayer  = this.tileLayer,
@@ -148,7 +167,7 @@ var PageControl = (function(){
         stripes.addTo(mapObject); //adding pattern definition to mapObject
         tileLayer.addTo(mapObject);
         //this.requestInitialData(options);
-      this.loadGeojsonLayer(this.dataSet, options);
+        this.loadGeojsonLayer(this.dataSet, options);
     };
 
 
@@ -166,26 +185,25 @@ var PageControl = (function(){
         return {
 
             style: function style(feature) {
-                var value = (feature.properties[fischerValue]);
-                var dname = feature.properties.district_name;
-                if (value == null){
-                    return {
-                        fillColor: getFillColor(Number(feature.properties[fischerValue])),
-                        fillPattern: stripes,
+                const punishment = this.punishmentToProcessedDataKey[this.dataSet];
+                // temporarily hardcode the year until we have a year dropdown
+                const year = '2009';
+                const group = this.groupToProcessedDataKey[this.groups[this.population]];
+                const selectedData = this.processedData[year][group][punishment];
+                const districtData = selectedData[String(feature.properties.district_number)];
+                const value = districtData ? districtData['S'] : null;
+                const returnStyle = {
+                        fillColor: getFillColor(value),
                         weight: 1,
                         opacity: 1,
                         color: '#b3b3b3',
                         fillOpacity: 0.6
-                    }
-                } else {
-                    return {
-                        fillColor: getFillColor(Number(feature.properties[fischerValue])),
-                        weight: 1,
-                        opacity: 1,
-                        color: '#b3b3b3',
-                        fillOpacity: 0.6
-                    };
-                }},
+                };
+                if (value == null) {
+                    returnStyle.fillPattern = stripes;
+                };
+                return returnStyle;
+            }.bind(this),
             //popup information for each district
             onEachFeature: function onEachFeature(feature, layer) {
                 var percentStudentsByGroup = (Number(feature.properties[percentStudentsValue]))*100,
@@ -264,6 +282,23 @@ var PageControl = (function(){
 
     };
 
+    // Loads data from data JSON file
+    Map.prototype.loadData = function() {
+        const path = "data/processed/stpp2010-2012.json";
+        $.ajax({
+            dataType: "json",
+            url: path,
+            context: this,
+            success: function(data) {
+                this.processedData = data;
+            },
+            error: function(e) {
+                console.log('Failure to load json with status ' + e);
+            }
+        });
+
+    };
+
     // Update data after selection is made
     Map.prototype.selectData = function(dataKey) {
         /*
@@ -338,28 +373,22 @@ var PageControl = (function(){
         }
     };
 
-    Map.prototype.getFillColor =   function (d) {
+    Map.prototype.getFillColor =   function (value) {
         var red    = ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26','#a50f15'],
         purple = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f'],
         gray   = '#DEDCDC';
 
-
-        //return d == false   ? gray    :
-        return d < -0.99999  ? purple[5] :
-        d < -0.9984  ? purple[4] :
-        d < -0.992   ? purple[3] :
-        d < -0.96    ? purple[2] :
-        d < -0.8     ? purple[1] :
-        d < -0.2     ? purple[0] :
-        d <=  0       ? 'white' :
-       // d == 0      ? 'white' :
-        d <  0.2     ? 'white' :
-        d <  0.8     ? red[0]  :
-        d <  0.96    ? red[1]  :
-        d <  0.992   ? red[2]  :
-        d <  0.9984  ? red[3]  :
-        d <  0.99999  ? red[4]  :
-        d <= 1       ? red[5]  :
+        return value == 0  ? purple[5] :
+        value == 1   ? purple[4] :
+        value == 2   ? purple[3] :
+        value == 3   ? purple[2] :
+        value == 4   ? purple[1] :
+        value == 5   ? 'white' :
+        value == 6   ? red[1] :
+        value == 7   ? red[2] :
+        value == 8   ? red[3]  :
+        value == 9   ? red[4]  :
+        value == 10  ? red[5]  :
         gray;
     };
 
