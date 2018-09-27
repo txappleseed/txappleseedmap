@@ -241,11 +241,8 @@ var PageControl = (function(){
             }.bind(this)
         };
 
-        // remove existing layer for previous group
-        thiz.clearGeojsonLayer.call(thiz);
-
-        thiz.addDataToMap(dataLayer, thiz.mapObject, options)
     };
+
     //sets population when user clicks choice
     Map.prototype.handleDataToggleClick = function (e) {
         //remove active button style
@@ -313,21 +310,12 @@ var PageControl = (function(){
 
     // Update data after selection is made
     Map.prototype.selectData = function(dataKey) {
-        /*
-         Takes a key for a data layer and loads the data
-         from the corresponding GeoJSON file.
-         */
-
-        // Clear old layers
-        this.clearGeojsonLayer();
+        const options = this.getOptions();
         this.dataSet = dataKey;
-        /*if(typeof dataKey !== 'undefined'){
-            console.log(dataKey + " in clearGeojsonLayer");
-        } else {
-            console.log("dataKey is undefined here in clearGeojsonLayer")
-        }*/
-        // Add new layer
-        this.loadGeojsonLayer(dataKey, this.getOptions(dataKey,this.population));
+        this.dataLayer.setStyle(options.style);
+        this.dataLayer.eachLayer(function (layer) {
+            options.onEachFeature(layer.feature, layer);
+        });
     };
 
     Map.prototype.addDataToMap = function (data, map, options) {
