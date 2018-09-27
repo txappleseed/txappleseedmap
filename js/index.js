@@ -179,7 +179,7 @@ var PageControl = (function(){
             punishmentPercentValue = "percent_" + this.dataSet + "_" + this.groups[this.population],
             percentStudentsValue = "percent_students_" + this.groups[this.population],
             groupNameInPopup = this.groupDisplayName[this.population],
-            displayvalue = this.displaypunishment[this.dataSet],
+            punishmentType = this.displaypunishment[this.dataSet],
             schoolYear = this.schoolYear;
 
         return {
@@ -206,29 +206,42 @@ var PageControl = (function(){
             }.bind(this),
             //popup information for each district
             onEachFeature: function onEachFeature(feature, layer) {
-                var percentStudentsByGroup = (Number(feature.properties[percentStudentsValue]))*100,
-                    districtName = feature.properties.district_name,
-                    groupName = groupNameInPopup,
-                    punishmentPercent = (Number(feature.properties[punishmentPercentValue]))*100,
-                    //punishmentsCount = (Number(feature.properties[punishmentCountValue])) || 0,
-                    punishmentType = displayvalue,
-                    popupContent;
+                const districtNumber = String(feature.properties.district_number);
+                const punishment = this.punishmentToProcessedDataKey[this.dataSet];
+                // temporarily hardcode the year until we have a year dropdown
+                const year = '2009';
+                const group = this.groupToProcessedDataKey[this.groups[this.population]];
+                const populationOfThisGroup =   this.processedData[year][group]['POP'][districtNumber];
+                const populationTotal =         this.processedData[year]['ALL']['POP'][districtNumber];
+                const punishmentOfThisGroup =   this.processedData[year][group][punishment][districtNumber];
+                const punishmentTotal =         this.processedData[year]['ALL'][punishment][districtNumber];
+                const validData = (populationOfThisGroup && populationTotal && punishmentOfThisGroup && punishmentTotal);
+                const districtName = feature.properties.district_name;
 
-                if (!isNaN(parseFloat((feature.properties[fischerValue])))){
+                var popupContent;
+
+                if (populationOfThisGroup && populationOfThisGroup['C'] == '0') {
+                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + groupNameInPopup + " for the <b>" + schoolYear + "</b> school year.</span>";
+                }
+                else if (punishmentTotal && punishmentTotal['C'] == '0') {
+                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + punishmentType + " for the <b>" + schoolYear + "</b> school year.</span>";
+                }
+                else if (validData){
+                    const percentStudentsByGroup = Number(populationOfThisGroup['C']) * 100.0 / Number(populationTotal['C']);
+                    const punishmentPercent = Number(punishmentOfThisGroup['C']) * 100.0 / Number(punishmentTotal['C']);
                     popupContent = [
                         "<span class='popup-text'>",
                         "In <b>" + districtName + "</b>, ",
-                        groupName + " received " + Math.round(punishmentPercent*100)/100.0 + "% of " + punishmentType + " and represent ",
+                        groupNameInPopup + " received " + Math.round(punishmentPercent*100)/100.0 + "% of " + punishmentType + " and represent ",
                          + Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population ",
                         "</span>"
                     ].join('');
-                } else if (percentStudentsByGroup == 0) {
-                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + groupName + " for the <b>" + schoolYear + "</b> school year.</span>";
-                }else {
+                }
+                else {
                     popupContent = "<span class='popup-text'>Data not available in <b>" + districtName + "</b> for this student group.</span>";
                 }
                 if (feature.properties) layer.bindPopup(popupContent);
-            }
+            }.bind(this)
         };
 
         // remove existing layer for previous group
