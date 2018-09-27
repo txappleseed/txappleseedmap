@@ -192,17 +192,14 @@ var PageControl = (function(){
                 const selectedData = this.processedData[year][group][punishment];
                 const districtData = selectedData[String(feature.properties.district_number)];
                 const value = districtData ? districtData['S'] : null;
-                const returnStyle = {
+                return {
                         fillColor: getFillColor(value),
                         weight: 1,
                         opacity: 1,
                         color: '#b3b3b3',
-                        fillOpacity: 0.6
+                        fillOpacity: 0.6,
+                        fillPattern: value ? null : stripes
                 };
-                if (value == null) {
-                    returnStyle.fillPattern = stripes;
-                };
-                return returnStyle;
             }.bind(this),
             //popup information for each district
             onEachFeature: function onEachFeature(feature, layer) {
@@ -261,10 +258,12 @@ var PageControl = (function(){
         //console.log(thiz);
         // change toggle button CSS to indicate "active"
         $(this).addClass("selector__button--active");
-        // remove existing layer for previous group
-        thiz.clearGeojsonLayer.call(thiz);
 
-        thiz.addDataToMap(dataLayer, thiz.mapObject, options)
+        thiz.dataLayer.setStyle(options.style);
+        thiz.dataLayer.eachLayer(function (layer) {
+            options.onEachFeature(layer.feature, layer);
+        });
+
     };
 
     Map.prototype.clearGeojsonLayer = function(){
