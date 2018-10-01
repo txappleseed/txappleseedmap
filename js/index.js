@@ -175,7 +175,7 @@ var PageControl = (function(){
             style: function style(feature) {
                 const punishment = this.punishmentToProcessedDataKey[this.dataSet];
                 // temporarily hardcode the year until we have a year dropdown
-                const year = '2009';
+                const year = '2015';
                 const group = this.groupToProcessedDataKey[this.groups[this.population]];
                 const selectedData = this.processedData[year][group][punishment];
                 const districtData = selectedData[String(feature.properties.district_number)];
@@ -197,7 +197,7 @@ var PageControl = (function(){
                 const districtNumber = String(feature.properties.district_number);
                 const punishment = this.punishmentToProcessedDataKey[this.dataSet];
                 // temporarily hardcode the year until we have a year dropdown
-                const year = '2009';
+                const year = '2015';
                 const group = this.groupToProcessedDataKey[this.groups[this.population]];
                 const populationOfThisGroup =   this.processedData[year][group]['POP'][districtNumber];
                 const populationTotal =         this.processedData[year]['ALL']['POP'][districtNumber];
@@ -283,7 +283,7 @@ var PageControl = (function(){
 
     // Loads data from data JSON file
     Map.prototype.loadData = function() {
-        const path = "data/processed/stpp2010-2012.json";
+        const path = "data/processed/stpp2015.json";
         $.ajax({
             dataType: "json",
             url: path,
