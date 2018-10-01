@@ -24,7 +24,7 @@ var PageControl = (function(){
         this.dataSet = "OSS";
         this.population = 0;
         this.hilight_layer = null;
-        this.dataLayer = null;
+        this.districtLayer = null;
         this.schoolYear = "2015-2016"
 
         this.$el = $( selector );
@@ -159,8 +159,6 @@ var PageControl = (function(){
         var mapClass = this,
             mapObject = this.mapObject,
             tileLayer  = this.tileLayer,
-            punishments = this.punishments,
-            groups = this.groups,
             stripes = this.stripes,
             options = this.getOptions();
         // Adds tileLayer from the Map Class to the mapObject
@@ -172,16 +170,6 @@ var PageControl = (function(){
 
 
     Map.prototype.getOptions = function () {
-        var getFillColor = this.getFillColor,
-            sentenceCase = this.sentenceCase,
-            stripes = this.stripes,
-            fischerValue = this.dataSet + "_scale_" + this.groups[this.population],
-            punishmentPercentValue = "percent_" + this.dataSet + "_" + this.groups[this.population],
-            percentStudentsValue = "percent_students_" + this.groups[this.population],
-            groupNameInPopup = this.groupDisplayName[this.population],
-            punishmentType = this.displaypunishment[this.dataSet],
-            schoolYear = this.schoolYear;
-
         return {
 
             style: function style(feature) {
@@ -193,16 +181,19 @@ var PageControl = (function(){
                 const districtData = selectedData[String(feature.properties.district_number)];
                 const value = districtData ? districtData['S'] : null;
                 return {
-                        fillColor: getFillColor(value),
+                        fillColor: this.getFillColor(value),
                         weight: 1,
                         opacity: 1,
                         color: '#b3b3b3',
                         fillOpacity: 0.6,
-                        fillPattern: value ? null : stripes
+                        fillPattern: value ? null : this.stripes
                 };
             }.bind(this),
             //popup information for each district
             onEachFeature: function onEachFeature(feature, layer) {
+                const groupNameInPopup = this.groupDisplayName[this.population];
+                const punishmentType = this.displaypunishment[this.dataSet];
+                const schoolYear = this.schoolYear;
                 const districtNumber = String(feature.properties.district_number);
                 const punishment = this.punishmentToProcessedDataKey[this.dataSet];
                 // temporarily hardcode the year until we have a year dropdown
@@ -248,16 +239,15 @@ var PageControl = (function(){
         //remove active button style
         $(".selector__button").removeClass("selector__button--active");
         console.log("Me me me");
-        var thiz = e.data.context,
-            dataLayer = GEODATA;
+        var thiz = e.data.context;
         thiz.population = typeof $(this).data("group-id") === 'number' ? $(this).data("group-id") : $(e.target).val();
         var options = thiz.getOptions();
         //console.log(thiz);
         // change toggle button CSS to indicate "active"
         $(this).addClass("selector__button--active");
 
-        thiz.dataLayer.setStyle(options.style);
-        thiz.dataLayer.eachLayer(function (layer) {
+        thiz.districtLayer.setStyle(options.style);
+        thiz.districtLayer.eachLayer(function (layer) {
             options.onEachFeature(layer.feature, layer);
         });
 
@@ -284,7 +274,7 @@ var PageControl = (function(){
             context: this,
             success: function(data) {
                 // Add the data layer to the map
-                this.addDataToMap(data, this.mapObject, geoJsonOptions);
+                this.addDistrictsToMap(data, this.mapObject, geoJsonOptions);
                 window.GEODATA = data;
             },
         });
@@ -312,27 +302,26 @@ var PageControl = (function(){
     Map.prototype.selectData = function(dataKey) {
         const options = this.getOptions();
         this.dataSet = dataKey;
-        this.dataLayer.setStyle(options.style);
-        this.dataLayer.eachLayer(function (layer) {
+        this.districtLayer.setStyle(options.style);
+        this.districtLayer.eachLayer(function (layer) {
             options.onEachFeature(layer.feature, layer);
         });
     };
 
-    Map.prototype.addDataToMap = function (data, map, options) {
+    Map.prototype.addDistrictsToMap = function (data, map, options) {
         var districtNames = [];
         var layers = new Object();
-        //var dataLayer = L.geoJson(data, options);
-        this.dataLayer = new L.TopoJSON(null, options);
-        this.dataLayer.addData(data);
+        this.districtLayer = new L.TopoJSON(null, options);
+        this.districtLayer.addData(data);
         var thiz = this;
-        for (var key in this.dataLayer._layers) {
-            var dName = this.dataLayer._layers[key].feature.properties.district_name;
+        for (var key in this.districtLayer._layers) {
+            var dName = this.districtLayer._layers[key].feature.properties.district_name;
             if (dName) {
                 districtNames.push(dName);
-                layers[dName] = this.dataLayer._layers[key];
+                layers[dName] = this.districtLayer._layers[key];
             }
         }
-        this.dataLayer.addTo(map);
+        this.districtLayer.addTo(map);
 
 
         //console.log(data);  //.objects.simple_oss.geometries.properties.district_name);
@@ -369,7 +358,7 @@ var PageControl = (function(){
 
     Map.prototype.clearHighlight = function() {
         if (this.hilight_layer != null) {
-            this.dataLayer.resetStyle(this.hilight_layer);
+            this.districtLayer.resetStyle(this.hilight_layer);
         }
     };
 
