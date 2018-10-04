@@ -186,7 +186,7 @@ var PageControl = (function(){
                         opacity: 1,
                         color: '#b3b3b3',
                         fillOpacity: 0.6,
-                        fillPattern: value ? null : this.stripes
+                        fillPattern: (value != null) ? null : this.stripes
                 };
             }.bind(this),
             //popup information for each district
