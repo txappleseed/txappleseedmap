@@ -1,5 +1,5 @@
 # Texas School Discipline Disparities Map
-[![Build Status](https://travis-ci.com/mscarey/txappleseedmap.svg?branch=cli)](https://travis-ci.com/mscarey/txappleseedmap)
+[![Build Status](https://travis-ci.com/mscarey/txappleseedmap.svg?branch=master)](https://travis-ci.com/mscarey/txappleseedmap)
 
 Maps for the Texas Appleseed "School to Prison Pipeline" projects:
 http://txappleseed.github.io/txappleseedmap/
