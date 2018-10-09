@@ -14,6 +14,17 @@ L.TopoJSON = L.GeoJSON.extend({
     }
 });
 
+const groupToProcessedDataKey = {
+    "Black/African American Students": "BLA",
+    "Asian Students": "ASI",
+    "Latino Students": "HIS",
+    "Indigenous American Students": "IND",
+    "Special Education Students": "SPE",
+    "Students of Two or More Races": "TWO",
+    "White Students": "WHI",
+    "Hawaiian/Pacific Islander Students": "PCI",
+};
+
 var PageControl = (function(){
     "use strict";
 
@@ -22,7 +33,7 @@ var PageControl = (function(){
         // Rename 'this' for use in callbacks
         var thisMap = this;
         this.dataSet = "OSS";
-        this.population = 0;
+        this.population = "Black/African American Students";
         this.hilight_layer = null;
         this.districtLayer = null;
         this.schoolYear = "2015-2016"
@@ -43,27 +54,6 @@ var PageControl = (function(){
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
         });
 
-        this.groups = [
-            "black_or_african_american",
-            "asian",
-            "hispanic_latino",
-            "american_indian_or_alaska_nat",
-            "special_education",
-            "two_or_more_races",
-            "white",
-            "native_hawaiian_other_pacific"
-            //"economic_disadvantage"
-        ];
-
-        this.groupDisplayName = [
-            "African American students",
-            "Asian students",
-            "Latino students",
-            "Native American students",
-            "Special Education students",
-            "Students of two or More Races",
-            "White students"
-        ];
 
         this.displaypunishment = {
             "Expulsion" : "expulsion actions",
@@ -71,14 +61,6 @@ var PageControl = (function(){
             "OSS"       : "out-of-school suspensions",
             "ISS"       : "in-school suspensions"
         };
-
-      /*
-        this.punishments = {
-            "Expulsion" : "D-EXPULSION ACTIONS",
-            "AltEdu"    : "E-DAEP PLACEMENTS",
-            "OSS"       : "F-OUT OF SCHOOL SUSPENSIONS",
-            "ISS"       : "G-IN SCHOOL SUSPENSIONS"
-        }; */
 
         this.punishments = {
             "Expulsion" : "Expulsion",
@@ -94,16 +76,6 @@ var PageControl = (function(){
             "ISS"       : "ISS"
         };
 
-        this.groupToProcessedDataKey = {
-            black_or_african_american: "BLA",
-            asian: "ASI",
-            hispanic_latino: "HIS",
-            american_indian_or_alaska_nat: "IND",
-            special_education: "SPE",
-            two_or_more_races: "TWO",
-            white: "WHI",
-            native_hawaiian_other_pacific: "PCI",
-        };
 
         // Dictionary that maps option values to GeoJSON data file paths
         this.dataFiles = {
@@ -114,15 +86,6 @@ var PageControl = (function(){
             "ISS"       : "topojson/iss_topo.json"
         };
 
-        this.groupPercentCode = [
-            "DPETBLAP", // black
-            "DPETASIP", // asian?
-            "DPETHISP", // latino?
-            "DPETINDP", // native american?
-            "DPETSPEP", // special ed?
-            "DPETTWOP", // multi-ethnic?
-            "DPETWHIP", // white?
-        ];
 
         // Default Stripes.
         this.stripes = new L.StripePattern({
@@ -176,8 +139,8 @@ var PageControl = (function(){
                 const punishment = this.punishmentToProcessedDataKey[this.dataSet];
                 // temporarily hardcode the year until we have a year dropdown
                 const year = '2015';
-                const group = this.groupToProcessedDataKey[this.groups[this.population]];
-                const selectedData = this.processedData[year][group][punishment];
+                const groupKey = groupToProcessedDataKey[this.population];
+                const selectedData = this.processedData[year][groupKey][punishment];
                 const districtData = selectedData[String(feature.properties.district_number)];
                 const value = districtData ? districtData['S'] : null;
                 return {
@@ -191,17 +154,17 @@ var PageControl = (function(){
             }.bind(this),
             //popup information for each district
             onEachFeature: function onEachFeature(feature, layer) {
-                const groupNameInPopup = this.groupDisplayName[this.population];
+                const groupNameInPopup = this.population;
                 const punishmentType = this.displaypunishment[this.dataSet];
                 const schoolYear = this.schoolYear;
                 const districtNumber = String(feature.properties.district_number);
                 const punishment = this.punishmentToProcessedDataKey[this.dataSet];
                 // temporarily hardcode the year until we have a year dropdown
                 const year = '2015';
-                const group = this.groupToProcessedDataKey[this.groups[this.population]];
-                const populationOfThisGroup =   this.processedData[year][group]['POP'][districtNumber];
+                const groupKey = groupToProcessedDataKey[this.population];
+                const populationOfThisGroup =   this.processedData[year][groupKey]['POP'][districtNumber];
                 const populationTotal =         this.processedData[year]['ALL']['POP'][districtNumber];
-                const punishmentOfThisGroup =   this.processedData[year][group][punishment][districtNumber];
+                const punishmentOfThisGroup =   this.processedData[year][groupKey][punishment][districtNumber];
                 const punishmentTotal =         this.processedData[year]['ALL'][punishment][districtNumber];
                 const validData = (populationOfThisGroup && populationTotal && punishmentOfThisGroup && punishmentTotal);
                 const districtName = feature.properties.district_name;
@@ -240,7 +203,7 @@ var PageControl = (function(){
         $(".selector__button").removeClass("selector__button--active");
         console.log("Me me me");
         var thiz = e.data.context;
-        thiz.population = typeof $(this).data("group-id") === 'number' ? $(this).data("group-id") : $(e.target).val();
+        thiz.population = $(e.target).find("option:selected").text();
         var options = thiz.getOptions();
         //console.log(thiz);
         // change toggle button CSS to indicate "active"
