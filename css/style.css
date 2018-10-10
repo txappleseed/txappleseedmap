@@ -139,7 +139,7 @@ button {
 /* MASTHEAD */
 .masthead {
 	box-sizing: border-box;
-	height: 6.3rem;
+	height: 6.5rem;
 	padding: 0.2rem;
 	overflow: hidden;
 	background: linear-gradient(#F0F0F0 0%,  #F0F0F0 50%,  #FAFAFA 50%,  #FAFAFA 100%);
@@ -151,11 +151,10 @@ button {
 
 .masthead__logo {
 	float: left;
-	height: 100%;
+	height: 70%;
 	overflow: hidden;
-	width: 120px;
-    margin-left: 30px;
-	background: url('../tx-appleseed-header-logo.png') no-repeat center;
+	margin-left: 20px;
+	margin-top: 15px;
 	background-size: 100%;
 }
 .masthead__content {
@@ -345,9 +344,5 @@ div.cartodb-legend ul li {
 
   .student_characteristic_selector{
     display: inherit;
-  }
-
-  .masthead {
-    height: 6.5rem;
   }
 }

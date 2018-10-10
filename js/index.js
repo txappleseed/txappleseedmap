@@ -22,7 +22,7 @@ const groupToProcessedDataKey = {
     "Special Education Students": "SPE",
     "Students of Two or More Races": "TWO",
     "White Students": "WHI",
-    "Hawaiian/Pacific Islander Students": "PCI",
+    "Hawaiian/Pacific Students": "PCI",
 };
 
 var PageControl = (function(){
@@ -202,15 +202,15 @@ var PageControl = (function(){
         //remove active button style
         $(".selector__button").removeClass("selector__button--active");
         console.log("Me me me");
-        var thiz = e.data.context;
-        thiz.population = $(e.target).find("option:selected").text();
-        var options = thiz.getOptions();
+        var thisMap = e.data.context;
+        thisMap.population = $(e.target).find("option:selected").text();
+        var options = thisMap.getOptions();
         //console.log(thiz);
         // change toggle button CSS to indicate "active"
         $(this).addClass("selector__button--active");
 
-        thiz.districtLayer.setStyle(options.style);
-        thiz.districtLayer.eachLayer(function (layer) {
+        thisMap.districtLayer.setStyle(options.style);
+        thisMap.districtLayer.eachLayer(function (layer) {
             options.onEachFeature(layer.feature, layer);
         });
 
@@ -276,7 +276,7 @@ var PageControl = (function(){
         var layers = new Object();
         this.districtLayer = new L.TopoJSON(null, options);
         this.districtLayer.addData(data);
-        var thiz = this;
+        var thisMap = this;
         for (var key in this.districtLayer._layers) {
             var dName = this.districtLayer._layers[key].feature.properties.district_name;
             if (dName) {
@@ -310,8 +310,8 @@ var PageControl = (function(){
                     opacity: 1
                 };
                 var layer = layers[ui.item.value];
-                thiz.clearHighlight();
-                thiz.hilight_layer = layer;
+                thisMap.clearHighlight();
+                thisMap.hilight_layer = layer;
                 layer.setStyle(hiStyle);
                 map.fitBounds(layer.getBounds());
             }
