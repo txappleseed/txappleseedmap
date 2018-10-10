@@ -5,3 +5,4 @@
 .DS_Store
 makedata/.pytest_cache/
 data/
+js/node_modules

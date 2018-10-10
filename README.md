@@ -78,3 +78,15 @@ If you use the `--nested` flag, instead of a JSON file you'll get a collection o
 ## Website
 
 This project uses leaflet.js and carto.js to [render the map](https://texasappleseed.carto.com/tables/ratiodistrictdaep_merge/public). https://carto.com/docs/
+
+The tests for the front end use node and can be run using npm. First, you'll need to install the
+dependencies of [canvas](https://github.com/Automattic/node-canvas/wiki/Installation:-Mac-OS-X). On
+a Mac:
+
+```brew install pkg-config cairo pango libpng jpeg giflib librsvg```
+
+Then, install the dependencies from the `js/` directory:
+
+``` npm install```
+
+Now, you can run tests using `npm test`.

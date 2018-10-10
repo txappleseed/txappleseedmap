@@ -386,3 +386,7 @@ var PageControl = (function(){
     return(new Map( "#leMap" ));
 
 })();
+
+// Handle node-style exporting for running tests or running in browser
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined')
+    module.exports = PageControl;
