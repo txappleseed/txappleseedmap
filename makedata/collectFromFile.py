@@ -505,13 +505,27 @@ def make_csv_row_all(d: dict, year: int,
             d[year]["ALL"]["POP"][0]["C"]]
 
 
+
+def report_nested_file_location(first_year: int, last_year: int):
+    dirname = os.path.dirname
+    first_path = os.path.join(dirname(dirname(__file__)),
+                            os.path.join('data', str(first_year)))
+    last_path = os.path.join(dirname(dirname(__file__)),
+                            os.path.join('data', str(last_year)))
+    if first_year == last_year:
+        return f"🍏🍏🍏 Data saved to {first_path} 🍏🍏🍏"
+    else:
+        return f"🍏🍏🍏 Data saved to {first_path} through {last_path} 🍏🍏🍏"
+
+
 def dict_to_nested(d: dict, first_year: int, last_year: int,
               include_charters: bool = False,
               include_traditional: bool = True) -> None:
     for year in d:
         for demo in d[year]:
             for p in (p for p in d[year][demo] if p != "POP"):
-                view = [
+                view = {}
+                [
                     ["district",
                     "groupActions",
                     "scale",
@@ -526,7 +540,7 @@ def dict_to_nested(d: dict, first_year: int, last_year: int,
                     else:
                         view.append(make_csv_row_demo(
                             d, year, demo, p, district))
-                dirname=os.path.dirname
+                dirname = os.path.dirname
                 if not include_traditional:
                     charter_status = "ChartersOnly"
                 elif include_charters:
@@ -542,24 +556,50 @@ def dict_to_nested(d: dict, first_year: int, last_year: int,
                 with open(csv_path, 'w', newline='') as f:
                     writer = csv.writer(f)
                     writer.writerows(view)
+    click.echo(report_nested_file_location(first_year, last_year))
 
-    first_path = os.path.join(dirname(dirname(__file__)),
-                            os.path.join('data', str(first_year)))
-    last_path = os.path.join(dirname(dirname(__file__)),
-                            os.path.join('data', str(last_year)))
-    if first_year == last_year:
-        click.echo(f"🍏🍏🍏 Data saved to {first_path} 🍏🍏🍏")
-    else:
-        click.echo(f"🍏🍏🍏 Data saved to {first_path} through {last_path} 🍏🍏🍏")
     return None
 
 def dict_to_nested_json(d: dict, first_year: int, last_year: int,
               include_charters: bool = False,
               include_traditional: bool = True) -> None:
 
-    """TODO: make a version of the three functions above, except
-    # have them export JSON files in nested folders."""
-    pass
+    for year in d:
+        for demo in d[year]:
+            for p in (p for p in d[year][demo] if p != "POP"):
+                view = {}
+                for district in d[year][demo][p]:
+                    if demo == "ALL":
+                        district_row = make_csv_row_all(
+                            d, year, demo, p, district)
+                    else:
+                        district_row = make_csv_row_demo(
+                            d, year, demo, p, district)
+                    view[district] = {
+                        "C": district_row[1],
+                        "S": district_row[2],
+                        "P": district_row[3],
+                        "aC": district_row[4],
+                        "aP": district_row[5]}
+                dirname = os.path.dirname
+                if not include_traditional:
+                    charter_status = "ChartersOnly"
+                elif include_charters:
+                    charter_status = "WithCharters"
+                else:
+                    charter_status = ""
+                json_path = os.path.join(dirname(dirname(__file__)),
+                            os.path.join('data', str(year), demo,
+                            f'{p}{charter_status}.json'))
+                directory = os.path.dirname(json_path)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                with open(json_path, 'w') as f:
+                    json.dump(view, f)
+
+    click.echo(report_nested_file_location(first_year, last_year))
+
+    return None
 
 def dict_to_json(d: dict, first_year: int, last_year: int,
               include_charters: bool = False,
@@ -727,12 +767,13 @@ def check_for_input_files(first_year: int,
               "format into a new format.")
 @click.option('--json', 'format', flag_value='json',
               default=True, help="Exports a single json file.")
-@click.option('--csv', 'format', flag_value='csv', help="Exports a single "
-              "csv file with all the data, where the first two columns "
-              "(district and year) form the key.")
-@click.option('--nested', 'format', flag_value='nested', help="Exports "
+@click.option('--csv', 'format', flag_value='nested', help="Exports "
               "nested directories labeled by year, demographic, and "
-              "punishment, containing CSVs each containing the data "
+              "punishment, with CSV files each containing the data "
+              "corresponding to one possible user query.")
+@click.option('--json-folders', 'format', flag_value='nested_json', help="Exports "
+              "nested directories labeled by year, demographic, and "
+              "punishment, with JSON files each containing the data "
               "corresponding to one possible user query.")
 def cli(include_charters: bool,
              charters_only: bool,
@@ -770,6 +811,9 @@ def cli(include_charters: bool,
                         include_charters, include_traditional)
             if format == "nested":
                 dict_to_nested(d, first_year, last_year,
+                        include_charters, include_traditional)
+            if format == "nested_json":
+                dict_to_nested_json(d, first_year, last_year,
                         include_charters, include_traditional)
 
         # TODO: Make the output functions handle user-specified outfile

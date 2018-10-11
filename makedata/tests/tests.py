@@ -211,3 +211,7 @@ def test_json_dump_with_charters(dump_dict_to_dir):
     d = dump_dict_to_dir(2010, 2012, True, True, test_data_dir_exists = True)
     assert os.path.exists(os.path.join(d, 'data', 'processed',
                                        'stppWithCharters2010-2012.json'))
+
+def test_report_nested_file_location():
+    assert "through" not in collectFromFile.report_nested_file_location(2008, 2008)
+    assert "through" in collectFromFile.report_nested_file_location(2006, 2016)
