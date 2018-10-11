@@ -5,5 +5,7 @@ branches:
   only:
   - master
 
+sudo: enabled
+
 # command to run tests
 script: pytest makedata/tests/tests.py

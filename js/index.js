@@ -159,20 +159,30 @@ var PageControl = (function(){
 
                 var popupContent;
 
-                if (populationOfThisGroup && populationOfThisGroup['C'] == '0') {
-                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + groupNameInPopup + " for the <b>" + schoolYear + "</b> school year.</span>";
+                if (punishmentOfThisGroup && punishmentOfThisGroup['S'] == -1) {
+                    popupContent = [
+                        "<span class='popup-text'>The statistics for " + districtName + " appear to have an <b>error</b>. ",
+                                   "They report that there were " + populationOfThisGroup.C.toLocaleString(),
+                                   " <b>" + groupNameInPopup + "</b> and that they received " + punishmentOfThisGroup.C.toLocaleString(),
+                                   " <b>" + punishmentType + "</b>, out of a district total of " + punishmentTotal.C.toLocaleString(),
+                                   ".</span>"
+                    ].join('');
                 }
                 else if (punishmentTotal && punishmentTotal['C'] == '0') {
                     popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + punishmentType + " for the <b>" + schoolYear + "</b> school year.</span>";
                 }
+                else if (populationOfThisGroup && populationOfThisGroup['C'] == '0') {
+                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + groupNameInPopup + " for the <b>" + schoolYear + "</b> school year.</span>";
+                }
                 else if (validData){
-                    const percentStudentsByGroup = Number(populationOfThisGroup['C']) * 100.0 / Number(populationTotal['C']);
-                    const punishmentPercent = Number(punishmentOfThisGroup['C']) * 100.0 / Number(punishmentTotal['C']);
+                    const percentStudentsByGroup = Number(populationOfThisGroup.C) * 100.0 / Number(populationTotal.C);
+                    const punishmentPercent = Number(punishmentOfThisGroup.C) * 100.0 / Number(punishmentTotal.C);
                     popupContent = [
                         "<span class='popup-text'>",
-                        "In <b>" + districtName + "</b>, ",
-                        groupNameInPopup + " received " + Math.round(punishmentPercent*100)/100.0 + "% of " + punishmentType + " and represent ",
-                         + Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population ",
+                        "In <b>" + districtName + "</b>, the " + populationOfThisGroup.C.toLocaleString(),
+                        " <b>" + groupNameInPopup + "</b> received " + Math.round(punishmentPercent*100)/100.0,
+                        "% of the " + punishmentTotal.C.toLocaleString() + " <b>" + punishmentType,
+                        "</b> and represented " + Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population.",
                         "</span>"
                     ].join('');
                 }

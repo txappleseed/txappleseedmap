@@ -19,7 +19,7 @@ This project documents incidents when public schools applied one of four punishm
 
 to one of ten categories of students, with the following abbreviations:
 
-* SPE: SPECIAL EDUCATION 
+* SPE: SPECIAL EDUCATION
 * ECO: ECONOMIC DISADVANTAGE
 * HIS: HISPANIC
 * BLA: BLACK OR AFRICAN AMERICAN
