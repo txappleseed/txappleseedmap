@@ -161,7 +161,7 @@ var PageControl = (function(){
             //popup information for each district
             onEachFeature: function onEachFeature(feature, layer) {
                 const groupNameInPopup = this.population;
-                const punishmentType = this.displaypunishment[this.dataSet];
+                const punishmentType = this.punishment;
                 const schoolYear = this.schoolYear;
                 const districtNumber = String(feature.properties.district_number);
                 const punishmentKey = this.punishmentKey;
