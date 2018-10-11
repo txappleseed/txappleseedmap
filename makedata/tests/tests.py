@@ -107,6 +107,10 @@ def test_get_demo_year():
 def test_get_charters():
     assert 14803 in collectFromFile.get_charters()
 
+def test_impossible_statistics():
+    assert not collectFromFile.impossible(8, 2, 10, 100)
+    assert collectFromFile.impossible(8, 20, 0, 100)
+
 def test_add_year_exclude_charters(load_dict_with_year):
     year = 2009
     assert 14803 not in load_dict_with_year[2009]["ALL"]["POP"].keys()

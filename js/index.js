@@ -57,7 +57,7 @@ var PageControl = (function(){
         this.groupkey = groupToProcessedDataKey[this.population];
         this.hilight_layer = null;
         this.districtLayer = null;
-        this.year = 2015;
+        this.year = yearSelector.lastChild.value;
 
 
         this.$el = $( selector );
@@ -224,9 +224,10 @@ var PageControl = (function(){
 
     // Loads data from GeoJSON file and adds layer to map
     Map.prototype.loadGeojsonLayer = function(geoJsonOptions) {
-        // Get path to data file
+        // Get path to a legacy data file
+        // TODO: replace with a file containing no statistics
         var path = "topojson/oss_topo.json";
-        //console.log(path + " is the path and " + dataKey + " is the key " + JSON.stringify(geoJsonOptions));
+
         // Load data from file
         $.ajax({
             dataType: "json",
@@ -315,7 +316,7 @@ var PageControl = (function(){
     Map.prototype.getFillColor =   function (value) {
         var red    = ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26','#a50f15'],
         purple = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f'],
-        gray   = '#DEDCDC';
+        gray   = '#707070';
 
         return value == 0  ? purple[5] :
         value == 1   ? purple[4] :

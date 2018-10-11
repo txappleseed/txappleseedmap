@@ -19,7 +19,7 @@ def load_region_file(apple_path: str) -> list:
     return region_records
 
 def get_year(year: int) -> list:
-    dirname=os.path.dirname
+    dirname = os.path.dirname
     apple_path = os.path.join(dirname(dirname(__file__)),
                               os.path.join('data', 'from_agency', 'by_region',
                               'REGION_{}_DISTRICT_summary_{}.csv'))
@@ -336,7 +336,7 @@ def impossible(member_punishments: int,
     Tells scale function to return a dummy variable
     of -1 for any "impossible" statistics."""
 
-    if member_punishments > all_punishments:
+    if member_punishments > all_punishments and member_punishments > 10:
         return True
     if member_pop == 0 and member_punishments > 0:
         return True
@@ -345,9 +345,9 @@ def impossible(member_punishments: int,
 
 
 def binomial_scale(member_punishments: int,
-                      all_punishments: int,
-                      member_pop: int,
-                      all_pop: int) -> int:
+                   all_punishments: int,
+                   member_pop: int,
+                   all_pop: int) -> int:
 
     if impossible(member_punishments,
                       all_punishments,
@@ -375,7 +375,7 @@ def binomial_scale(member_punishments: int,
     else:
         return score
     pvalue = stats.binom_test(member_punishments,
-                               all_punishments,
+                               max(all_punishments, member_punishments),
                                p,
                                alternative=tail)
 
