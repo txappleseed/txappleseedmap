@@ -17,12 +17,19 @@ L.TopoJSON = L.GeoJSON.extend({
 const groupToProcessedDataKey = {
     "Black/African American Students": "BLA",
     "Asian Students": "ASI",
-    "Latino Students": "HIS",
+    "Latino/Hispanic Students": "HIS",
     "Indigenous American Students": "IND",
     "Special Education Students": "SPE",
     "Students of Two or More Races": "TWO",
     "White Students": "WHI",
     "Hawaiian/Pacific Students": "PCI",
+};
+
+const punishmentToProcessedDataKey = {
+    "Expulsions" : "EXP",
+    "Alternative Placements"    : "DAE",
+    "Out of School Suspensions"       : "OSS",
+    "In School Suspensions"       : "ISS"
 };
 
 var PageControl = (function(){
@@ -32,8 +39,11 @@ var PageControl = (function(){
 
         // Rename 'this' for use in callbacks
         var thisMap = this;
-        this.dataSet = "OSS";
+        this.dataSet = "OSS"; // delete this when possible
+        this.punishment = "Out of School Suspensions";
         this.population = "Black/African American Students";
+        this.punishmentKey = punishmentToProcessedDataKey[this.punishment];
+        this.groupkey = groupToProcessedDataKey[this.population];
         this.hilight_layer = null;
         this.districtLayer = null;
         this.schoolYear = "2015-2016"
@@ -49,9 +59,9 @@ var PageControl = (function(){
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">Stamen</a> contributors'
         }); */
 
-            this.tileLayer = L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
+        this.tileLayer = L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
         });
 
 
@@ -69,12 +79,7 @@ var PageControl = (function(){
             "ISS"       : "ISS"
         };
 
-        this.punishmentToProcessedDataKey = {
-            "Expulsion" : "EXP",
-            "AltEdu"    : "DAE",
-            "OSS"       : "OSS",
-            "ISS"       : "ISS"
-        };
+
 
 
         // Dictionary that maps option values to GeoJSON data file paths
@@ -98,16 +103,17 @@ var PageControl = (function(){
 
         this.$el.find(".selector__button").on("click", {context: this}, this.handleDataToggleClick);
         $(".student_characteristic_selector").on("change", {context: this}, this.handleDataToggleClick);
+        $(".punishment_selector").on("change", {context: this}, this.handleDataToggleClick);
 
         // Attach event handler to drop-down menu to update data after
         // selection changed.
-        $("#dropdown").on(
+        $(".student_characteristic_selector").on(
             "change",
             {context: this},
             function(event) {
 
                 // Get the selection from the drop-down menu
-                this.dataSet = $("#dropdown").find("option:selected").val();
+                this.dataSet = $(".student_characteristic_selector").find("option:selected").val();
                 //console.log("In dropdown " + this.dataSet);
                 // Load the data from the corresponding file
                 thisMap.selectData(this.dataSet);
@@ -136,11 +142,11 @@ var PageControl = (function(){
         return {
 
             style: function style(feature) {
-                const punishment = this.punishmentToProcessedDataKey[this.dataSet];
+                const punishmentKey = punishmentToProcessedDataKey[this.punishment];
                 // temporarily hardcode the year until we have a year dropdown
                 const year = '2015';
                 const groupKey = groupToProcessedDataKey[this.population];
-                const selectedData = this.processedData[year][groupKey][punishment];
+                const selectedData = this.processedData[year][groupKey][punishmentKey];
                 const districtData = selectedData[String(feature.properties.district_number)];
                 const value = districtData ? districtData['S'] : null;
                 return {
@@ -158,14 +164,14 @@ var PageControl = (function(){
                 const punishmentType = this.displaypunishment[this.dataSet];
                 const schoolYear = this.schoolYear;
                 const districtNumber = String(feature.properties.district_number);
-                const punishment = this.punishmentToProcessedDataKey[this.dataSet];
+                const punishmentKey = this.punishmentKey;
                 // temporarily hardcode the year until we have a year dropdown
                 const year = '2015';
                 const groupKey = groupToProcessedDataKey[this.population];
                 const populationOfThisGroup =   this.processedData[year][groupKey]['POP'][districtNumber];
                 const populationTotal =         this.processedData[year]['ALL']['POP'][districtNumber];
-                const punishmentOfThisGroup =   this.processedData[year][groupKey][punishment][districtNumber];
-                const punishmentTotal =         this.processedData[year]['ALL'][punishment][districtNumber];
+                const punishmentOfThisGroup =   this.processedData[year][groupKey][punishmentKey][districtNumber];
+                const punishmentTotal =         this.processedData[year]['ALL'][punishmentKey][districtNumber];
                 const validData = (populationOfThisGroup && populationTotal && punishmentOfThisGroup && punishmentTotal);
                 const districtName = feature.properties.district_name;
 
@@ -203,11 +209,9 @@ var PageControl = (function(){
         $(".selector__button").removeClass("selector__button--active");
         console.log("Me me me");
         var thisMap = e.data.context;
-        thisMap.population = $(e.target).find("option:selected").text();
+        thisMap.population = $(".student_characteristic_selector").find("option:selected").text();
+        thisMap.punishment = $(".punishment_selector").find("option:selected").text();
         var options = thisMap.getOptions();
-        //console.log(thiz);
-        // change toggle button CSS to indicate "active"
-        $(this).addClass("selector__button--active");
 
         thisMap.districtLayer.setStyle(options.style);
         thisMap.districtLayer.eachLayer(function (layer) {

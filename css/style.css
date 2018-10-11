@@ -88,7 +88,6 @@ p {
 
 h1, h2, h3, h4 {
 	font-family: "Museo Slab", serif;
-    margin: 1.414em 0 0.5em;
 	font-weight: inherit;
 	line-height: 1.2;
 }
@@ -164,7 +163,6 @@ button {
 	margin-right: 50px;
 }
 masthead__title h2{
-	margin-bottom:.2em;
 	line-height: .8;
 }
 
@@ -206,57 +204,6 @@ masthead__title h2{
 	border-radius: 2px;
 	background: #fff;
 	background: rgba(255, 255, 255, .9);
-}
-
-
-/* SELECTOR */
-.selector {
-	max-width: 15rem;
-	width: 100%;
-	position: absolute;
-	right:  1.5rem;
-	bottom: 10.75rem;
-	background: #fff;
-	border: 1px solid #999999;
-	border-radius: 4px;
-	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.2);
-}
-
-.selector__title {
-	display: block;
-	padding: 1em;
-
-	font-weight: bold;
-	font-size: 0.75em;
-	text-align: center;
-	text-transform: uppercase;
-
-	border-bottom: 1px solid #999;
-}
-
-.selector__list {
-	padding-left: 0;
-	margin: 0;
-	list-style: none;
-}
-
-.selector__item:not(:last-child) {
-    border-bottom: 1px solid #999;
-}
-
-.selector__button {
-	display: block;
-	width: 100%;
-	padding: 0.8em;
-}
-.selector__button:hover, .selector__button:focus {
-	background-color: #DDD;
-}
-.selector__button:active, .selector__button.selector__button--active {
-	box-shadow: inset 0 3px 15px rgba(0, 0, 0, 0.4);
-	text-shadow:0 -1px #000;
-	background-color: #555;
-	color: #FFF
 }
 
 
@@ -331,18 +278,4 @@ div.cartodb-legend ul li {
 
 .leaflet-popup-content {
 	z-index:400 !important;
-}
-
-.student_characteristic_selector{
-  display: none;
-}
-
-@media only screen and (max-width : 768px) {
-  .selector {
-    display: none;
-  }
-
-  .student_characteristic_selector{
-    display: inherit;
-  }
 }
