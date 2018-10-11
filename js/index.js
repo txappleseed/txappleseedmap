@@ -32,6 +32,17 @@ const punishmentToProcessedDataKey = {
     "In School Suspensions"       : "ISS"
 };
 
+// populate year selector with choices
+var yearSelector = document.querySelector('.year_selector');
+// this line assumes 2015 is the last available year of data
+for (year = 2006; year < 2016; year++) {
+    var yearEntry = document.createElement('option');
+    yearEntry.textContent = year + "-" + (year + 1);
+    yearEntry.value = year;
+    yearSelector.appendChild(yearEntry);
+}
+yearSelector.lastChild.selected = true;
+
 var PageControl = (function(){
     "use strict";
 
@@ -46,7 +57,8 @@ var PageControl = (function(){
         this.groupkey = groupToProcessedDataKey[this.population];
         this.hilight_layer = null;
         this.districtLayer = null;
-        this.schoolYear = "2015-2016"
+        this.year = 2015;
+        this.schoolYear = this.year + "-" + (this.year + 1);
 
         this.$el = $( selector );
 
@@ -100,8 +112,6 @@ var PageControl = (function(){
             angle: 45
         });
 
-
-        this.$el.find(".selector__button").on("click", {context: this}, this.handleDataToggleClick);
         $(".student_characteristic_selector").on("change", {context: this}, this.handleDataToggleClick);
         $(".punishment_selector").on("change", {context: this}, this.handleDataToggleClick);
 
@@ -205,9 +215,6 @@ var PageControl = (function(){
 
     //sets population when user clicks choice
     Map.prototype.handleDataToggleClick = function (e) {
-        //remove active button style
-        $(".selector__button").removeClass("selector__button--active");
-        console.log("Me me me");
         var thisMap = e.data.context;
         thisMap.population = $(".student_characteristic_selector").find("option:selected").text();
         thisMap.punishment = $(".punishment_selector").find("option:selected").text();
