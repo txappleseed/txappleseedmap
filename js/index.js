@@ -3,7 +3,7 @@
 L.TopoJSON = L.GeoJSON.extend({
     addData: function(jsonData) {
         if (jsonData.type === "Topology") {
-            for (key in jsonData.objects) {
+            for (var key in jsonData.objects) {
                 geojson = topojson.feature(jsonData, jsonData.objects[key]);
                 L.GeoJSON.prototype.addData.call(this, geojson);
             }
@@ -43,6 +43,7 @@ for (year = 2006; year < 2016; year++) {
 }
 yearSelector.lastChild.selected = true;
 
+
 var PageControl = (function(){
     "use strict";
 
@@ -77,37 +78,10 @@ var PageControl = (function(){
         });
 
 
-        this.displaypunishment = {
-            "Expulsion" : "expulsion actions",
-            "AltEdu"    : "alternative placements",
-            "OSS"       : "out-of-school suspensions",
-            "ISS"       : "in-school suspensions"
-        };
-
-        this.punishments = {
-            "Expulsion" : "Expulsion",
-            "AltEdu"    : "AltEdu",
-            "OSS"       : "OSS",
-            "ISS"       : "ISS"
-        };
-
-
-
-
-        // Dictionary that maps option values to GeoJSON data file paths
-        this.dataFiles = {
-            "Expulsion" : "topojson/expulsion_topo.json",
-            "AltEdu"    : "topojson/altedu_topo.json",
-            "OSS"       : "topojson/oss_topo.json",
-            //"OSS"       : "geojson/simple_oss.geojson",
-            "ISS"       : "topojson/iss_topo.json"
-        };
-
-
         // Default Stripes.
         this.stripes = new L.StripePattern({
             weight: 1,
-            spaceWeight: .5,
+            spaceWeight: 0.5,
             color: '#b3b3b3',
             angle: 45
         });
@@ -127,11 +101,10 @@ var PageControl = (function(){
                 //console.log("In dropdown " + this.dataSet);
                 // Load the data from the corresponding file
                 thisMap.selectData(this.dataSet);
-                $('.selector__title').html(event.data.context.displaypunishment[this.dataSet]);
             }
         );
         this.setUp();
-    };
+    }
 
     Map.prototype.setUp = function () {
         this.loadData();
@@ -238,7 +211,7 @@ var PageControl = (function(){
     // Loads data from GeoJSON file and adds layer to map
     Map.prototype.loadGeojsonLayer = function(dataKey, geoJsonOptions) {
         // Get path to data file
-        var path = this.dataFiles[dataKey];
+        var path = "topojson/oss_topo.json";
         //console.log(path + " is the path and " + dataKey + " is the key " + JSON.stringify(geoJsonOptions));
         // Load data from file
         $.ajax({
@@ -284,7 +257,7 @@ var PageControl = (function(){
 
     Map.prototype.addDistrictsToMap = function (data, map, options) {
         var districtNames = [];
-        var layers = new Object();
+        var layers = {};
         this.districtLayer = new L.TopoJSON(null, options);
         this.districtLayer.addData(data);
         var thisMap = this;
