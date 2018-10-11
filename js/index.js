@@ -51,7 +51,6 @@ var PageControl = (function(){
 
         // Rename 'this' for use in callbacks
         var thisMap = this;
-        this.dataSet = "OSS"; // delete this when possible
         this.punishment = "Out of School Suspensions";
         this.population = "Black/African American Students";
         this.punishmentKey = punishmentToProcessedDataKey[this.punishment];
@@ -97,10 +96,10 @@ var PageControl = (function(){
             function(event) {
 
                 // Get the selection from the drop-down menu
-                this.dataSet = $(".student_characteristic_selector").find("option:selected").val();
-                //console.log("In dropdown " + this.dataSet);
+                this.population = $(".student_characteristic_selector").find("option:selected").val();
+
                 // Load the data from the corresponding file
-                thisMap.selectData(this.dataSet);
+                thisMap.selectData();
             }
         );
         this.setUp();
@@ -117,7 +116,7 @@ var PageControl = (function(){
         stripes.addTo(mapObject); //adding pattern definition to mapObject
         tileLayer.addTo(mapObject);
         //this.requestInitialData(options);
-        this.loadGeojsonLayer(this.dataSet, options);
+        this.loadGeojsonLayer(options);
     };
 
 
@@ -209,7 +208,7 @@ var PageControl = (function(){
     };
 
     // Loads data from GeoJSON file and adds layer to map
-    Map.prototype.loadGeojsonLayer = function(dataKey, geoJsonOptions) {
+    Map.prototype.loadGeojsonLayer = function(geoJsonOptions) {
         // Get path to data file
         var path = "topojson/oss_topo.json";
         //console.log(path + " is the path and " + dataKey + " is the key " + JSON.stringify(geoJsonOptions));
@@ -246,9 +245,8 @@ var PageControl = (function(){
     };
 
     // Update data after selection is made
-    Map.prototype.selectData = function(dataKey) {
+    Map.prototype.selectData = function() {
         const options = this.getOptions();
-        this.dataSet = dataKey;
         this.districtLayer.setStyle(options.style);
         this.districtLayer.eachLayer(function (layer) {
             options.onEachFeature(layer.feature, layer);
@@ -269,16 +267,6 @@ var PageControl = (function(){
             }
         }
         this.districtLayer.addTo(map);
-
-
-        //console.log(data);  //.objects.simple_oss.geometries.properties.district_name);
-        //for (var n = 0; n < data.objects.simple_oss.geometries.length; n++) {
-            //var dName = data.objects.simple_oss.geometries[n].properties.district_name;
-            //if (dName)
-                //districtNames.push(dName);
-                //districtBounds[dName] = L.polygon(data.objects.simple_oss.geometries[n].geometry.coordinates).getBounds();
-        //}
-
 
 
         // autocomplete searchbox stuff
