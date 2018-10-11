@@ -54,7 +54,7 @@ var PageControl = (function(){
         this.punishment = "Out of School Suspensions";
         this.population = "Black/African American Students";
         this.punishmentKey = punishmentToProcessedDataKey[this.punishment];
-        this.groupkey = groupToProcessedDataKey[this.population];
+        this.groupKey = groupToProcessedDataKey[this.population];
         this.hilight_layer = null;
         this.districtLayer = null;
         this.year = yearSelector.lastChild.value;
@@ -205,6 +205,7 @@ var PageControl = (function(){
         thisMap.population = $(".student_characteristic_selector").find("option:selected").text();
         thisMap.punishment = $(".punishment_selector").find("option:selected").text();
         thisMap.year = $(".year_selector").find("option:selected").val();
+        thisMap.loadData();
         var options = thisMap.getOptions();
 
         thisMap.districtLayer.setStyle(options.style);
@@ -245,7 +246,7 @@ var PageControl = (function(){
 
     // Loads data from data JSON file
     Map.prototype.loadData = function() {
-        const path = "data/processed/stpp2006-2016.json";
+        const path = "data/processed/" + this.year + "/" + this.groupKey + "/" + this.punishmentKey + ".json";
         $.ajax({
             dataType: "json",
             url: path,

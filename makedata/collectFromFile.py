@@ -553,7 +553,13 @@ def dict_to_nested(d: dict, first_year: int, last_year: int,
         click.echo(f"🍏🍏🍏 Data saved to {first_path} through {last_path} 🍏🍏🍏")
     return None
 
+def dict_to_nested_json(d: dict, first_year: int, last_year: int,
+              include_charters: bool = False,
+              include_traditional: bool = True) -> None:
 
+    """TODO: make a version of the three functions above, except
+    # have them export JSON files in nested folders."""
+    pass
 
 def dict_to_json(d: dict, first_year: int, last_year: int,
               include_charters: bool = False,
