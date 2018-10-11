@@ -34,10 +34,10 @@ const punishmentToProcessedDataKey = {
 
 // populate year selector with choices
 var yearSelector = document.querySelector('.year_selector');
-// this line assumes 2015 is the last available year of data
-for (year = 2006; year < 2016; year++) {
+// this line assumes 2016 is the last available year of data
+for (year = 2006; year < 2017; year++) {
     var yearEntry = document.createElement('option');
-    yearEntry.textContent = year + "-" + (year + 1);
+    yearEntry.textContent = (year - 1) + "-" + year;
     yearEntry.value = year;
     yearSelector.appendChild(yearEntry);
 }
@@ -58,7 +58,7 @@ var PageControl = (function(){
         this.hilight_layer = null;
         this.districtLayer = null;
         this.year = 2015;
-        this.schoolYear = this.year + "-" + (this.year + 1);
+
 
         this.$el = $( selector );
 
@@ -87,6 +87,7 @@ var PageControl = (function(){
 
         $(".student_characteristic_selector").on("change", {context: this}, this.handleDataToggleClick);
         $(".punishment_selector").on("change", {context: this}, this.handleDataToggleClick);
+        $(".year_selector").on("change", {context: this}, this.handleDataToggleClick);
 
         // Attach event handler to drop-down menu to update data after
         // selection changed.
@@ -107,8 +108,7 @@ var PageControl = (function(){
 
     Map.prototype.setUp = function () {
         this.loadData();
-        var mapClass = this,
-            mapObject = this.mapObject,
+        var mapObject = this.mapObject,
             tileLayer  = this.tileLayer,
             stripes = this.stripes,
             options = this.getOptions();
@@ -126,7 +126,7 @@ var PageControl = (function(){
             style: function style(feature) {
                 const punishmentKey = punishmentToProcessedDataKey[this.punishment];
                 // temporarily hardcode the year until we have a year dropdown
-                const year = '2015';
+                const year = this.year;
                 const groupKey = groupToProcessedDataKey[this.population];
                 const selectedData = this.processedData[year][groupKey][punishmentKey];
                 const districtData = selectedData[String(feature.properties.district_number)];
@@ -144,11 +144,11 @@ var PageControl = (function(){
             onEachFeature: function onEachFeature(feature, layer) {
                 const groupNameInPopup = this.population;
                 const punishmentType = this.punishment;
-                const schoolYear = this.schoolYear;
                 const districtNumber = String(feature.properties.district_number);
                 const punishmentKey = this.punishmentKey;
                 // temporarily hardcode the year until we have a year dropdown
-                const year = '2015';
+                const year = this.year;
+                const schoolYear = $(".year_selector").find("option:selected").text();
                 const groupKey = groupToProcessedDataKey[this.population];
                 const populationOfThisGroup =   this.processedData[year][groupKey]['POP'][districtNumber];
                 const populationTotal =         this.processedData[year]['ALL']['POP'][districtNumber];
@@ -187,7 +187,11 @@ var PageControl = (function(){
                     ].join('');
                 }
                 else {
-                    popupContent = "<span class='popup-text'>Data not available in <b>" + districtName + "</b> for this student group.</span>";
+                    popupContent = [
+                        "<span class='popup-text'>Data not available in <b>" + districtName,
+                        "</b> for <b>" + groupNameInPopup + "</b> in the <b>" + schoolYear,
+                        "</b> school year."
+                    ].join('');
                 }
                 if (feature.properties) layer.bindPopup(popupContent);
             }.bind(this)
@@ -200,6 +204,7 @@ var PageControl = (function(){
         var thisMap = e.data.context;
         thisMap.population = $(".student_characteristic_selector").find("option:selected").text();
         thisMap.punishment = $(".punishment_selector").find("option:selected").text();
+        thisMap.year = $(".year_selector").find("option:selected").val();
         var options = thisMap.getOptions();
 
         thisMap.districtLayer.setStyle(options.style);
@@ -239,7 +244,7 @@ var PageControl = (function(){
 
     // Loads data from data JSON file
     Map.prototype.loadData = function() {
-        const path = "data/processed/stpp2015.json";
+        const path = "data/processed/stpp2006-2016.json";
         $.ajax({
             dataType: "json",
             url: path,
