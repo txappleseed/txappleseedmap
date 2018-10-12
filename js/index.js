@@ -224,13 +224,6 @@ var PageControl = (function(){
             });
     };
 
-    Map.prototype.clearGeojsonLayer = function(){
-        var map = this.mapObject;
-        // Remove all layers which have 'feature' properties
-        map.eachLayer(function (layer) {
-            if (layer.feature) map.removeLayer(layer);
-        });
-    };
 
     // Loads data from GeoJSON file and adds layer to map
     Map.prototype.loadGeojsonLayer = function(geoJsonOptions) {

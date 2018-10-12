@@ -657,9 +657,9 @@ def download_one_file(url: str,
 
 def download_regions_from_TEA(first_year: int,
                               last_year: int) -> None:
-
-    # Downloads district disciplinary report records for the specified years
-    # from the Texas Education Agency's website.
+    """
+    Downloads district disciplinary report records for the specified years
+    # from the Texas Education Agency's website."""
 
     dirname=os.path.dirname
     for year in range(first_year, last_year + 1):
@@ -816,7 +816,5 @@ def cli(include_charters: bool,
                 dict_to_nested_json(d, first_year, last_year,
                         include_charters, include_traditional)
 
-        # TODO: Make the output functions handle user-specified outfile
-        # TODO: flat CSV output option in addition to nested folders?
 
     return None
