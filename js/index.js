@@ -25,6 +25,7 @@ const groupToProcessedDataKey = {
     "Students of Two or More Races": "TWO",
     "White Students": "WHI",
     "Hawaiian/Pacific Students": "PCI",
+    "All Students": "ALL"
 };
 
 const punishmentToProcessedDataKey = {
@@ -91,20 +92,6 @@ var PageControl = (function(){
         $(".punishment_selector").on("change", {context: this}, this.handleDataToggleClick);
         $(".year_selector").on("change", {context: this}, this.handleDataToggleClick);
 
-        // Attach event handler to drop-down menu to update data after
-        // selection changed.
-        $(".student_characteristic_selector").on(
-            "change",
-            {context: this},
-            function(event) {
-
-                // Get the selection from the drop-down menu
-                this.population = $(".student_characteristic_selector").find("option:selected").val();
-
-                // Load the data from the corresponding file
-                thisMap.selectData();
-            }
-        );
         this.setUp();
     }
 
@@ -150,40 +137,59 @@ var PageControl = (function(){
                     this.punishmentTotal =         this.processedData[districtNumber].aC;
                 }
 
-                // const validData = (this.populationOfThisGroup && this.populationTotal &&
-                //                   this.punishmentOfThisGroup && this.punishmentTotal);
                 const districtName = feature.properties.district_name;
 
                 var popupContent;
 
                 if (this.punishmentOfThisGroup && this.scale == -1) {
-                    popupContent = [
+                    if (this.population == "All Students") {
+                        popupContent = [
+                        "<span class='popup-text'>The statistics for " + districtName + " appear to have an <b>error</b>. ",
+                                    "They report that there were " + this.populationOfThisGroup.toLocaleString(),
+                                    " students in the district and that they received " + this.punishmentOfThisGroup.toLocaleString(),
+                                    " <b>" + punishmentType + "</b>, out of a statewide total of " + this.punishmentTotal.toLocaleString(),
+                                    ".</span>"
+                        ].join('');
+                    }
+                    else {
+                        popupContent = [
                         "<span class='popup-text'>The statistics for " + districtName + " appear to have an <b>error</b>. ",
                                    "They report that there were " + this.populationOfThisGroup.toLocaleString(),
                                    " <b>" + groupNameInPopup + "</b> and that they received " + this.punishmentOfThisGroup.toLocaleString(),
                                    " <b>" + punishmentType + "</b>, out of a district total of " + this.punishmentTotal.toLocaleString(),
                                    ".</span>"
-                    ].join('');
+                        ].join('');
                 }
-                else if (this.punishmentTotal && this.punishmentTotal == '0') {
+                }
+                else if (this.punishmentTotal === 0) {
                     const schoolYear = $(".year_selector").find("option:selected").text();
                     popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + punishmentType + " for the <b>" + schoolYear + "</b> school year.</span>";
                 }
-                else if (this.populationOfThisGroup && this.populationOfThisGroup == '0') {
+                else if (this.populationOfThisGroup === 0) {
                     const schoolYear = $(".year_selector").find("option:selected").text();
                     popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + groupNameInPopup + " for the <b>" + schoolYear + "</b> school year.</span>";
                 }
                 else if (this.populationTotal){
                     const percentStudentsByGroup = Number(this.populationOfThisGroup) * 100.0 / Number(this.populationTotal);
                     const punishmentPercent = Number(this.punishmentOfThisGroup) * 100.0 / Number(this.punishmentTotal);
+                    if (this.population == "All Students") {
                     popupContent = [
                         "<span class='popup-text'>",
                         "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
-                        " <b>" + groupNameInPopup + "</b> received " + Math.round(punishmentPercent*100)/100.0,
-                        "% of the " + this.punishmentTotal.toLocaleString() + " <b>" + punishmentType,
-                        "</b> and represented " + Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population.",
+                        " students received " + Math.round(punishmentPercent*100)/100.0,
+                        "% of the state's " + this.punishmentTotal.toLocaleString() + " <b>" + punishmentType,
+                        "</b> and represented " + Math.round(percentStudentsByGroup*100)/100.0 + "% of the state's student population.",
                         "</span>"
-                    ].join('');
+                    ].join('');}
+                    else {
+                        popupContent = [
+                            "<span class='popup-text'>",
+                            "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
+                            " <b>" + groupNameInPopup + "</b> received " + Math.round(punishmentPercent*100)/100.0,
+                            "% of the " + this.punishmentTotal.toLocaleString() + " <b>" + punishmentType,
+                            "</b> and represented " + Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population.",
+                            "</span>"
+                        ].join('');}
                 }
                 else {
                     const schoolYear = $(".year_selector").find("option:selected").text();
