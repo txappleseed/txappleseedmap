@@ -142,9 +142,6 @@ var PageControl = (function(){
                 const groupNameInPopup = this.population;
                 const punishmentType = this.punishment;
                 const districtNumber = String(feature.properties.district_number);
-                const punishmentKey = this.punishmentKey;
-                const year = this.year;
-                const groupKey = groupToProcessedDataKey[this.population];
                 if (districtNumber in this.processedData) {
                     this.scale = this.processedData[districtNumber].S;
                     this.populationOfThisGroup =   this.processedData[districtNumber].P;
@@ -207,14 +204,24 @@ var PageControl = (function(){
         thisMap.population = $(".student_characteristic_selector").find("option:selected").text();
         thisMap.punishment = $(".punishment_selector").find("option:selected").text();
         thisMap.year = $(".year_selector").find("option:selected").val();
-        thisMap.loadData();
-        var options = thisMap.getOptions();
+        thisMap.punishmentKey = punishmentToProcessedDataKey[thisMap.punishment];
+        thisMap.groupKey = groupToProcessedDataKey[thisMap.population];
+        const path = "data/" + thisMap.year + "/" + thisMap.groupKey + "/" + thisMap.punishmentKey + ".json";
+        fetch(path).then(function(response) {
+            if(response.ok) {
+                return response.json();
+            }
+                throw new Error('Network response was not ok.');
+            }).then(function(data) {
+                thisMap.processedData = data;
+                var options = thisMap.getOptions();
 
-        thisMap.districtLayer.setStyle(options.style);
-        thisMap.districtLayer.eachLayer(function (layer) {
-            options.onEachFeature(layer.feature, layer);
-        });
+                thisMap.districtLayer.setStyle(options.style);
+                thisMap.districtLayer.eachLayer(function (layer) {
+                    options.onEachFeature(layer.feature, layer);
+                });
 
+            });
     };
 
     Map.prototype.clearGeojsonLayer = function(){

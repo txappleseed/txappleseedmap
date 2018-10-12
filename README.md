@@ -58,7 +58,7 @@ Then use this command to install the utility in its virtual environment:
 
 ```$ pip install --editable .```
 
-After that, you should be able to use the utility with the command `collectFromFile`. If you type that command by itself, the utility will look in the `data/from_agency` folder for files from the TEA to use as input, and then try to convert them to a single JSON file. You can also add a `--help` flag to read the utility's help feature without doing anything else.
+After that, you should be able to use the utility with the command `collectFromFile`. If you type that command by itself, the utility will look in the `data/from_agency` folder for files from the TEA to use as input, and then try to convert them to JSON files in the format used by the map. You can also add a `--help` flag to read the utility's help feature without doing anything else.
 
 ```$ collectFromFile --help```
 
@@ -70,10 +70,17 @@ You can use the `-f` and `-l` flags to set the first and last years of the range
 
 ```$ collectFromFile -f 2012 -l 2015```
 
-If you use the `--nested` flag, instead of a JSON file you'll get a collection of nested folders containing CSVs. Each file will have the statistics to populate a map about one type of action taken against one demographic group in one year.
+If you use the `--json-folders` flag, you'll get nested directories labeled by year, demographic, and punishment, with JSON files each containing the data corresponding to one possible user query. The current version of the map is set up to use data exported using the `--json-folders` flag.
 
-```$ collectFromFile --nested```
+```$ collectFromFile --json-folders```
 
+If you use the `--csv` flag, instead of JSONs file you'll get a collection of nested folders containing CSVs. Each file will have the statistics to populate a map about one type of action taken against one demographic group in one year.
+
+```$ collectFromFile --csv```
+
+If you use the `--json` flag, you'll get one big JSON file with all the data (about 7 MB).
+
+```$ collectFromFile --json```
 
 ## Website
 

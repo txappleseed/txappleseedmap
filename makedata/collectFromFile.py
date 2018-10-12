@@ -765,13 +765,13 @@ def check_for_input_files(first_year: int,
 @click.option('--skip-processing/--no-skip', default=False,
               help="Skips the process of converting data from the TEA's "
               "format into a new format.")
-@click.option('--json', 'format', flag_value='json',
-              default=True, help="Exports a single json file.")
+@click.option('--json', 'format', flag_value='json', help="Exports a single json file.")
 @click.option('--csv', 'format', flag_value='nested', help="Exports "
               "nested directories labeled by year, demographic, and "
               "punishment, with CSV files each containing the data "
               "corresponding to one possible user query.")
-@click.option('--json-folders', 'format', flag_value='nested_json', help="Exports "
+@click.option('--json-folders', 'format', flag_value='nested_json',
+              default=True, help="Exports "
               "nested directories labeled by year, demographic, and "
               "punishment, with JSON files each containing the data "
               "corresponding to one possible user query.")
