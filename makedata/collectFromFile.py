@@ -3,6 +3,7 @@ import json
 import os
 import random
 import time
+from typing import Dict
 
 
 import click
@@ -19,7 +20,7 @@ def load_region_file(apple_path: str) -> list:
     return region_records
 
 def get_year(year: int) -> list:
-    dirname=os.path.dirname
+    dirname = os.path.dirname
     apple_path = os.path.join(dirname(dirname(__file__)),
                               os.path.join('data', 'from_agency', 'by_region',
                               'REGION_{}_DISTRICT_summary_{}.csv'))
@@ -293,7 +294,7 @@ def get_demo_year(year: int) -> dict:
     # dropping 'DPETALLC', which is also a measure of district population,
     # but isn't what TEA uses in the discipline reports processed above.
 
-    demo_dict = {demo: {} for demo in demos}
+    demo_dict: Dict[str, dict] = {demo: {} for demo in demos}
     with open(district_path) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -336,7 +337,7 @@ def impossible(member_punishments: int,
     Tells scale function to return a dummy variable
     of -1 for any "impossible" statistics."""
 
-    if member_punishments > all_punishments:
+    if member_punishments > all_punishments and member_punishments > 10:
         return True
     if member_pop == 0 and member_punishments > 0:
         return True
@@ -345,9 +346,9 @@ def impossible(member_punishments: int,
 
 
 def binomial_scale(member_punishments: int,
-                      all_punishments: int,
-                      member_pop: int,
-                      all_pop: int) -> int:
+                   all_punishments: int,
+                   member_pop: int,
+                   all_pop: int) -> int:
 
     if impossible(member_punishments,
                       all_punishments,
@@ -367,7 +368,9 @@ def binomial_scale(member_punishments: int,
     score = 5
     if member_pop == member_punishments == 0:
         return score
-    p = member_pop / all_pop
+    # max() is to avoid divide by zero errors
+    p = member_pop / max(all_pop, 1)
+    group_p = member_punishments / max(all_punishments, 1)
     if member_punishments / member_pop > all_punishments / all_pop:
         tail = 'greater'
     elif member_punishments / member_pop < all_punishments / all_pop:
@@ -375,7 +378,7 @@ def binomial_scale(member_punishments: int,
     else:
         return score
     pvalue = stats.binom_test(member_punishments,
-                               all_punishments,
+                               max(all_punishments, member_punishments),
                                p,
                                alternative=tail)
 
@@ -383,10 +386,18 @@ def binomial_scale(member_punishments: int,
     # to find one-sided odds of being 1-5 standard deviations away from mean
 
     std_intervals = (.5/3, .5/22, .5/370, .5/15787, .5/1744278)
+
+    # also requiring a minimum percentage difference to get a brighter color
+
+    p_intervals = (1.1, 1.3, 1.6, 2, 2.5)
+
+    # again, max() is to avoid divide by zero errors
     if tail == 'greater':
-        score += sum(pvalue < t for t in std_intervals)
+        score += min(sum(pvalue < t for t in std_intervals),
+                     sum(group_p/(max(p, .00001)) > t for t in p_intervals))
     else:
-        score -= sum(pvalue < t for t in std_intervals)
+        score -= min(sum(pvalue < t for t in std_intervals),
+                     sum(p/(max(group_p, .00001)) > t for t in p_intervals))
     return int(score)
 
 
@@ -505,6 +516,19 @@ def make_csv_row_all(d: dict, year: int,
             d[year]["ALL"]["POP"][0]["C"]]
 
 
+
+def report_nested_file_location(first_year: int, last_year: int):
+    dirname = os.path.dirname
+    first_path = os.path.join(dirname(dirname(__file__)),
+                            os.path.join('data', str(first_year)))
+    last_path = os.path.join(dirname(dirname(__file__)),
+                            os.path.join('data', str(last_year)))
+    if first_year == last_year:
+        return f"🍏🍏🍏 Data saved to {first_path} 🍏🍏🍏"
+    else:
+        return f"🍏🍏🍏 Data saved to {first_path} through {last_path} 🍏🍏🍏"
+
+
 def dict_to_nested(d: dict, first_year: int, last_year: int,
               include_charters: bool = False,
               include_traditional: bool = True) -> None:
@@ -526,7 +550,7 @@ def dict_to_nested(d: dict, first_year: int, last_year: int,
                     else:
                         view.append(make_csv_row_demo(
                             d, year, demo, p, district))
-                dirname=os.path.dirname
+                dirname = os.path.dirname
                 if not include_traditional:
                     charter_status = "ChartersOnly"
                 elif include_charters:
@@ -542,18 +566,50 @@ def dict_to_nested(d: dict, first_year: int, last_year: int,
                 with open(csv_path, 'w', newline='') as f:
                     writer = csv.writer(f)
                     writer.writerows(view)
+    click.echo(report_nested_file_location(first_year, last_year))
 
-    first_path = os.path.join(dirname(dirname(__file__)),
-                            os.path.join('data', str(first_year)))
-    last_path = os.path.join(dirname(dirname(__file__)),
-                            os.path.join('data', str(last_year)))
-    if first_year == last_year:
-        click.echo(f"🍏🍏🍏 Data saved to {first_path} 🍏🍏🍏")
-    else:
-        click.echo(f"🍏🍏🍏 Data saved to {first_path} through {last_path} 🍏🍏🍏")
     return None
 
+def dict_to_nested_json(d: dict, first_year: int, last_year: int,
+              include_charters: bool = False,
+              include_traditional: bool = True) -> None:
 
+    for year in d:
+        for demo in d[year]:
+            for p in (p for p in d[year][demo] if p != "POP"):
+                view = {}
+                for district in d[year][demo][p]:
+                    if demo == "ALL":
+                        district_row = make_csv_row_all(
+                            d, year, demo, p, district)
+                    else:
+                        district_row = make_csv_row_demo(
+                            d, year, demo, p, district)
+                    view[district] = {
+                        "C": district_row[1],
+                        "S": district_row[2],
+                        "P": district_row[3],
+                        "aC": district_row[4],
+                        "aP": district_row[5]}
+                dirname = os.path.dirname
+                if not include_traditional:
+                    charter_status = "ChartersOnly"
+                elif include_charters:
+                    charter_status = "WithCharters"
+                else:
+                    charter_status = ""
+                json_path = os.path.join(dirname(dirname(__file__)),
+                            os.path.join('data', str(year), demo,
+                            f'{p}{charter_status}.json'))
+                directory = os.path.dirname(json_path)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                with open(json_path, 'w') as f:
+                    json.dump(view, f)
+
+    click.echo(report_nested_file_location(first_year, last_year))
+
+    return None
 
 def dict_to_json(d: dict, first_year: int, last_year: int,
               include_charters: bool = False,
@@ -611,9 +667,9 @@ def download_one_file(url: str,
 
 def download_regions_from_TEA(first_year: int,
                               last_year: int) -> None:
-
-    # Downloads district disciplinary report records for the specified years
-    # from the Texas Education Agency's website.
+    """
+    Downloads district disciplinary report records for the specified years
+    # from the Texas Education Agency's website."""
 
     dirname=os.path.dirname
     for year in range(first_year, last_year + 1):
@@ -719,14 +775,15 @@ def check_for_input_files(first_year: int,
 @click.option('--skip-processing/--no-skip', default=False,
               help="Skips the process of converting data from the TEA's "
               "format into a new format.")
-@click.option('--json', 'format', flag_value='json',
-              default=True, help="Exports a single json file.")
-@click.option('--csv', 'format', flag_value='csv', help="Exports a single "
-              "csv file with all the data, where the first two columns "
-              "(district and year) form the key.")
-@click.option('--nested', 'format', flag_value='nested', help="Exports "
+@click.option('--json', 'format', flag_value='json', help="Exports a single json file.")
+@click.option('--csv', 'format', flag_value='nested', help="Exports "
               "nested directories labeled by year, demographic, and "
-              "punishment, containing CSVs each containing the data "
+              "punishment, with CSV files each containing the data "
+              "corresponding to one possible user query.")
+@click.option('--json-folders', 'format', flag_value='nested_json',
+              default=True, help="Exports "
+              "nested directories labeled by year, demographic, and "
+              "punishment, with JSON files each containing the data "
               "corresponding to one possible user query.")
 def cli(include_charters: bool,
              charters_only: bool,
@@ -765,8 +822,9 @@ def cli(include_charters: bool,
             if format == "nested":
                 dict_to_nested(d, first_year, last_year,
                         include_charters, include_traditional)
+            if format == "nested_json":
+                dict_to_nested_json(d, first_year, last_year,
+                        include_charters, include_traditional)
 
-        # TODO: Make the output functions handle user-specified outfile
-        # TODO: flat CSV output option in addition to nested folders?
 
     return None
