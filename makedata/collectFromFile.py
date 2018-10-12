@@ -3,6 +3,7 @@ import json
 import os
 import random
 import time
+from typing import Dict
 
 
 import click
@@ -293,7 +294,7 @@ def get_demo_year(year: int) -> dict:
     # dropping 'DPETALLC', which is also a measure of district population,
     # but isn't what TEA uses in the discipline reports processed above.
 
-    demo_dict = {demo: {} for demo in demos}
+    demo_dict: Dict[str, dict] = {demo: {} for demo in demos}
     with open(district_path) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -524,8 +525,7 @@ def dict_to_nested(d: dict, first_year: int, last_year: int,
     for year in d:
         for demo in d[year]:
             for p in (p for p in d[year][demo] if p != "POP"):
-                view = {}
-                [
+                view = [
                     ["district",
                     "groupActions",
                     "scale",

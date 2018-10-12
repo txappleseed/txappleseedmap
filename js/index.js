@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 // Copyright (c) 2013 Ryan Clark
 // https://gist.github.com/rclark/5779673
 L.TopoJSON = L.GeoJSON.extend({
@@ -27,15 +29,15 @@ const groupToProcessedDataKey = {
 
 const punishmentToProcessedDataKey = {
     "Expulsions" : "EXP",
-    "Alternative Placements"    : "DAE",
-    "Out of School Suspensions"       : "OSS",
-    "In School Suspensions"       : "ISS"
+    "Alternative Placements" : "DAE",
+    "Out of School Suspensions" : "OSS",
+    "In School Suspensions" : "ISS"
 };
 
 // populate year selector with choices
 var yearSelector = document.querySelector('.year_selector');
 // this line assumes 2016 is the last available year of data
-for (year = 2006; year < 2017; year++) {
+for (year = 2006; year <= 2016; year++) {
     var yearEntry = document.createElement('option');
     yearEntry.textContent = (year - 1) + "-" + year;
     yearEntry.value = year;
@@ -124,12 +126,7 @@ var PageControl = (function(){
         return {
 
             style: function style(feature) {
-                const punishmentKey = punishmentToProcessedDataKey[this.punishment];
-                // temporarily hardcode the year until we have a year dropdown
-                const year = this.year;
-                const groupKey = groupToProcessedDataKey[this.population];
-                const selectedData = this.processedData[year][groupKey][punishmentKey];
-                const districtData = selectedData[String(feature.properties.district_number)];
+                const districtData = this.processedData[String(feature.properties.district_number)];
                 const value = districtData ? districtData['S'] : null;
                 return {
                         fillColor: this.getFillColor(value),
@@ -146,47 +143,53 @@ var PageControl = (function(){
                 const punishmentType = this.punishment;
                 const districtNumber = String(feature.properties.district_number);
                 const punishmentKey = this.punishmentKey;
-                // temporarily hardcode the year until we have a year dropdown
                 const year = this.year;
-                const schoolYear = $(".year_selector").find("option:selected").text();
                 const groupKey = groupToProcessedDataKey[this.population];
-                const populationOfThisGroup =   this.processedData[year][groupKey]['POP'][districtNumber];
-                const populationTotal =         this.processedData[year]['ALL']['POP'][districtNumber];
-                const punishmentOfThisGroup =   this.processedData[year][groupKey][punishmentKey][districtNumber];
-                const punishmentTotal =         this.processedData[year]['ALL'][punishmentKey][districtNumber];
-                const validData = (populationOfThisGroup && populationTotal && punishmentOfThisGroup && punishmentTotal);
+                if (districtNumber in this.processedData) {
+                    this.scale = this.processedData[districtNumber].S;
+                    this.populationOfThisGroup =   this.processedData[districtNumber].P;
+                    this.populationTotal =         this.processedData[districtNumber].aP;
+                    this.punishmentOfThisGroup =   this.processedData[districtNumber].C;
+                    this.punishmentTotal =         this.processedData[districtNumber].aC;
+                }
+
+                // const validData = (this.populationOfThisGroup && this.populationTotal &&
+                //                   this.punishmentOfThisGroup && this.punishmentTotal);
                 const districtName = feature.properties.district_name;
 
                 var popupContent;
 
-                if (punishmentOfThisGroup && punishmentOfThisGroup['S'] == -1) {
+                if (this.punishmentOfThisGroup && this.scale == -1) {
                     popupContent = [
                         "<span class='popup-text'>The statistics for " + districtName + " appear to have an <b>error</b>. ",
-                                   "They report that there were " + populationOfThisGroup.C.toLocaleString(),
-                                   " <b>" + groupNameInPopup + "</b> and that they received " + punishmentOfThisGroup.C.toLocaleString(),
-                                   " <b>" + punishmentType + "</b>, out of a district total of " + punishmentTotal.C.toLocaleString(),
+                                   "They report that there were " + this.populationOfThisGroup.toLocaleString(),
+                                   " <b>" + groupNameInPopup + "</b> and that they received " + this.punishmentOfThisGroup.toLocaleString(),
+                                   " <b>" + punishmentType + "</b>, out of a district total of " + this.punishmentTotal.toLocaleString(),
                                    ".</span>"
                     ].join('');
                 }
-                else if (punishmentTotal && punishmentTotal['C'] == '0') {
+                else if (this.punishmentTotal && this.punishmentTotal == '0') {
+                    const schoolYear = $(".year_selector").find("option:selected").text();
                     popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + punishmentType + " for the <b>" + schoolYear + "</b> school year.</span>";
                 }
-                else if (populationOfThisGroup && populationOfThisGroup['C'] == '0') {
+                else if (this.populationOfThisGroup && this.populationOfThisGroup == '0') {
+                    const schoolYear = $(".year_selector").find("option:selected").text();
                     popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + groupNameInPopup + " for the <b>" + schoolYear + "</b> school year.</span>";
                 }
-                else if (validData){
-                    const percentStudentsByGroup = Number(populationOfThisGroup.C) * 100.0 / Number(populationTotal.C);
-                    const punishmentPercent = Number(punishmentOfThisGroup.C) * 100.0 / Number(punishmentTotal.C);
+                else if (this.populationTotal){
+                    const percentStudentsByGroup = Number(this.populationOfThisGroup) * 100.0 / Number(this.populationTotal);
+                    const punishmentPercent = Number(this.punishmentOfThisGroup) * 100.0 / Number(this.punishmentTotal);
                     popupContent = [
                         "<span class='popup-text'>",
-                        "In <b>" + districtName + "</b>, the " + populationOfThisGroup.C.toLocaleString(),
+                        "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
                         " <b>" + groupNameInPopup + "</b> received " + Math.round(punishmentPercent*100)/100.0,
-                        "% of the " + punishmentTotal.C.toLocaleString() + " <b>" + punishmentType,
+                        "% of the " + this.punishmentTotal.toLocaleString() + " <b>" + punishmentType,
                         "</b> and represented " + Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population.",
                         "</span>"
                     ].join('');
                 }
                 else {
+                    const schoolYear = $(".year_selector").find("option:selected").text();
                     popupContent = [
                         "<span class='popup-text'>Data not available in <b>" + districtName,
                         "</b> for <b>" + groupNameInPopup + "</b> in the <b>" + schoolYear,
@@ -199,7 +202,6 @@ var PageControl = (function(){
 
     };
 
-    //sets population when user clicks choice
     Map.prototype.handleDataToggleClick = function (e) {
         var thisMap = e.data.context;
         thisMap.population = $(".student_characteristic_selector").find("option:selected").text();
@@ -246,7 +248,7 @@ var PageControl = (function(){
 
     // Loads data from data JSON file
     Map.prototype.loadData = function() {
-        const path = "data/processed/" + this.year + "/" + this.groupKey + "/" + this.punishmentKey + ".json";
+        const path = "data/" + this.year + "/" + this.groupKey + "/" + this.punishmentKey + ".json";
         $.ajax({
             dataType: "json",
             url: path,
