@@ -32,15 +32,15 @@ def load_dict_with_year_charters(load_empty_dict):
                                             True, False)
 
 @pytest.fixture()
-def dump_dict_to_dir(load_dict_with_year, tmpdir, monkey_patch):
+def dump_dict_to_dir(load_dict_with_year, tmpdir, monkeypatch):
     def _test_helper(first_year, last_year, include_charters,
                         include_traditional, test_data_dir_exists = False):
         fake_proj_dir = tmpdir.mkdir('test_dir')
         fake_src_file = fake_proj_dir.mkdir('makedata').join('fake_src.py')
         if test_data_dir_exists:
             fake_data_dir = fake_proj_dir.mkdir('data')
-        with monkey_patch.context() as m:
-            monkey_patch.setattr(collectFromFile, "__file__", fake_src_file)
+        with monkeypatch.context() as m:
+            monkeypatch.setattr(collectFromFile, "__file__", fake_src_file)
             collectFromFile.dict_to_json(load_dict_with_year, first_year,
             last_year, include_charters, include_traditional)
         return fake_proj_dir
