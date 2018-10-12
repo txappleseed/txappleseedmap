@@ -162,12 +162,12 @@ var PageControl = (function(){
                 }
                 }
                 else if (this.punishmentTotal === 0) {
-                    const schoolYear = $(".year_selector").find("option:selected").text();
-                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + punishmentType + " for the <b>" + schoolYear + "</b> school year.</span>";
+
+                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + punishmentType + " for the <b>" + this.schoolYear + "</b> school year.</span>";
                 }
                 else if (this.populationOfThisGroup === 0) {
-                    const schoolYear = $(".year_selector").find("option:selected").text();
-                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + groupNameInPopup + " for the <b>" + schoolYear + "</b> school year.</span>";
+
+                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + groupNameInPopup + " for the <b>" + this.schoolYear + "</b> school year.</span>";
                 }
                 else if (this.populationTotal){
                     const percentStudentsByGroup = Number(this.populationOfThisGroup) * 100.0 / Number(this.populationTotal);
@@ -212,6 +212,7 @@ var PageControl = (function(){
         thisMap.year = $(".year_selector").find("option:selected").val();
         thisMap.punishmentKey = punishmentToProcessedDataKey[thisMap.punishment];
         thisMap.groupKey = groupToProcessedDataKey[thisMap.population];
+        thisMap.schoolYear = $(".year_selector").find("option:selected").text();
         const path = "data/" + thisMap.year + "/" + thisMap.groupKey + "/" + thisMap.punishmentKey + ".json";
         fetch(path).then(function(response) {
             if(response.ok) {
@@ -228,6 +229,15 @@ var PageControl = (function(){
                 });
 
             });
+            var subtitle = document.querySelector('.legend-subtitle');
+            if (thisMap.population === "All Students") {
+                subtitle.textContent = "COMPARED TO STATE AVERAGE";
+            }
+            else {subtitle.textContent = "COMPARED TO DISTRICT AVERAGE";}
+            var headline = document.querySelector('h1.masthead__title');
+            headline.textContent = "Disparities in " + thisMap.punishment + " (" + thisMap.schoolYear + ")";
+            var headingExplanation = document.querySelector('div.masthead__content h2');
+            headingExplanation.textContent = thisMap.population + ", Pre-K through 12th Grade";
     };
 
 
