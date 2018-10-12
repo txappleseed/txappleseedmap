@@ -164,7 +164,8 @@ var PageControl = (function(){
                         "<span class='popup-text'>The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. ",
                                    "They report that there were " + this.populationOfThisGroup.toLocaleString(),
                                    " <b>" + groupNameInPopup + "</b> and that they received " + this.punishmentOfThisGroup.toLocaleString(),
-                                   " <b>" + punishmentType + "</b>, out of a district total of " + this.punishmentTotal.toLocaleString(),
+                                   " <b>" + punishmentType + "</b>, out of a district total of ",
+                                   (this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
                                    ".</span>"
                         ].join('');
                 }
@@ -184,18 +185,20 @@ var PageControl = (function(){
                     popupContent = [
                         "<span class='popup-text'>",
                         "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
-                        " students received " + Math.round(punishmentPercent*100)/100.0,
-                        "% of the state's " + this.punishmentTotal.toLocaleString() + " <b>" + punishmentType,
-                        "</b> and represented " + Math.round(percentStudentsByGroup*100)/100.0 + "% of the state's student population.",
+                        " students received " + Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the state's ",
+                        (0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
+                        " <b>" + punishmentType + "</b> and represented ",
+                        Math.round(percentStudentsByGroup*100)/100.0 + "% of the state's student population.",
                         "</span>"
                     ].join('');}
                     else {
                         popupContent = [
                             "<span class='popup-text'>",
                             "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
-                            " <b>" + groupNameInPopup + "</b> received " + Math.round(punishmentPercent*100)/100.0,
-                            "% of the " + this.punishmentTotal.toLocaleString() + " <b>" + punishmentType,
-                            "</b> and represented " + Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population.",
+                            " <b>" + groupNameInPopup + "</b> received " + Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the ",
+                            (0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
+                            " <b>" + punishmentType + "</b> and represented ",
+                            Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population.",
                             "</span>"
                         ].join('');}
                 }
