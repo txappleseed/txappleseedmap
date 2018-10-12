@@ -332,22 +332,23 @@ var PageControl = (function(){
         }
     };
 
+
     Map.prototype.getFillColor =   function (value) {
-        var red    = ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26','#a50f15'],
-        purple = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f'],
+        var red    = ['#fcbba1','#fc9272','#fb6a4a','#de2d26','#aa0208'],
+        purple = ['#d8daeb','#b2abd2','#8073ac','#542788','#2d004b'],
         gray   = '#707070';
 
-        return value == 0  ? purple[5] :
-        value == 1   ? purple[4] :
-        value == 2   ? purple[3] :
-        value == 3   ? purple[2] :
-        value == 4   ? purple[1] :
+        return value == 0  ? purple[4] :
+        value == 1   ? purple[3] :
+        value == 2   ? purple[2] :
+        value == 3   ? purple[1] :
+        value == 4   ? purple[0] :
         value == 5   ? 'white' :
-        value == 6   ? red[1] :
-        value == 7   ? red[2] :
-        value == 8   ? red[3]  :
-        value == 9   ? red[4]  :
-        value == 10  ? red[5]  :
+        value == 6   ? red[0] :
+        value == 7   ? red[1] :
+        value == 8   ? red[2]  :
+        value == 9   ? red[3]  :
+        value == 10  ? red[4]  :
         gray;
     };
 
