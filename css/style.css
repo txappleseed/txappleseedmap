@@ -154,11 +154,12 @@ button {
 	overflow: hidden;
 	margin-left: 20px;
 	margin-top: 15px;
+	margin-right: 15px;
 	background-size: 100%;
 }
 .masthead__content {
-	float: right;
-	width: 80%;
+
+	width: 60%;
 	margin-top: 10px;
 	margin-right: 50px;
 }
