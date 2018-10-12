@@ -145,20 +145,45 @@ def test_statewide_populations_for_year(load_dict_with_year):
     assert load_dict_with_year[year]["ASI"]["EXP"][0]["C"] == 34
 
 def test_binomial_scaling_calculation():
+
+    """
+    binomial_scale(member_punishments: int,
+                   all_punishments: int,
+                   member_pop: int,
+                   all_pop: int) -> int:
+    """
+
     assert collectFromFile.binomial_scale(0, 50, 30, 100) == 0
     assert collectFromFile.binomial_scale(3, 50, 30, 100) == 2
     assert collectFromFile.binomial_scale(15, 50, 30, 100) == 5
     assert collectFromFile.binomial_scale(40, 50, 30, 100) == 10
 
+def test_percentage_scaling_calculation():
+
+    """
+    Despite being many standard deviations from the mean of a random
+    distribution, the group's punishment rate is less than 1.4 times the
+    district population's rate, so it's score is 6,
+    only one step above the middle score.
+    """
+
+    assert collectFromFile.binomial_scale(1300, 10000, 10000, 100000) == 6
+
+    """
+    In the next example, p/group_p == 1000/800 == 1.25
+    """
+
+    assert collectFromFile.binomial_scale(800, 10000, 10000, 100000) == 4
+
 def test_add_scale_variable_to_dict(load_dict_with_year):
     year = 2009
-    assert load_dict_with_year[year]["BLA"]["OSS"][101902]["S"] == 10
+    assert load_dict_with_year[year]["BLA"]["OSS"][101902]["S"] == 8
 
 def test_calculate_districtwide_scale_variable(load_dict_with_year):
     year = 2009
     assert load_dict_with_year[year]["ALL"]["POP"][101914]["C"] == 59604
     assert load_dict_with_year[year]["ALL"]["ISS"][101914]["C"] == 8773
-    assert load_dict_with_year[year]["ALL"]["ISS"][101914]["S"] == 0
+    assert load_dict_with_year[year]["ALL"]["ISS"][101914]["S"] == 1
 
 def test_unavailable_scale_variable_omitted(load_dict_with_year):
 
@@ -172,7 +197,7 @@ def test_unavailable_scale_variable_omitted(load_dict_with_year):
 def test_make_csv_row_demo(load_dict_with_year):
     assert collectFromFile.make_csv_row_demo(load_dict_with_year,
         2009, "BLA", "OSS", 101902) == [
-            101902, 9333, 10, 20240, 17982, 67468]
+            101902, 9333, 8, 20240, 17982, 67468]
     assert collectFromFile.make_csv_row_demo(load_dict_with_year,
         2009, "TWO", "EXP", 3903) == [
             3903, None, None, None, 12, 9346]
@@ -180,7 +205,7 @@ def test_make_csv_row_demo(load_dict_with_year):
 def test_make_csv_row_all(load_dict_with_year):
     assert collectFromFile.make_csv_row_all(load_dict_with_year,
         2009, "ALL", "OSS", 101902) == [
-            101902, 17982, 10, 67468, 583121, 5068223]
+            101902, 17982, 9, 67468, 583121, 5068223]
 
 def test_make_csv_row_no_actions(load_dict_with_year):
     assert collectFromFile.make_csv_row_all(load_dict_with_year,

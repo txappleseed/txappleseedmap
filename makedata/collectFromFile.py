@@ -368,7 +368,9 @@ def binomial_scale(member_punishments: int,
     score = 5
     if member_pop == member_punishments == 0:
         return score
-    p = member_pop / all_pop
+    # max() is to avoid divide by zero errors
+    p = member_pop / max(all_pop, 1)
+    group_p = member_punishments / max(all_punishments, 1)
     if member_punishments / member_pop > all_punishments / all_pop:
         tail = 'greater'
     elif member_punishments / member_pop < all_punishments / all_pop:
@@ -384,10 +386,18 @@ def binomial_scale(member_punishments: int,
     # to find one-sided odds of being 1-5 standard deviations away from mean
 
     std_intervals = (.5/3, .5/22, .5/370, .5/15787, .5/1744278)
+
+    # also requiring a minimum percentage difference to get a brighter color
+
+    p_intervals = (1.1, 1.3, 1.6, 2, 2.5)
+
+    # again, max() is to avoid divide by zero errors
     if tail == 'greater':
-        score += sum(pvalue < t for t in std_intervals)
+        score += min(sum(pvalue < t for t in std_intervals),
+                     sum(group_p/(max(p, .00001)) > t for t in p_intervals))
     else:
-        score -= sum(pvalue < t for t in std_intervals)
+        score -= min(sum(pvalue < t for t in std_intervals),
+                     sum(p/(max(group_p, .00001)) > t for t in p_intervals))
     return int(score)
 
 
