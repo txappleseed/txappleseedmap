@@ -61,6 +61,7 @@ var PageControl = (function(){
         this.hilight_layer = null;
         this.districtLayer = null;
         this.year = yearSelector.lastChild.value;
+        this.schoolYear = $(".year_selector").find("option:selected").text();
 
 
         this.$el = $( selector );
@@ -136,6 +137,13 @@ var PageControl = (function(){
                     this.punishmentOfThisGroup =   this.processedData[districtNumber].C;
                     this.punishmentTotal =         this.processedData[districtNumber].aC;
                 }
+                else {
+                    this.scale = -1;
+                    this.populationOfThisGroup = undefined;
+                    this.populationTotal = undefined;
+                    this.punishmentOfThisGroup = undefined;
+                    this.punishmentTotal = undefined;
+                }
 
                 const districtName = feature.properties.district_name;
 
@@ -144,7 +152,7 @@ var PageControl = (function(){
                 if (this.punishmentOfThisGroup && this.scale == -1) {
                     if (this.population == "All Students") {
                         popupContent = [
-                        "<span class='popup-text'>The statistics for " + districtName + " appear to have an <b>error</b>. ",
+                        "<span class='popup-text'>The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. ",
                                     "They report that there were " + this.populationOfThisGroup.toLocaleString(),
                                     " students in the district and that they received " + this.punishmentOfThisGroup.toLocaleString(),
                                     " <b>" + punishmentType + "</b>, out of a statewide total of " + this.punishmentTotal.toLocaleString(),
@@ -153,7 +161,7 @@ var PageControl = (function(){
                     }
                     else {
                         popupContent = [
-                        "<span class='popup-text'>The statistics for " + districtName + " appear to have an <b>error</b>. ",
+                        "<span class='popup-text'>The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. ",
                                    "They report that there were " + this.populationOfThisGroup.toLocaleString(),
                                    " <b>" + groupNameInPopup + "</b> and that they received " + this.punishmentOfThisGroup.toLocaleString(),
                                    " <b>" + punishmentType + "</b>, out of a district total of " + this.punishmentTotal.toLocaleString(),
@@ -192,11 +200,11 @@ var PageControl = (function(){
                         ].join('');}
                 }
                 else {
-                    const schoolYear = $(".year_selector").find("option:selected").text();
                     popupContent = [
                         "<span class='popup-text'>Data not available in <b>" + districtName,
-                        "</b> for <b>" + groupNameInPopup + "</b> in the <b>" + schoolYear,
-                        "</b> school year."
+                        "</b> for <b>" + groupNameInPopup + "</b> in the <b>" + this.schoolYear,
+                        "</b> school year.",
+                        "</span>"
                     ].join('');
                 }
                 if (feature.properties) layer.bindPopup(popupContent);
