@@ -1,5 +1,15 @@
 /*jshint esversion: 6 */
 
+/*
+The firstYear and lastYear variables are the first and last years
+available in the map's drop-down menu. So, if you're able to add
+2017 data to the data/ directory, you can then make that data
+viewable in the map by changing the line to "lastYear = 2017;"
+*/
+
+firstYear = 2006;
+lastYear = 2016;
+
 // Copyright (c) 2013 Ryan Clark
 // https://gist.github.com/rclark/5779673
 L.TopoJSON = L.GeoJSON.extend({
@@ -37,8 +47,9 @@ const punishmentToProcessedDataKey = {
 
 // populate year selector with choices
 var yearSelector = document.querySelector('.year_selector');
-// this line assumes 2016 is the last available year of data
-for (year = 2006; year <= 2016; year++) {
+
+// currently this adds years 2006 through 2016
+for (year = firstYear; year <= lastYear; year++) {
     var yearEntry = document.createElement('option');
     yearEntry.textContent = (year - 1) + "-" + year;
     yearEntry.value = year;
@@ -195,7 +206,9 @@ var PageControl = (function(){
                         popupContent = [
                             "<span class='popup-text'>",
                             "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
-                            " <b>" + groupNameInPopup + "</b> received " + Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the ",
+                            " <b>" + groupNameInPopup + "</b> received ",
+                            (0 < this.punishmentTotal && this.punishmentTotal < 10 && punishmentPercent != 0) ? "about " : "",
+                            Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the ",
                             (0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
                             " <b>" + punishmentType + "</b> and represented ",
                             Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population.",
