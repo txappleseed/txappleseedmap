@@ -150,10 +150,10 @@ var PageControl = (function(){
                 }
                 else {
                     this.scale = -1;
-                    this.populationOfThisGroup = undefined;
-                    this.populationTotal = undefined;
-                    this.punishmentOfThisGroup = undefined;
-                    this.punishmentTotal = undefined;
+                    this.populationOfThisGroup = null;
+                    this.populationTotal = null;
+                    this.punishmentOfThisGroup = null;
+                    this.punishmentTotal = null;
                 }
 
                 const districtName = feature.properties.district_name;
@@ -183,13 +183,13 @@ var PageControl = (function(){
                 }
                 else if (this.punishmentTotal === 0) {
 
-                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + punishmentType + " for the <b>" + this.schoolYear + "</b> school year.</span>";
+                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no <b>" + punishmentType + "</b> for the <b>" + this.schoolYear + "</b> school year.</span>";
                 }
                 else if (this.populationOfThisGroup === 0) {
 
-                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + groupNameInPopup + " for the <b>" + this.schoolYear + "</b> school year.</span>";
+                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no <b>" + groupNameInPopup + "</b> for the <b>" + this.schoolYear + "</b> school year.</span>";
                 }
-                else if (this.populationTotal){
+                else if (this.punishmentTotal !== null){
                     const percentStudentsByGroup = Number(this.populationOfThisGroup) * 100.0 / Number(this.populationTotal);
                     const punishmentPercent = Number(this.punishmentOfThisGroup) * 100.0 / Number(this.punishmentTotal);
                     if (this.population == "All Students") {
