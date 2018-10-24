@@ -10,9 +10,10 @@ click = "*"
 colorama = "*"
 
 [dev-packages]
-pytest = "*"
+"pytest =" = "*"
 pylint = "*"
 mypy = "*"
+pytest = "==3.7.4"
 
 [requires]
 python_version = "3.6"

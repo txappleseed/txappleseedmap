@@ -5,7 +5,6 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <link rel="shortcut icon" href="favicon.ico" />
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="js/vendor/leaflet/leaflet.css" />
     <link rel="stylesheet" href="css/cartodb.css">
     <link rel="stylesheet" href="css/style.css">
@@ -14,29 +13,40 @@
 
   <body>
 		<header class="masthead">
-			<h1 class="masthead__logo"></h1>
+      <a href="http://texasdisciplinelab.org">
+        <img class="masthead__logo" src='tx-appleseed-header-logo.png' alt="Texas Appleseed">
+      </a>
 			<div class="masthead__content">
-				<h1 class="masthead__title h2">Texas School Discipline Punishments by Race/Ethnicity<br>Pre-K through 12th Grade (2015-16)</h1>
-				<span class="masthead__disclaimer">Data Source: Texas Education Agency. Download the <a href="https://data.world/mcarey/tx-student-suspensions-2015">full dataset at data.world</a></span>
+        <h1 class="masthead__title">Disparities in Out of School Suspensions (2015-2016)</h1>
+        <h2>Black/African American Students, Pre-K through 12th Grade</h2>
+        <span class="masthead__disclaimer">Data Source:
+          <a href="https://rptsvr1.tea.texas.gov/adhocrpt/Disciplinary_Data_Products/Download_Region_Districts.html">
+          Texas Education Agency</a>. Download the full dataset <a href="https://data.world/mcarey/tx-student-suspensions-2015">at data.world</a> or <a href="https://github.com/txappleseed/txappleseedmap">at GitHub</a></span>
 
             <div class="masthead_right">
               <div class="masthead_select">
-                <select id="dropdown">
+
+                <select class="punishment_selector">
                   <option value="OSS">Out of School Suspensions</option>
-                  <option value="Expulsion">Expulsion Actions</option>
-                  <option value="AltEdu">Alternative Placements</option>
+                  <option value="EXP">Expulsions</option>
+                  <option value="DAE">Alternative Placements</option>
                   <option value="ISS">In School Suspensions</option>
                 </select>
+                <select class="year_selector">
+                  </select>
+
               </div>
-              <div class="masthead_select student_characteristic_selector">
-                <select id="dropdown">
-                  <option value="0">Black/African American Students</option>
-                  <option value="1">Asian Students</option>
-                  <option value="2">Latino Students</option>
-                  <option value="3">Native American Students</option>
-                  <option value="4">Special Education Students</option>
-                  <option value="5">Students of two or More Races</option>
-                  <option value="6">White Students</option>
+              <div class="masthead_select">
+                <select class="student_characteristic_selector">
+                  <option value="BLA">Black/African American Students</option>
+                  <option value="ASI">Asian Students</option>
+                  <option value="HIS">Latino/Hispanic Students</option>
+                  <option value="IND">Indigenous American Students</option>
+                  <option value="SPE">Special Education Students</option>
+                  <option value="TWO">Students of Two or More Races</option>
+                  <option value="WHI">White Students</option>
+                  <option value="PCI">Hawaiian/Pacific Students</option>
+                  <option value="ALL">All Students</option>
                 </select>
               </div>
                <form class="masthead_search" role="search">
@@ -50,57 +60,29 @@
     <div class="viewport" id="leMap">
       <div id="map" class="map">
       </div>
-      <div class="selector z-400">
-        <header class="selector__header">
-          <span class="selector__title">Out of School Suspensions</span>
-        </header>
-        <ul class="selector__list">
-          <li class="selector__item">
-            <button class="selector__button selector__button--active" data-group-id="0">Black/African American Students</button>
-          </li>
-          <li class="selector__item">
-            <button class="selector__button" data-group-id="1">Asian Students</button>
-          </li>
-          <li class="selector__item">
-            <button class="selector__button" data-group-id="2">Latino Students</button>
-          </li>
-          <li class="selector__item">
-            <button class="selector__button" data-group-id="3">Native American Students</button>
-          </li>
-          <li class="selector__item">
-            <button class="selector__button" data-group-id="4">Special Education Students</button>
-          </li>
-          <li class="selector__item">
-            <button class="selector__button" data-group-id="5">Students of two or More Races</button>
-          </li>
-          <li class="selector__item">
-            <button class="selector__button" data-group-id="6">White Students</button>
-          </li>
-        </ul>
-      </div>
+
 
       <div class="cartodb-legend-stack z-400">
         <div class='cartodb-legend density'>
           <ul>
              <li class="min">
                 <span class="legend-title">Punishments per Capita</span><br>
-                <span class="legend-subtitle">(compared to statewide district average)</span>
+                <span class="legend-subtitle">compared to district average</span>
              </li>
 
              <li class="graph leg" style="border-radius: 0; border:none">
              <div class="colors">
-               <div class="quartile" style="background-color:#54278f"></div>
-               <div class="quartile" style="background-color:#756bb1"></div>
-               <div class="quartile" style="background-color:#9e9ac8"></div>
-               <div class="quartile" style="background-color:#bcbddc"></div>
-               <div class="quartile" style="background-color:#dadaeb"></div>
-               <div class="quartile" style="background-color:#f2f0f7"></div>
-               <div class="quartile" style="background-color:#fee5d9"></div>
+               <div class="quartile" style="background-color:#2d004b"></div>
+               <div class="quartile" style="background-color:#542788"></div>
+               <div class="quartile" style="background-color:#8073ac"></div>
+               <div class="quartile" style="background-color:#b2abd2"></div>
+               <div class="quartile" style="background-color:#d8daeb"></div>
+               <div class="quartile" style="background-color:#f7f7f7"></div>
                <div class="quartile" style="background-color:#fcbba1"></div>
                <div class="quartile" style="background-color:#fc9272"></div>
                <div class="quartile" style="background-color:#fb6a4a"></div>
                <div class="quartile" style="background-color:#de2d26"></div>
-               <div class="quartile" style="background-color:#a50f15"></div>
+               <div class="quartile" style="background-color:#aa0208"></div>
              </div>
              </li>
              <li class="margin-bottom">
