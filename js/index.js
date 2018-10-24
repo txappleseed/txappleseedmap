@@ -120,6 +120,75 @@ var PageControl = (function(){
         this.loadGeojsonLayer(options);
     };
 
+    Map.prototype.getPopupContent = function (districtName, groupNameInPopup, punishmentType) {
+
+        var popupContent;
+
+        if (this.punishmentOfThisGroup && this.scale == -1) {
+            if (this.population == "All Students") {
+                popupContent = [
+                "<span class='popup-text'>The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. ",
+                            "They report that there were " + this.populationOfThisGroup.toLocaleString(),
+                            " students in the district and that they received " + this.punishmentOfThisGroup.toLocaleString(),
+                            " <b>" + punishmentType + "</b>, out of a statewide total of " + this.punishmentTotal.toLocaleString(),
+                            ".</span>"
+                ].join('');
+            }
+            else {
+                popupContent = [
+                "<span class='popup-text'>The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. ",
+                           "They report that there were " + this.populationOfThisGroup.toLocaleString(),
+                           " <b>" + groupNameInPopup + "</b> and that they received " + this.punishmentOfThisGroup.toLocaleString(),
+                           " <b>" + punishmentType + "</b>, out of a district total of ",
+                           (this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
+                           ".</span>"
+                ].join('');
+        }
+        }
+        else if (this.punishmentTotal === 0) {
+
+            popupContent = "<span class='popup-text'>" + districtName + " reported that it had no <b>" + punishmentType + "</b> for the <b>" + this.schoolYear + "</b> school year.</span>";
+        }
+        else if (this.populationOfThisGroup === 0) {
+
+            popupContent = "<span class='popup-text'>" + districtName + " reported that it had no <b>" + groupNameInPopup + "</b> for the <b>" + this.schoolYear + "</b> school year.</span>";
+        }
+        else if (this.punishmentTotal !== null){
+            const percentStudentsByGroup = Number(this.populationOfThisGroup) * 100.0 / Number(this.populationTotal);
+            const punishmentPercent = Number(this.punishmentOfThisGroup) * 100.0 / Number(this.punishmentTotal);
+            if (this.population == "All Students") {
+            popupContent = [
+                "<span class='popup-text'>",
+                "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
+                " students received " + Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the state's ",
+                (0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
+                " <b>" + punishmentType + "</b> and represented ",
+                Math.round(percentStudentsByGroup*100)/100.0 + "% of the state's student population.",
+                "</span>"
+            ].join('');}
+            else {
+                popupContent = [
+                    "<span class='popup-text'>",
+                    "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
+                    " <b>" + groupNameInPopup + "</b> received ",
+                    (0 < this.punishmentTotal && this.punishmentTotal < 10 && punishmentPercent != 0) ? "about " : "",
+                    Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the ",
+                    (0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
+                    " <b>" + punishmentType + "</b> and represented ",
+                    Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population.",
+                    "</span>"
+                ].join('');}
+        }
+        else {
+            popupContent = [
+                "<span class='popup-text'>Data not available in <b>" + districtName,
+                "</b> for <b>" + groupNameInPopup + "</b> in the <b>" + this.schoolYear,
+                "</b> school year.",
+                "</span>"
+            ].join('');
+        }
+        return popupContent;
+    };
 
     Map.prototype.getOptions = function () {
         return {
@@ -158,71 +227,8 @@ var PageControl = (function(){
 
                 const districtName = feature.properties.district_name;
 
-                var popupContent;
+                var popupContent = this.getPopupContent(districtName, groupNameInPopup, punishmentType);
 
-                if (this.punishmentOfThisGroup && this.scale == -1) {
-                    if (this.population == "All Students") {
-                        popupContent = [
-                        "<span class='popup-text'>The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. ",
-                                    "They report that there were " + this.populationOfThisGroup.toLocaleString(),
-                                    " students in the district and that they received " + this.punishmentOfThisGroup.toLocaleString(),
-                                    " <b>" + punishmentType + "</b>, out of a statewide total of " + this.punishmentTotal.toLocaleString(),
-                                    ".</span>"
-                        ].join('');
-                    }
-                    else {
-                        popupContent = [
-                        "<span class='popup-text'>The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. ",
-                                   "They report that there were " + this.populationOfThisGroup.toLocaleString(),
-                                   " <b>" + groupNameInPopup + "</b> and that they received " + this.punishmentOfThisGroup.toLocaleString(),
-                                   " <b>" + punishmentType + "</b>, out of a district total of ",
-                                   (this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
-                                   ".</span>"
-                        ].join('');
-                }
-                }
-                else if (this.punishmentTotal === 0) {
-
-                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no <b>" + punishmentType + "</b> for the <b>" + this.schoolYear + "</b> school year.</span>";
-                }
-                else if (this.populationOfThisGroup === 0) {
-
-                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no <b>" + groupNameInPopup + "</b> for the <b>" + this.schoolYear + "</b> school year.</span>";
-                }
-                else if (this.punishmentTotal !== null){
-                    const percentStudentsByGroup = Number(this.populationOfThisGroup) * 100.0 / Number(this.populationTotal);
-                    const punishmentPercent = Number(this.punishmentOfThisGroup) * 100.0 / Number(this.punishmentTotal);
-                    if (this.population == "All Students") {
-                    popupContent = [
-                        "<span class='popup-text'>",
-                        "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
-                        " students received " + Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the state's ",
-                        (0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
-                        " <b>" + punishmentType + "</b> and represented ",
-                        Math.round(percentStudentsByGroup*100)/100.0 + "% of the state's student population.",
-                        "</span>"
-                    ].join('');}
-                    else {
-                        popupContent = [
-                            "<span class='popup-text'>",
-                            "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
-                            " <b>" + groupNameInPopup + "</b> received ",
-                            (0 < this.punishmentTotal && this.punishmentTotal < 10 && punishmentPercent != 0) ? "about " : "",
-                            Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the ",
-                            (0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
-                            " <b>" + punishmentType + "</b> and represented ",
-                            Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population.",
-                            "</span>"
-                        ].join('');}
-                }
-                else {
-                    popupContent = [
-                        "<span class='popup-text'>Data not available in <b>" + districtName,
-                        "</b> for <b>" + groupNameInPopup + "</b> in the <b>" + this.schoolYear,
-                        "</b> school year.",
-                        "</span>"
-                    ].join('');
-                }
                 if (feature.properties) layer.bindPopup(popupContent);
             }.bind(this)
         };
