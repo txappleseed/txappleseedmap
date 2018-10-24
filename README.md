@@ -24,7 +24,7 @@ to one of ten categories of students, with the following abbreviations:
 * HIS: HISPANIC
 * BLA: BLACK OR AFRICAN AMERICAN
 * WHI: WHITE
-* IND: NATIVE AMERICAN
+* IND: INDIGENOUS AMERICAN
 * ASI: ASIAN
 * PCI: NATIVE HAWAIIAN/OTHER PACIFIC
 * TWO: TWO OR MORE RACES

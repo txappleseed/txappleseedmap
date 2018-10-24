@@ -10,7 +10,7 @@ viewable in the map by changing the line to "lastYear = 2017;"
 firstYear = 2006;
 lastYear = 2016;
 
-// Copyright (c) 2013 Ryan Clark
+// This section Copyright (c) 2013 Ryan Clark -- under MIT License
 // https://gist.github.com/rclark/5779673
 L.TopoJSON = L.GeoJSON.extend({
     addData: function(jsonData) {
@@ -63,8 +63,6 @@ var PageControl = (function(){
 
     function Map( selector ) {
 
-        // Rename 'this' for use in callbacks
-        var thisMap = this;
         this.punishment = "Out of School Suspensions";
         this.population = "Black/African American Students";
         this.punishmentKey = punishmentToProcessedDataKey[this.punishment];
@@ -123,71 +121,42 @@ var PageControl = (function(){
     Map.prototype.getPopupContent = function (districtName, groupNameInPopup, punishmentType) {
 
         var popupContent;
+        if (this.population == "All Students") {
+            groupNameInPopup = "students";
+            this.populationScope = "statewide"; }
+        else {this.populationScope = "district"; }
 
         if (this.punishmentOfThisGroup && this.scale == -1) {
-            if (this.population == "All Students") {
-                popupContent = [
-                "<span class='popup-text'>The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. ",
-                            "They report that there were " + this.populationOfThisGroup.toLocaleString(),
-                            " students in the district and that they received " + this.punishmentOfThisGroup.toLocaleString(),
-                            " <b>" + punishmentType + "</b>, out of a statewide total of " + this.punishmentTotal.toLocaleString(),
-                            ".</span>"
-                ].join('');
-            }
-            else {
-                popupContent = [
-                "<span class='popup-text'>The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. ",
-                           "They report that there were " + this.populationOfThisGroup.toLocaleString(),
-                           " <b>" + groupNameInPopup + "</b> and that they received " + this.punishmentOfThisGroup.toLocaleString(),
-                           " <b>" + punishmentType + "</b>, out of a district total of ",
-                           (this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
-                           ".</span>"
-                ].join('');
+            popupContent = "The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. " +
+                "They report that there were " + this.populationOfThisGroup.toLocaleString() +
+                " <b>" + groupNameInPopup + "</b> and that they received " +
+                this.punishmentOfThisGroup.toLocaleString() + " <b>" + punishmentType +
+                "</b>, out of a " + this.populationScope + " total of " +
+                ((this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString()) + ".";
         }
-        }
-        else if (this.punishmentTotal === 0) {
+        else if (this.punishmentTotal === 0 || this.populationOfThisGroup === 0) {
 
-            popupContent = "<span class='popup-text'>" + districtName + " reported that it had no <b>" + punishmentType + "</b> for the <b>" + this.schoolYear + "</b> school year.</span>";
-        }
-        else if (this.populationOfThisGroup === 0) {
-
-            popupContent = "<span class='popup-text'>" + districtName + " reported that it had no <b>" + groupNameInPopup + "</b> for the <b>" + this.schoolYear + "</b> school year.</span>";
+            popupContent = districtName + " reported that it had no <b>" +
+                ((this.populationOfThisGroup === 0) ? groupNameInPopup : punishmentType) +
+                "</b> for the <b>" + this.schoolYear + "</b> school year.";
         }
         else if (this.punishmentTotal !== null){
             const percentStudentsByGroup = Number(this.populationOfThisGroup) * 100.0 / Number(this.populationTotal);
             const punishmentPercent = Number(this.punishmentOfThisGroup) * 100.0 / Number(this.punishmentTotal);
-            if (this.population == "All Students") {
-            popupContent = [
-                "<span class='popup-text'>",
-                "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
-                " students received " + Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the state's ",
-                (0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
-                " <b>" + punishmentType + "</b> and represented ",
-                Math.round(percentStudentsByGroup*100)/100.0 + "% of the state's student population.",
-                "</span>"
-            ].join('');}
-            else {
-                popupContent = [
-                    "<span class='popup-text'>",
-                    "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
-                    " <b>" + groupNameInPopup + "</b> received ",
-                    (0 < this.punishmentTotal && this.punishmentTotal < 10 && punishmentPercent != 0) ? "about " : "",
-                    Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the ",
-                    (0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
-                    " <b>" + punishmentType + "</b> and represented ",
-                    Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population.",
-                    "</span>"
-                ].join('');}
-        }
+            popupContent = "In <b>" + districtName + "</b>, the " +
+                this.populationOfThisGroup.toLocaleString() + " <b>" + groupNameInPopup + "</b> received " +
+                ((0 < this.punishmentTotal && this.punishmentTotal < 10 && punishmentPercent != 0) ? "about " : "") +
+                Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the " +
+                ((0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString()) +
+                " <b>" + punishmentType + "</b> and represented " + Math.round(percentStudentsByGroup*100)/100.0 +
+                "% of the " + this.populationScope + " population.";
+            }
         else {
-            popupContent = [
-                "<span class='popup-text'>Data not available in <b>" + districtName,
-                "</b> for <b>" + groupNameInPopup + "</b> in the <b>" + this.schoolYear,
-                "</b> school year.",
-                "</span>"
-            ].join('');
+            popupContent = "Data not available in <b>" + districtName +
+                "</b> for <b>" + groupNameInPopup + "</b> in the <b>" + this.schoolYear +
+                "</b> school year.";
         }
-        return popupContent;
+        return ["<span class='popup-text'>", "</span>"].join(popupContent);
     };
 
     Map.prototype.getOptions = function () {
@@ -362,7 +331,6 @@ var PageControl = (function(){
         }
     };
 
-
     Map.prototype.getFillColor =   function (value) {
         var red    = ['#fcbba1','#fc9272','#fb6a4a','#de2d26','#aa0208'],
         purple = ['#d8daeb','#b2abd2','#8073ac','#542788','#2d004b'],
@@ -381,7 +349,6 @@ var PageControl = (function(){
         value == 10  ? red[4]  :
         gray;
     };
-
 
     // Return a reference to the map
     return(new Map( "#leMap" ));
