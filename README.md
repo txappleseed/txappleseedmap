@@ -46,7 +46,7 @@ This project includes a command line utility for generating the data used to pop
 
 To set up a Python environment that can run the utility, use pipenv. If needed, follow the [pipenv installation instructions](https://pipenv.readthedocs.io/en/latest/) before you continue. Once pipenv is installed, use this pipenv command to install the Python libraries you need:
 
-```$ pipenv install --dev```
+```$ pipenv install```
 
 If you need to install or manage different versions of Python in order to run the required version for this project (pipenv will give you a warning), consider [pyenv](https://github.com/pyenv/pyenv) which pipenv integrates with directly.
 
@@ -70,7 +70,9 @@ You can use the `-f` and `-l` flags to set the first and last years of the range
 
 ```$ collectFromFile -f 2012 -l 2015```
 
-If you use the `--json-folders` flag, you'll get nested directories labeled by year, demographic, and punishment, with JSON files each containing the data corresponding to one possible user query. The current version of the map is set up to use data exported using the `--json-folders` flag.
+### Output Format
+
+The three options to output the processed data are `--json-folders`, `--csv`, and `--json`. The current version of the map is set up to use data exported using the `--json-folders` option. That option is also the default, so if you don't include any of these three flags, you get the `--json-folders` format, which includes nested directories labeled by year, demographic, and punishment. Each JSON file contains the data corresponding to one possible user query.
 
 ```$ collectFromFile --json-folders```
 
