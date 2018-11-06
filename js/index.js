@@ -1,6 +1,16 @@
 /*jshint esversion: 6 */
 
-// Copyright (c) 2013 Ryan Clark
+/*
+The firstYear and lastYear variables are the first and last years
+available in the map's drop-down menu. So, if you're able to add
+2017 data to the data/ directory, you can then make that data
+viewable in the map by changing the line to "lastYear = 2017;"
+*/
+
+firstYear = 2006;
+lastYear = 2016;
+
+// This section Copyright (c) 2013 Ryan Clark -- under MIT License
 // https://gist.github.com/rclark/5779673
 L.TopoJSON = L.GeoJSON.extend({
     addData: function(jsonData) {
@@ -37,8 +47,9 @@ const punishmentToProcessedDataKey = {
 
 // populate year selector with choices
 var yearSelector = document.querySelector('.year_selector');
-// this line assumes 2016 is the last available year of data
-for (year = 2006; year <= 2016; year++) {
+
+// currently this adds years 2006 through 2016
+for (year = firstYear; year <= lastYear; year++) {
     var yearEntry = document.createElement('option');
     yearEntry.textContent = (year - 1) + "-" + year;
     yearEntry.value = year;
@@ -52,8 +63,6 @@ var PageControl = (function(){
 
     function Map( selector ) {
 
-        // Rename 'this' for use in callbacks
-        var thisMap = this;
         this.punishment = "Out of School Suspensions";
         this.population = "Black/African American Students";
         this.punishmentKey = punishmentToProcessedDataKey[this.punishment];
@@ -79,7 +88,6 @@ var PageControl = (function(){
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
         });
-
 
         // Default Stripes.
         this.stripes = new L.StripePattern({
@@ -109,6 +117,46 @@ var PageControl = (function(){
         this.loadGeojsonLayer(options);
     };
 
+    Map.prototype.getPopupContent = function (districtName, groupNameInPopup, punishmentType) {
+
+        var popupContent;
+        if (this.population == "All Students") {
+            groupNameInPopup = "students";
+            this.populationScope = "statewide"; }
+        else {this.populationScope = "district"; }
+
+        if (this.punishmentOfThisGroup && this.scale == -1) {
+            popupContent = "The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. " +
+                "They report that there were " + this.populationOfThisGroup.toLocaleString() +
+                " <b>" + groupNameInPopup + "</b> and that they received " +
+                this.punishmentOfThisGroup.toLocaleString() + " <b>" + punishmentType +
+                "</b>, out of a " + this.populationScope + " total of " +
+                ((this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString()) + ".";
+        }
+        else if (this.punishmentTotal === 0 || this.populationOfThisGroup === 0) {
+
+            popupContent = districtName + " reported that it had no <b>" +
+                ((this.populationOfThisGroup === 0) ? groupNameInPopup : punishmentType) +
+                "</b> for the <b>" + this.schoolYear + "</b> school year.";
+        }
+        else if (this.punishmentTotal !== null && this.populationOfThisGroup !== null){
+            const percentStudentsByGroup = Number(this.populationOfThisGroup) * 100.0 / Number(this.populationTotal);
+            const punishmentPercent = Number(this.punishmentOfThisGroup) * 100.0 / Number(this.punishmentTotal);
+            popupContent = "In <b>" + districtName + "</b>, the " +
+                this.populationOfThisGroup.toLocaleString() + " <b>" + groupNameInPopup + "</b> received " +
+                ((0 < this.punishmentTotal && this.punishmentTotal < 10 && punishmentPercent != 0) ? "about " : "") +
+                Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the " +
+                ((0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString()) +
+                " <b>" + punishmentType + "</b> and represented " + Math.round(percentStudentsByGroup*100)/100.0 +
+                "% of the " + this.populationScope + " population.";
+            }
+        else {
+            popupContent = "Data not available in <b>" + districtName +
+                "</b> for <b>" + groupNameInPopup + "</b> in the <b>" + this.schoolYear +
+                "</b> school year.";
+        }
+        return ["<span class='popup-text'>", "</span>"].join(popupContent);
+    };
 
     Map.prototype.getOptions = function () {
         return {
@@ -139,77 +187,16 @@ var PageControl = (function(){
                 }
                 else {
                     this.scale = -1;
-                    this.populationOfThisGroup = undefined;
-                    this.populationTotal = undefined;
-                    this.punishmentOfThisGroup = undefined;
-                    this.punishmentTotal = undefined;
+                    this.populationOfThisGroup = null;
+                    this.populationTotal = null;
+                    this.punishmentOfThisGroup = null;
+                    this.punishmentTotal = null;
                 }
 
                 const districtName = feature.properties.district_name;
 
-                var popupContent;
+                var popupContent = this.getPopupContent(districtName, groupNameInPopup, punishmentType);
 
-                if (this.punishmentOfThisGroup && this.scale == -1) {
-                    if (this.population == "All Students") {
-                        popupContent = [
-                        "<span class='popup-text'>The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. ",
-                                    "They report that there were " + this.populationOfThisGroup.toLocaleString(),
-                                    " students in the district and that they received " + this.punishmentOfThisGroup.toLocaleString(),
-                                    " <b>" + punishmentType + "</b>, out of a statewide total of " + this.punishmentTotal.toLocaleString(),
-                                    ".</span>"
-                        ].join('');
-                    }
-                    else {
-                        popupContent = [
-                        "<span class='popup-text'>The statistics for <b>" + districtName + "</b> appear to have an <b>error</b>. ",
-                                   "They report that there were " + this.populationOfThisGroup.toLocaleString(),
-                                   " <b>" + groupNameInPopup + "</b> and that they received " + this.punishmentOfThisGroup.toLocaleString(),
-                                   " <b>" + punishmentType + "</b>, out of a district total of ",
-                                   (this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
-                                   ".</span>"
-                        ].join('');
-                }
-                }
-                else if (this.punishmentTotal === 0) {
-
-                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + punishmentType + " for the <b>" + this.schoolYear + "</b> school year.</span>";
-                }
-                else if (this.populationOfThisGroup === 0) {
-
-                    popupContent = "<span class='popup-text'>" + districtName + " reported that it had no " + groupNameInPopup + " for the <b>" + this.schoolYear + "</b> school year.</span>";
-                }
-                else if (this.populationTotal){
-                    const percentStudentsByGroup = Number(this.populationOfThisGroup) * 100.0 / Number(this.populationTotal);
-                    const punishmentPercent = Number(this.punishmentOfThisGroup) * 100.0 / Number(this.punishmentTotal);
-                    if (this.population == "All Students") {
-                    popupContent = [
-                        "<span class='popup-text'>",
-                        "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
-                        " students received " + Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the state's ",
-                        (0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
-                        " <b>" + punishmentType + "</b> and represented ",
-                        Math.round(percentStudentsByGroup*100)/100.0 + "% of the state's student population.",
-                        "</span>"
-                    ].join('');}
-                    else {
-                        popupContent = [
-                            "<span class='popup-text'>",
-                            "In <b>" + districtName + "</b>, the " + this.populationOfThisGroup.toLocaleString(),
-                            " <b>" + groupNameInPopup + "</b> received " + Math.min(100, Math.round(punishmentPercent*100)/100.0) + "% of the ",
-                            (0 < this.punishmentTotal && this.punishmentTotal < 10) ? "fewer than 10" : this.punishmentTotal.toLocaleString(),
-                            " <b>" + punishmentType + "</b> and represented ",
-                            Math.round(percentStudentsByGroup*100)/100.0 + "% of the student population.",
-                            "</span>"
-                        ].join('');}
-                }
-                else {
-                    popupContent = [
-                        "<span class='popup-text'>Data not available in <b>" + districtName,
-                        "</b> for <b>" + groupNameInPopup + "</b> in the <b>" + this.schoolYear,
-                        "</b> school year.",
-                        "</span>"
-                    ].join('');
-                }
                 if (feature.properties) layer.bindPopup(popupContent);
             }.bind(this)
         };
@@ -343,7 +330,6 @@ var PageControl = (function(){
         }
     };
 
-
     Map.prototype.getFillColor =   function (value) {
         var red    = ['#fcbba1','#fc9272','#fb6a4a','#de2d26','#aa0208'],
         purple = ['#d8daeb','#b2abd2','#8073ac','#542788','#2d004b'],
@@ -362,7 +348,6 @@ var PageControl = (function(){
         value == 10  ? red[4]  :
         gray;
     };
-
 
     // Return a reference to the map
     return(new Map( "#leMap" ));
