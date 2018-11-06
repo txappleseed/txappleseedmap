@@ -26,25 +26,6 @@ L.TopoJSON = L.GeoJSON.extend({
     }
 });
 
-const groupToProcessedDataKey = {
-    "Black/African American Students": "BLA",
-    "Asian Students": "ASI",
-    "Latino/Hispanic Students": "HIS",
-    "Indigenous American Students": "IND",
-    "Special Education Students": "SPE",
-    "Students of Two or More Races": "TWO",
-    "White Students": "WHI",
-    "Hawaiian/Pacific Students": "PCI",
-    "All Students": "ALL"
-};
-
-const punishmentToProcessedDataKey = {
-    "Expulsions" : "EXP",
-    "Alternative Placements" : "DAE",
-    "Out of School Suspensions" : "OSS",
-    "In School Suspensions" : "ISS"
-};
-
 // populate year selector with choices
 var yearSelector = document.querySelector('.year_selector');
 
@@ -61,12 +42,10 @@ yearSelector.lastChild.selected = true;
 var PageControl = (function(){
     "use strict";
 
-    function Map( selector ) {
+    function Map( selector, yearSelector ) {
 
         this.punishment = "Out of School Suspensions";
         this.population = "Black/African American Students";
-        this.punishmentKey = punishmentToProcessedDataKey[this.punishment];
-        this.groupKey = groupToProcessedDataKey[this.population];
         this.hilight_layer = null;
         this.districtLayer = null;
         this.year = yearSelector.lastChild.value;
@@ -115,6 +94,31 @@ var PageControl = (function(){
         tileLayer.addTo(mapObject);
         //this.requestInitialData(options);
         this.loadGeojsonLayer(options);
+    };
+
+    Map.prototype.getPunishmentKey = function() {
+        const punishmentToProcessedDataKey = {
+            "Expulsions" : "EXP",
+            "Alternative Placements" : "DAE",
+            "Out of School Suspensions" : "OSS",
+            "In School Suspensions" : "ISS"
+        };
+        return punishmentToProcessedDataKey[this.punishment];
+    };
+
+    Map.prototype.getPopulationKey = function() {
+        const populationToProcessedDataKey = {
+            "Black/African American Students": "BLA",
+            "Asian Students": "ASI",
+            "Latino/Hispanic Students": "HIS",
+            "Indigenous American Students": "IND",
+            "Special Education Students": "SPE",
+            "Students of Two or More Races": "TWO",
+            "White Students": "WHI",
+            "Hawaiian/Pacific Students": "PCI",
+            "All Students": "ALL"
+        };
+        return populationToProcessedDataKey[this.population];
     };
 
     Map.prototype.getPopupContent = function (districtName, groupNameInPopup, punishmentType) {
@@ -208,10 +212,8 @@ var PageControl = (function(){
         thisMap.population = $(".student_characteristic_selector").find("option:selected").text();
         thisMap.punishment = $(".punishment_selector").find("option:selected").text();
         thisMap.year = $(".year_selector").find("option:selected").val();
-        thisMap.punishmentKey = punishmentToProcessedDataKey[thisMap.punishment];
-        thisMap.groupKey = groupToProcessedDataKey[thisMap.population];
         thisMap.schoolYear = $(".year_selector").find("option:selected").text();
-        const path = "data/" + thisMap.year + "/" + thisMap.groupKey + "/" + thisMap.punishmentKey + ".json";
+        const path = "data/" + thisMap.year + "/" + thisMap.getPopulationKey() + "/" + thisMap.getPunishmentKey() + ".json";
         fetch(path).then(function(response) {
             if(response.ok) {
                 return response.json();
@@ -262,7 +264,7 @@ var PageControl = (function(){
 
     // Loads data from data JSON file
     Map.prototype.loadData = function() {
-        const path = "data/" + this.year + "/" + this.groupKey + "/" + this.punishmentKey + ".json";
+        const path = "data/" + this.year + "/" + this.getPopulationKey() + "/" + this.getPunishmentKey() + ".json";
         $.ajax({
             dataType: "json",
             url: path,
@@ -350,6 +352,6 @@ var PageControl = (function(){
     };
 
     // Return a reference to the map
-    return(new Map( "#leMap" ));
+    return(new Map( "#leMap", yearSelector ));
 
 })();
