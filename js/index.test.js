@@ -34,13 +34,13 @@ beforeEach(() => {
     L = require('leaflet-headless');
     Pattern = require('./leaflet.pattern.js');
     $ = require('jquery');
-    document.body.innerHTML ='<div class="viewport" id="leMap"><div id="map" class="map"></div><div class="year_selector" id="searchbox"></div>'
-    M = require('./index.js');
+    document.body.innerHTML ='<div class="viewport" id="leMap"><div id="map" class="map"></div><div class="year_selector" id="searchbox"></div>';
+    var Map = require('./index.js');
+    M = new Map("leMap");
 });
 
 test('style of value 5 returns white style', () => {
     M.processedData = mockData;
-    debugger;
     style = M.getOptions().style(mockFeature(1902));
     expect(style.fillColor).toEqual('white');
     expect(style.weight).toBe(1);
@@ -71,4 +71,3 @@ test('style of value 10 returns dark red style', () => {
     expect(style.fillOpacity).toBe(0.6);
     expect(style.fillPattern).toBeFalsy();
 });
-
