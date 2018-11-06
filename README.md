@@ -98,4 +98,4 @@ Then, install the dependencies from the `js/` directory:
 
 ``` npm install```
 
-Now, you can run tests using `npm test`.
+Now, you can run tests from within the `js/` directory using `npm test`.
