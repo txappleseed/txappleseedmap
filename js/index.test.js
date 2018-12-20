@@ -19,13 +19,26 @@ const mockData = {
         S: 0,
         aC: 46,
         aP: 622
-    }
+    },
+    // district with missing data
+    1906: {
+        P: 923
+    },
+    // district with error in reporting
+    1907: {
+        C: 1,
+        S: -1,
+        P: 0,
+        aC: 2,
+        aP: 193
+    },
 };
 
 const mockFeature = (district_number) => {
     return {
         properties: {
-            district_number: district_number
+            district_number: district_number,
+            district_name: "Test District Name",
         }
     };
 };
@@ -70,4 +83,36 @@ test('style of value 10 returns dark red style', () => {
     expect(style.color).toBe('#b3b3b3');
     expect(style.fillOpacity).toBe(0.6);
     expect(style.fillPattern).toBeFalsy();
+});
+
+test('style of district that does not exist returns stripes', () => {
+    M.processedData = mockData;
+    style = M.getOptions().style(mockFeature(101));
+    expect(style.fillColor).toEqual('#707070');
+    expect(style.weight).toBe(1);
+    expect(style.opacity).toBe(1);
+    expect(style.color).toBe('#b3b3b3');
+    expect(style.fillOpacity).toBe(0.6);
+    expect(style.fillPattern).toBe(M.stripes);
+});
+
+test('style of district that is missing data returns stripes', () => {
+    M.processedData = mockData;
+    style = M.getOptions().style(mockFeature(1906));
+    expect(style.fillColor).toEqual('#707070');
+    expect(style.weight).toBe(1);
+    expect(style.opacity).toBe(1);
+    expect(style.color).toBe('#b3b3b3');
+    expect(style.fillOpacity).toBe(0.6);
+    expect(style.fillPattern).toBe(M.stripes);
+});
+
+test('popup of district with higher count than population shows error', () => {
+    M.processedData = mockData;
+    var layer = { bindPopup : jest.fn() };
+    M.getOptions().onEachFeature(mockFeature(1907), layer);
+    expect(layer.bindPopup).toBeCalledWith("<span class='popup-text'>The statistics for <b>Test District Name</b> appear " +
+        "to have an <b>error</b>. They report that there were 0 <b>Black/African American " +
+        "Students</b> and that they received 1 <b>Out of School Suspensions</b>, out of a district total " +
+        "of fewer than 10.</span>");
 });
