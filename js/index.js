@@ -40,7 +40,7 @@ for (year = firstYear; year <= lastYear; year++) {
 }
 yearSelector.lastChild.selected = true;
 
-function Map( selector, yearSelector ) {
+function Map( selector ) {
 
     this.punishment = "Out of School Suspensions";
     this.population = "Black/African American Students";
@@ -349,4 +349,6 @@ Map.prototype.getFillColor =   function (value) {
     gray;
 };
 
-var PageControl = new Map( "#leMap", yearSelector );
+// Handle node-style exporting for running tests or running in browser
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined')
+    module.exports = Map;
